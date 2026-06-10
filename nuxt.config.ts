@@ -8,13 +8,7 @@ const BACKEND_ORIGIN = 'http://localhost:8000'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  // Nuxt DevTools is OFF by default: the @nuxtjs/seo stack ships a DevTools panel
-  // (nuxt-schema-org / @nuxtjs/robots) whose pages import `isProductionMode` from
-  // `#imports` — a dangling auto-import in the current nuxt-site-config@4.0.8, so
-  // building the DevTools client throws "[unimport] failed to find isProductionMode"
-  // and prints an ugly "Build failed" on `pnpm dev` (the app server itself is fine).
-  // Re-enable once the upstream SEO DevTools incompatibility is resolved.
-  devtools: { enabled: false },
+  devtools: { enabled: true },
 
   // Default dev/preview port. Override with NUXT_PORT or `nuxt dev --port`.
   devServer: { port: Number(process.env.NUXT_PORT) || 3118 },
@@ -132,6 +126,19 @@ export default defineNuxtConfig({
   vite: {
     // Tailwind v4 vite plugin (PITFALL 4 — this is the v4 wiring).
     plugins: [tailwindcss()],
+    // Pre-bundle deps Vite would otherwise discover at runtime (causing a one-off
+    // dev page reload on first hit). Listing them here makes the first dev load
+    // stable. Harmless if a dep is unused on a given route.
+    optimizeDeps: {
+      include: [
+        '@unhead/schema-org/vue',
+        'centrifuge',
+        'class-variance-authority',
+        'clsx',
+        'reka-ui',
+        'tailwind-merge',
+      ],
+    },
     // Dev proxy for client (Vite) requests — mirrors nitro.devProxy above.
     server: {
       proxy: {
