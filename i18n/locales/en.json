@@ -1,6 +1,18 @@
 {
   "nav": { "home": "Home", "blog": "Blog", "login": "Log in" },
-  "demo": { "welcome": "Welcome to the Vue Starter App" },
+  "demo": {
+    "welcome": "Welcome to the Vue Starter App",
+    "authState": "Auth state",
+    "loggedInAs": "Signed in as {email}",
+    "loggedOut": "Not signed in",
+    "logout": "Log out",
+    "realtime": "Realtime feed",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "realtimeOff": "Realtime not configured — set centrifugoWsUrl (e.g. ws://localhost:8000/connection/websocket) and run Centrifugo to enable the live feed.",
+    "noEvents": "No live events yet.",
+    "blogLink": "Browse the blog"
+  },
   "blog": {
     "title": "Blog",
     "subtitle": "Latest posts from the Journal API",
