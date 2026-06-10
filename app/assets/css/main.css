@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Tailwind v4 CSS-first entry (PITFALL 4).
+   No tailwind.config.ts, no @nuxtjs/tailwindcss module — the
+   @tailwindcss/vite plugin (wired in nuxt.config.ts) handles it.
+   Design tokens live here as CSS variables under @theme.
+   shadcn-vue cssVariables theme tokens are appended below in Task 3.
+   --------------------------------------------------------------- */
+@theme {
+  /* Brand palette — override per-project in frontend-init.sh consumers */
+  --color-brand: #16697a;
+  --color-brand-foreground: #ffffff;
+
+  /* Fonts */
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
