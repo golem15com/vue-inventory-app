@@ -14,9 +14,9 @@ const authFile = path.join(__dirname, '.auth/user.json')
  *
  * BACKEND-GATED: this needs a running WinterCMS backend (localhost:8000) with a
  * seeded user (see tests/e2e/helpers/runTinker.ts). When E2E_EMAIL/E2E_PASSWORD
- * are unset we test.skip() so CI without a seed SKIPS rather than FAILS — and the
- * dependent chromium project still runs (it just falls back to the empty
- * storageState produced below). This is the CI-safe graceful path (T-17-12).
+ * are unset it writes an EMPTY storageState and returns — CI without a seed SKIPS
+ * the real login yet the dependent chromium project still runs (the global
+ * `use.storageState` file always exists). This is the CI-safe graceful path (T-17-12).
  *
  * SECURITY: credentials come from the env only (never committed — see
  * tests/e2e/.env.example placeholders). The token is never logged.
@@ -25,12 +25,17 @@ setup('authenticate', async ({ page, context }) => {
   const email = process.env.E2E_EMAIL
   const password = process.env.E2E_PASSWORD
 
-  // Graceful skip when no seed creds are present (CI without a backend).
-  setup.skip(
-    !email || !password,
-    'E2E_EMAIL / E2E_PASSWORD unset — copy tests/e2e/.env.example to '
-    + 'tests/e2e/.env.local, seed a backend user (see helpers/runTinker.ts), and re-run.',
-  )
+  // No seed creds (CI without a backend): write an empty jar so the file the global
+  // `use.storageState` points at always exists, then bail. Dependent specs that
+  // genuinely need auth are themselves backend-gated (test.skip).
+  if (!email || !password) {
+    console.warn(
+      '[auth.setup] E2E_EMAIL / E2E_PASSWORD unset — writing empty storageState '
+      + '(copy tests/e2e/.env.example to .env.local + seed a user via helpers/runTinker.ts to enable login).',
+    )
+    await context.storageState({ path: authFile })
+    return
+  }
 
   await page.goto('/login')
   await page.waitForLoadState('networkidle')

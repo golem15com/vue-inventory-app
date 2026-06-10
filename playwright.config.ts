@@ -11,6 +11,9 @@ dotenv.config({ path: path.join(__dirname, 'tests/e2e/.env.local') })
 dotenv.config({ path: path.join(__dirname, 'tests/e2e/.env') })
 
 const FRONTEND_URL = process.env.E2E_FRONTEND_URL || 'http://localhost:3000'
+// Derive the dev-server port from the URL so `pnpm dev` boots on the SAME port
+// Playwright probes — robust when the default :3000 is already taken by another app.
+const FRONTEND_PORT = new URL(FRONTEND_URL).port || '3000'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -46,7 +49,7 @@ export default defineConfig({
   // Boots the Nuxt dev server for the suite (no watch-mode flag — Playwright owns
   // the lifecycle); reuses an already-running dev server locally.
   webServer: {
-    command: 'pnpm dev',
+    command: `pnpm dev --port ${FRONTEND_PORT}`,
     url: FRONTEND_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
