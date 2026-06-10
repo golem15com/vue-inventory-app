@@ -29,5 +29,6 @@
     "pageOf": "Page {current} of {last}",
     "notFound": "Post not found"
   },
-  "auth": { "login": "Log in" }
+  "auth": { "login": "Log in" },
+  "footer": { "poweredBy": "Built in" }
 }

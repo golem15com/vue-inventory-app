@@ -29,5 +29,6 @@
     "pageOf": "Strona {current} z {last}",
     "notFound": "Nie znaleziono wpisu"
   },
-  "auth": { "login": "Zaloguj się" }
+  "auth": { "login": "Zaloguj się" },
+  "footer": { "poweredBy": "Zbudowano w" }
 }

@@ -19,7 +19,7 @@ function onLocaleChange(event: Event) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-foreground font-body">
+  <div class="flex min-h-screen flex-col bg-background text-foreground font-body">
     <header class="border-b">
       <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <nav class="flex items-center gap-4 text-sm">
@@ -46,9 +46,30 @@ function onLocaleChange(event: Event) {
       </div>
     </header>
 
-    <main class="mx-auto max-w-5xl px-4 py-8">
+    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
       <slot />
     </main>
+
+    <!--
+      Golem15 Stack attribution. Intentionally subtle — the header/main are the
+      client project's space; this footer badge marks the starter as part of the
+      Golem15 Stack without competing with project branding. Safe to remove or
+      replace per project.
+    -->
+    <footer class="border-t">
+      <div class="mx-auto flex max-w-5xl items-center justify-center gap-2 px-4 py-6 text-xs text-muted-foreground">
+        <span>{{ t('footer.poweredBy') }}</span>
+        <a
+          href="https://www.golem15.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center opacity-60 transition-opacity hover:opacity-100"
+          aria-label="Golem15 Stack"
+        >
+          <img src="/brand/golem15.svg" alt="Golem15" class="h-4 w-auto" width="150" height="16" >
+        </a>
+      </div>
+    </footer>
 
     <!-- Global toast outlet (vue-sonner via shadcn). -->
     <Toaster />

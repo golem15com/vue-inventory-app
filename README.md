@@ -189,6 +189,16 @@ starter still boots/builds/tests green via the graceful-degrade path above.
   OG). The default `http://localhost:3118` emits a site-config "should not be
   localhost" warning — expected for the starter; real projects override it.
 
+### Branding — Golem15 Stack badge
+
+- **Wired files:** a muted "Built in [Golem15]" footer badge in
+  `app/layouts/default.vue`, logo at `public/brand/golem15.svg`, `footer.poweredBy`
+  i18n key in `i18n/locales/{en,pl}.json`.
+- Intentionally subtle (`opacity-60`, footer-only) so the header/main stay the
+  client project's branding space. Keep it to signal membership of the Golem15
+  Stack, or remove the `<footer>` block + logo asset per project — nothing else
+  depends on it.
+
 ### Blog — `useBlog` over `/_journal/api/v1`
 
 - **Endpoints (under `journalApiBase` = `…/_journal/api/v1`):** `GET /posts`
