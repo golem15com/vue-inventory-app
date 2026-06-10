@@ -1,6 +1,21 @@
 {
   "nav": { "home": "Home", "blog": "Blog", "login": "Log in" },
   "demo": { "welcome": "Welcome to the Vue Starter App" },
-  "blog": { "title": "Blog" },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Latest posts from the Journal API",
+    "allCategories": "All",
+    "noPosts": "No posts published yet.",
+    "readMore": "Read more",
+    "backToBlog": "Back to blog",
+    "minRead": "min read",
+    "previous": "Previous",
+    "next": "Next",
+    "related": "Related posts",
+    "prevPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {current} of {last}",
+    "notFound": "Post not found"
+  },
   "auth": { "login": "Log in" }
 }

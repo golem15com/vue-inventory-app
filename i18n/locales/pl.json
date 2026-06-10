@@ -1,6 +1,21 @@
 {
   "nav": { "home": "Strona główna", "blog": "Blog", "login": "Zaloguj się" },
   "demo": { "welcome": "Witaj w Vue Starter App" },
-  "blog": { "title": "Blog" },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Najnowsze wpisy z API Journal",
+    "allCategories": "Wszystkie",
+    "noPosts": "Brak opublikowanych wpisów.",
+    "readMore": "Czytaj dalej",
+    "backToBlog": "Powrót do bloga",
+    "minRead": "min czytania",
+    "previous": "Poprzedni",
+    "next": "Następny",
+    "related": "Powiązane wpisy",
+    "prevPage": "Poprzednia",
+    "nextPage": "Następna",
+    "pageOf": "Strona {current} z {last}",
+    "notFound": "Nie znaleziono wpisu"
+  },
   "auth": { "login": "Zaloguj się" }
 }
