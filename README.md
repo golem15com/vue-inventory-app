@@ -81,7 +81,7 @@ The two Vite SPA apps (drzewo, wavepath) are **not** a supported starter path.
 ```bash
 pnpm install
 cp .env.example .env      # adjust NUXT_PUBLIC_* if needed
-pnpm dev                  # Nuxt dev server on http://localhost:3000
+pnpm dev                  # Nuxt dev server on http://localhost:3118
 pnpm build                # production build
 pnpm typecheck            # strict TS check
 ```
@@ -104,7 +104,7 @@ overridden with the matching `NUXT_PUBLIC_*` env var (see `.env.example`):
 | `userApiBase` | `NUXT_PUBLIC_USER_API_BASE` | `…/_user/api/v1` | JWT auth API |
 | `journalApiBase` | `NUXT_PUBLIC_JOURNAL_API_BASE` | `…/_journal/api/v1` | Blog read API |
 | `centrifugoWsUrl` | `NUXT_PUBLIC_CENTRIFUGO_WS_URL` | `` (empty) | Realtime WS; empty = graceful no-op |
-| `siteUrl` | `NUXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Canonical/sitemap/OG |
+| `siteUrl` | `NUXT_PUBLIC_SITE_URL` | `http://localhost:3118` | Canonical/sitemap/OG |
 
 ### Dev proxy (dev-only)
 
@@ -186,7 +186,7 @@ starter still boots/builds/tests green via the graceful-degrade path above.
   description, `defaultLocale`) → sitemap + OG defaults; per-post `useSeoMeta`
   on the blog detail page (title/description/OG/article times).
 - **runtimeConfig / env:** `siteUrl` / `NUXT_PUBLIC_SITE_URL` (canonical, sitemap,
-  OG). The default `http://localhost:3000` emits a site-config "should not be
+  OG). The default `http://localhost:3118` emits a site-config "should not be
   localhost" warning — expected for the starter; real projects override it.
 
 ### Blog — `useBlog` over `/_journal/api/v1`

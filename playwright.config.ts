@@ -10,10 +10,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, 'tests/e2e/.env.local') })
 dotenv.config({ path: path.join(__dirname, 'tests/e2e/.env') })
 
-const FRONTEND_URL = process.env.E2E_FRONTEND_URL || 'http://localhost:3000'
+const FRONTEND_URL = process.env.E2E_FRONTEND_URL || 'http://localhost:3118'
 // Derive the dev-server port from the URL so `pnpm dev` boots on the SAME port
-// Playwright probes — robust when the default :3000 is already taken by another app.
-const FRONTEND_PORT = new URL(FRONTEND_URL).port || '3000'
+// Playwright probes — robust when the default :3118 is already taken by another app.
+const FRONTEND_PORT = new URL(FRONTEND_URL).port || '3118'
 
 export default defineConfig({
   testDir: './tests/e2e',

@@ -10,6 +10,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  // Default dev/preview port. Override with NUXT_PORT or `nuxt dev --port`.
+  devServer: { port: Number(process.env.NUXT_PORT) || 3118 },
+
   // TypeScript strict mode (typeCheck off — run `pnpm typecheck` explicitly).
   typescript: {
     strict: true,
@@ -47,7 +50,7 @@ export default defineNuxtConfig({
       // Dev value when Centrifugo runs: ws://localhost:8000/connection/websocket
       centrifugoWsUrl: '',
       // Public site URL (canonical/sitemap/OG via @nuxtjs/seo).
-      siteUrl: 'http://localhost:3000',
+      siteUrl: 'http://localhost:3118',
     },
   },
 
@@ -79,7 +82,7 @@ export default defineNuxtConfig({
   // The 3.x reference shape still holds.
   // -------------------------------------------------------------------------
   site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3118',
     name: 'Vue Starter App',
     description: 'Headless WinterCMS Nuxt 4 starter (auth, realtime, i18n, SEO, blog).',
     defaultLocale: 'en',
