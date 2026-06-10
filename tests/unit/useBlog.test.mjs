@@ -36,24 +36,40 @@ console.log('useBlog source-contract')
 check('app/composables/useBlog.ts exists', existsSync(composable))
 
 const src = existsSync(composable) ? readFileSync(composable, 'utf8') : ''
-// Strip line comments so assertions test real code, not prose.
-const code = src.replace(/\/\/.*$/gm, '')
+// Strip block + line comments so assertions test real code, not the doc prose
+// (which legitimately MENTIONS /_wc and `lang` to explain the re-point).
+const code = src
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\/\/.*$/gm, '')
 
 // Behaviour 1: fetchPosts targets journalApiBase + '/posts' with `per_page`
 // (the Journal contract) and `locale` — NOT queststream's `lang`/`/_wc`.
 check('reads journalApiBase as baseURL', /public\.journalApiBase/.test(code))
-check("fetchPosts calls useFetch('/posts')", /useFetch\(\s*['"`]\/posts['"`]/.test(code))
+check("fetchPosts calls useFetch('/posts')", /useFetch(<[^(]*>)?\(\s*['"`]\/posts['"`]/.test(code))
 check('sends per_page query param', /per_page\s*:/.test(code))
 check('sends locale query param', /locale\s*:\s*locale\.value/.test(code))
 check("does NOT carry queststream's /_wc path", !/_wc/.test(code))
 check("does NOT use queststream's `lang` query param", !/\blang\s*:/.test(code))
 
 // Behaviour 2: search shorter than 3 chars is omitted from the query.
-check('search guarded to >= 3 chars', /\.length\s*>=\s*3/.test(code))
+// Accept the literal `>= 3` or a MIN_SEARCH_LEN constant proven to equal 3.
+const minSearch3 =
+  /\.length\s*>=\s*3\b/.test(code) ||
+  (/\.length\s*>=\s*MIN_SEARCH_LEN\b/.test(code) &&
+    /MIN_SEARCH_LEN\s*=\s*3\b/.test(code))
+check('search guarded to >= 3 chars', minSearch3)
 
-// Behaviour 3: per_page clamped to <= 30 (default 9).
-check('per_page clamped to <= 30 (Math.min(.,30))', /Math\.min\([^)]*,\s*30\s*\)/.test(code))
-check('per_page default is 9', /\?\?\s*9/.test(code))
+// Behaviour 3: per_page clamped to <= 30 (default 9). Accept literals or the
+// MAX_PER_PAGE / DEFAULT_PER_PAGE constants proven to equal 30 / 9.
+const clamp30 =
+  /Math\.min\([^)]*,\s*30\s*\)/.test(code) ||
+  (/Math\.min\([^)]*,\s*MAX_PER_PAGE\s*\)/.test(code) &&
+    /MAX_PER_PAGE\s*=\s*30\b/.test(code))
+check('per_page clamped to <= 30 (Math.min(., 30))', clamp30)
+const default9 =
+  /\?\?\s*9\b/.test(code) ||
+  (/\?\?\s*DEFAULT_PER_PAGE\b/.test(code) && /DEFAULT_PER_PAGE\s*=\s*9\b/.test(code))
+check('per_page default is 9', default9)
 
 // Behaviour 4: every fetch is keyed (category/page/slug + locale) and
 // watch:[locale] so locale switches refetch consistently for SSR/client.
@@ -65,8 +81,8 @@ check('watch: [locale] on every fetch', (code.match(/watch:\s*\[\s*locale\s*\]/g
 check('exposes fetchPosts', /function\s+fetchPosts/.test(code))
 check('exposes fetchPost', /function\s+fetchPost/.test(code))
 check('exposes fetchCategories', /function\s+fetchCategories/.test(code))
-check("fetchPost targets /posts/${slug}", /useFetch\(\s*[`]\/posts\/\$\{slug\}/.test(code))
-check("fetchCategories targets /categories", /useFetch\(\s*['"`]\/categories['"`]/.test(code))
+check("fetchPost targets /posts/${slug}", /useFetch(<[^(]*>)?\(\s*[`]\/posts\/\$\{slug\}/.test(code))
+check("fetchCategories targets /categories", /useFetch(<[^(]*>)?\(\s*['"`]\/categories['"`]/.test(code))
 
 if (failures > 0) {
   console.error(`\nuseBlog contract: ${failures} assertion(s) failed`)
