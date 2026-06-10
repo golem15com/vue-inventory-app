@@ -1,0 +1,6 @@
+{
+  "nav": { "home": "Home", "blog": "Blog", "login": "Log in" },
+  "demo": { "welcome": "Welcome to the Vue Starter App" },
+  "blog": { "title": "Blog" },
+  "auth": { "login": "Log in" }
+}
