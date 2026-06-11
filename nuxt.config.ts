@@ -1,16 +1,25 @@
 import tailwindcss from '@tailwindcss/vite'
 
-// Backend origin used by the dev proxies. Browser/SSR requests to the backend
-// routes below are forwarded here in dev; in production the app is same-origin
-// and no proxy is emitted into the build output (dev-only — T-17-01).
-const BACKEND_ORIGIN = 'http://localhost:8000'
+// Dev-proxy target for the backend. The app addresses the backend with
+// SAME-ORIGIN relative paths (see runtimeConfig.public below), and in dev the
+// proxies further down forward those paths here — so there is NO cross-origin
+// request and NO CORS needed. In production the app is same-origin with the
+// backend, so the relative paths resolve directly and no proxy is emitted
+// (dev-only — T-17-01).
+//
+// Override the dev backend with NUXT_DEV_BACKEND_ORIGIN when your backend runs
+// somewhere other than :8000 (e.g. `NUXT_DEV_BACKEND_ORIGIN=http://127.0.0.1:8421`).
+const BACKEND_ORIGIN = process.env.NUXT_DEV_BACKEND_ORIGIN || 'http://localhost:8000'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
 
-  // Default dev/preview port. Override with NUXT_PORT or `nuxt dev --port`.
+  // Canonical dev/preview port for this app is 3118 (matches siteUrl + the
+  // Centrifugo allowed-origin you whitelist). Override only via NUXT_PORT or
+  // `nuxt dev --port`. NB: if 3118 is already taken, the Nuxt listener silently
+  // falls back to another port (often :3000) — keep 3118 free, or pass NUXT_PORT.
   devServer: { port: Number(process.env.NUXT_PORT) || 3118 },
 
   // TypeScript strict mode (typeCheck off — run `pnpm typecheck` explicitly).
@@ -35,19 +44,25 @@ export default defineNuxtConfig({
 
   // -------------------------------------------------------------------------
   // Runtime config — canonical public keys downstream plans + client projects
-  // consume. Dev defaults point at the local backend; override any key at
-  // runtime with the matching NUXT_PUBLIC_* env var (see .env.example).
+  // consume. The HTTP API bases default to SAME-ORIGIN relative paths so the
+  // browser never makes a cross-origin call (no CORS): in dev they are proxied
+  // to NUXT_DEV_BACKEND_ORIGIN, in production they resolve against the app's own
+  // origin. Only override these (with NUXT_PUBLIC_*) if the backend is on a
+  // genuinely different origin — in which case that backend must send CORS
+  // headers for the app origin.
   // -------------------------------------------------------------------------
   runtimeConfig: {
     public: {
-      // Base origin of the WinterCMS backend.
-      apiBase: BACKEND_ORIGIN,
-      // Golem15.User JWT auth API.
-      userApiBase: `${BACKEND_ORIGIN}/_user/api/v1`,
-      // Golem15.Journal blog read API.
-      journalApiBase: `${BACKEND_ORIGIN}/_journal/api/v1`,
+      // Backend base — same-origin (empty) so $api uses relative URLs.
+      apiBase: '',
+      // Golem15.User JWT auth API (relative → proxied in dev, same-origin in prod).
+      userApiBase: '/_user/api/v1',
+      // Golem15.Journal blog read API (relative → proxied in dev, same-origin in prod).
+      journalApiBase: '/_journal/api/v1',
       // Centrifugo websocket URL. Empty = realtime gracefully degrades (no-op).
-      // Dev value when Centrifugo runs: ws://localhost:8000/connection/websocket
+      // The WS connection is a direct cross-origin socket (not proxied) — set it
+      // to your Centrifugo endpoint and add the app origin to Centrifugo's
+      // `client.allowed_origins`. Dev example: ws://localhost:8787/connection/websocket
       centrifugoWsUrl: '',
       // Public site URL (canonical/sitemap/OG via @nuxtjs/seo).
       siteUrl: 'http://localhost:3118',
