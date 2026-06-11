@@ -1,4 +1,4 @@
-# vue-starter-app
+# wn-inventory-app
 
 A reusable **headless-WinterCMS Nuxt 4 frontend starter**, distilled from six
 production Golem15 Vue apps. It boots into a working demo that exercises every

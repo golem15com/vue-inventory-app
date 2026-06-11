@@ -1,7 +1,7 @@
 {
   "nav": { "home": "Strona główna", "blog": "Blog", "login": "Zaloguj się" },
   "demo": {
-    "welcome": "Witaj w Vue Starter App",
+    "welcome": "Witaj w Wn Inventory App",
     "authState": "Stan uwierzytelnienia",
     "loggedInAs": "Zalogowano jako {email}",
     "loggedOut": "Niezalogowano",

@@ -98,7 +98,7 @@ export default defineNuxtConfig({
   // -------------------------------------------------------------------------
   site: {
     url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3118',
-    name: 'Vue Starter App',
+    name: 'Wn Inventory App',
     description: 'Headless WinterCMS Nuxt 4 starter (auth, realtime, i18n, SEO, blog).',
     defaultLocale: 'en',
   },
@@ -166,7 +166,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Vue Starter App',
+      title: 'Wn Inventory App',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
