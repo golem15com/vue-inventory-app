@@ -8,7 +8,7 @@ const BACKEND_ORIGIN = 'http://localhost:8000'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   // Default dev/preview port. Override with NUXT_PORT or `nuxt dev --port`.
   devServer: { port: Number(process.env.NUXT_PORT) || 3118 },

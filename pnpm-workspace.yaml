@@ -1,0 +1,2 @@
+patchedDependencies:
+  nuxtseo-shared@5.2.2: patches/nuxtseo-shared@5.2.2.patch

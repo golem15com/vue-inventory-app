@@ -1,0 +1,19 @@
+diff --git a/dist/devtools.mjs b/dist/devtools.mjs
+index 96dd9992a2a85e4bb9e8778ca3247cfa6fe72ac2..0d0a644a43d79f6f2e71d2c6b616deac1d9d1039 100644
+--- a/dist/devtools.mjs
++++ b/dist/devtools.mjs
+@@ -144,6 +144,14 @@ function setupLegacyModule(config, clientPath, nuxt) {
+ function setupDevToolsUI(config, resolve, nuxt = useNuxt()) {
+   if (!nuxt.options.dev)
+     return;
++  // Patched (g15-starter): honor `devtools.enabled`. Upstream only gates on
++  // `nuxt.options.dev`, so the SEO devtools client builds on every `nuxt dev`
++  // even when devtools is disabled — and nuxt-schema-org@6.2.0's devtools page
++  // references unregistered auto-imports (isProductionMode/loadShiki/...) that
++  // crash that build. With `devtools: { enabled: false }` set in nuxt.config,
++  // this early-return skips the broken build so `pnpm dev` is clean.
++  if (nuxt.options.devtools && nuxt.options.devtools.enabled === false)
++    return;
+   const layerDir = resolve("./devtools");
+   const isLayer = existsSync(join(layerDir, "nuxt.config.ts")) && !existsSync(join(layerDir, "index.html"));
+   registerSharedRpcOnce(nuxt);
