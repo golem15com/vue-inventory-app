@@ -98,7 +98,8 @@
       "notFound": "This doesn't exist or isn't available to you.",
       "photoRejected": "That image couldn't be uploaded. Use JPG, PNG, GIF, or WebP under 10 MB.",
       "nameRequired": "Give this thing a name.",
-      "categoryRequired": "Pick or create a category."
+      "categoryRequired": "Pick or create a category.",
+      "locationRequired": "Pick where this thing lives."
     },
     "action": {
       "confirmDelete": "Delete",
@@ -109,7 +110,12 @@
     },
     "field": {
       "name": "Name",
-      "description": "Description"
+      "description": "Description",
+      "location": "Location",
+      "category": "Category",
+      "quantity": "Quantity",
+      "tags": "Tags",
+      "photo": "Photo"
     },
     "totals": {
       "areas": "Areas",

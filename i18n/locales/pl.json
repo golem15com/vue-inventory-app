@@ -98,7 +98,8 @@
       "notFound": "To nie istnieje lub nie jest dla Ciebie dostępne.",
       "photoRejected": "Nie udało się przesłać obrazu. Użyj JPG, PNG, GIF lub WebP poniżej 10 MB.",
       "nameRequired": "Nadaj tej rzeczy nazwę.",
-      "categoryRequired": "Wybierz lub utwórz kategorię."
+      "categoryRequired": "Wybierz lub utwórz kategorię.",
+      "locationRequired": "Wybierz, gdzie ta rzecz się znajduje."
     },
     "action": {
       "confirmDelete": "Usuń",
@@ -109,7 +110,12 @@
     },
     "field": {
       "name": "Nazwa",
-      "description": "Opis"
+      "description": "Opis",
+      "location": "Miejsce",
+      "category": "Kategoria",
+      "quantity": "Ilość",
+      "tags": "Tagi",
+      "photo": "Zdjęcie"
     },
     "totals": {
       "areas": "Obszary",
