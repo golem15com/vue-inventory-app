@@ -45,7 +45,7 @@
     "subtitle": "Sign in to find anything you own.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
-    "emailPlaceholder": "you@example.com",
+    "emailPlaceholder": "you{'@'}example.com",
     "submit": "Sign in",
     "submitting": "Signing in…",
     "noAccount": "No account? Ask an admin for an invite."
