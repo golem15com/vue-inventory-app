@@ -72,12 +72,11 @@ async function onLogout() {
 
 <template>
   <div class="flex min-h-screen flex-col bg-background text-foreground font-body">
-    <!-- Authed top-bar spans the FULL page width (full-bleed) — brand sits
-         hard-left, the avatar menu reaches hard-right. Only the header goes
-         edge-to-edge; <main> and the footer keep the max-w-5xl reading column.
-         Horizontal gutters (px-4 sm:px-6) are retained for breathing room. -->
+    <!-- Authed top-bar aligned to the same max-w-5xl px-4 reading column as
+         <main> and the footer — brand lines up with the content's left edge,
+         the avatar menu (ml-auto) with its right edge. -->
     <header class="border-b">
-      <div class="flex w-full items-center gap-4 px-4 py-3 sm:px-6">
+      <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3">
         <!-- Brand lockup — mark + lowercase wordmark, paired with gap-2 (mirrors
              the public header so authed pages never degrade to a bare wordmark).
              Points at /dashboard (the authed home); `/` is the public landing. -->
