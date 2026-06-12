@@ -57,7 +57,7 @@ function onLocaleChange(event: Event) {
               :placeholder="t('inventory.search.placeholder')"
               :aria-label="t('inventory.search.label')"
               class="min-h-11 pl-8"
-              data-testid="search-input"
+              data-testid="topbar-search-input"
             />
           </div>
         </form>

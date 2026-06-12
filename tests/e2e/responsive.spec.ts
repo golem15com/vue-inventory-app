@@ -21,7 +21,7 @@ import { test, expect, request as playwrightRequest } from '@playwright/test'
  *   - data-testid="nav-menu"        → the hamburger trigger (phone-only nav drawer)
  *   - data-testid="filters-button"  → the "Filters" button (phone-only → bottom sheet)
  *   - data-testid="filter-area"     → an Area filter control (inline on desktop / in sheet on phone)
- *   - data-testid="search-input"    → the top-bar query box (visible at every width)
+ *   - data-testid="search-input"    → the /search page query box (top bar uses topbar-search-input)
  */
 const BACKEND_URL = process.env.E2E_BACKEND_URL || 'http://localhost:8000'
 
