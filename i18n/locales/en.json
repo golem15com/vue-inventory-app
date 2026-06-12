@@ -103,8 +103,13 @@
     "action": {
       "confirmDelete": "Delete",
       "cancel": "Cancel",
+      "save": "Save",
       "editLabel": "Edit {name}",
       "deleteLabel": "Delete {name}"
+    },
+    "field": {
+      "name": "Name",
+      "description": "Description"
     },
     "totals": {
       "areas": "Areas",

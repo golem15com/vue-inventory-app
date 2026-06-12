@@ -103,8 +103,13 @@
     "action": {
       "confirmDelete": "Usuń",
       "cancel": "Anuluj",
+      "save": "Zapisz",
       "editLabel": "Edytuj {name}",
       "deleteLabel": "Usuń {name}"
+    },
+    "field": {
+      "name": "Nazwa",
+      "description": "Opis"
     },
     "totals": {
       "areas": "Obszary",
