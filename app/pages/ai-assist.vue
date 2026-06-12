@@ -59,8 +59,12 @@ const status = ref<Status>('idle')
 const saving = ref(false)
 const touched = ref(false)
 
-/** Each entry pairs the editable row with its (non-blocking) duplicate flag. */
-const rows = reactive<{ row: AiAssistRowModel, duplicate: boolean }[]>([])
+/**
+ * Each entry pairs the editable row with its (non-blocking) duplicate flag and
+ * the actual matching existing items (name + their location/area) so the chip
+ * popover can list them and link each to /items/{id} for editing (D-13).
+ */
+const rows = reactive<{ row: AiAssistRowModel, duplicate: boolean, duplicates: Item[] }[]>([])
 
 onMounted(async () => {
   await store.loadLocationsForPickers()
@@ -116,7 +120,7 @@ async function analyze() {
   try {
     const items = await store.recognize(photoFile.value, areaId.value)
     if (items.length) {
-      for (const s of items) rows.push({ row: toRow(s), duplicate: false })
+      for (const s of items) rows.push({ row: toRow(s), duplicate: false, duplicates: [] })
       status.value = 'reviewed'
       void flagDuplicates()
     }
@@ -136,7 +140,7 @@ async function analyze() {
 // Step 3 — Review: add / remove / manual entry
 // ---------------------------------------------------------------
 function addRow() {
-  rows.push({ row: { name: '', item_category_id: null, quantity: null, description: '' }, duplicate: false })
+  rows.push({ row: { name: '', item_category_id: null, quantity: null, description: '' }, duplicate: false, duplicates: [] })
 }
 
 function removeRow(index: number) {
@@ -166,14 +170,21 @@ async function flagDuplicates() {
   await Promise.all(
     rows.map(async (entry) => {
       const name = entry.row.name.trim()
+      // Clear any prior probe result before re-running.
+      entry.duplicates = []
+      entry.duplicate = false
       if (!name) return
       try {
         const res = await $api<{ data: Item[] }>('/items/search', {
           baseURL,
           query: { q: name, area: areaId.value, per_page: 5 },
         })
-        // High-confidence: a case-insensitive exact name hit in the same Area.
-        entry.duplicate = res.data.some(it => it.name.trim().toLowerCase() === name.toLowerCase())
+        // High-confidence: case-insensitive exact name hits in the same Area.
+        // Capture the matching Items (each carries its location/area) so the
+        // chip popover can list them and link to /items/{id} for editing.
+        const matches = res.data.filter(it => it.name.trim().toLowerCase() === name.toLowerCase())
+        entry.duplicates = matches
+        entry.duplicate = matches.length > 0
       }
       catch {
         // Best-effort: a failed duplicate probe never blocks the flow.
@@ -354,6 +365,7 @@ useSeoMeta({
             :key="index"
             v-model="entry.row"
             :duplicate="entry.duplicate"
+            :duplicates="entry.duplicates"
             :touched="touched"
             @remove="removeRow(index)"
           />
