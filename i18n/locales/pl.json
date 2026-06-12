@@ -34,7 +34,26 @@
   "inventory": {
     "nav": {
       "categories": "Kategorie",
-      "logout": "Wyloguj"
+      "logout": "Wyloguj",
+      "menu": "Otwórz menu"
+    },
+    "search": {
+      "title": "Szukaj",
+      "placeholder": "Szukaj swoich rzeczy…",
+      "label": "Przeszukaj spis",
+      "filters": "Filtry",
+      "filtersActive": "Filtry · {count}",
+      "filterArea": "Obszar",
+      "filterTag": "Tag",
+      "clearFilters": "Wyczyść filtry",
+      "recent": "Ostatnie",
+      "loadMore": "Załaduj więcej",
+      "loading": "Szukanie…",
+      "error": "Nie udało się teraz wyszukać. Sprawdź połączenie i spróbuj ponownie.",
+      "empty": {
+        "title": "Brak pasujących przedmiotów",
+        "body": "Spróbuj innej nazwy lub wyczyść filtry."
+      }
     },
     "area": {
       "create": "Dodaj obszar",

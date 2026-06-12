@@ -34,7 +34,26 @@
   "inventory": {
     "nav": {
       "categories": "Categories",
-      "logout": "Log out"
+      "logout": "Log out",
+      "menu": "Open menu"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search your things…",
+      "label": "Search inventory",
+      "filters": "Filters",
+      "filtersActive": "Filters · {count}",
+      "filterArea": "Area",
+      "filterTag": "Tag",
+      "clearFilters": "Clear filters",
+      "recent": "Recent",
+      "loadMore": "Load more",
+      "loading": "Searching…",
+      "error": "Couldn't search right now. Check your connection and try again.",
+      "empty": {
+        "title": "No items match",
+        "body": "Try a different name or clear your filters."
+      }
     },
     "area": {
       "create": "Create Area",
