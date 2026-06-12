@@ -59,6 +59,8 @@ export default defineNuxtConfig({
       userApiBase: '/_user/api/v1',
       // Golem15.Journal blog read API (relative → proxied in dev, same-origin in prod).
       journalApiBase: '/_journal/api/v1',
+      // JZ.Inventory read/write API (relative → proxied in dev, same-origin in prod).
+      inventoryApiBase: '/_inventory/api/v1',
       // Centrifugo websocket URL. Empty = realtime gracefully degrades (no-op).
       // The WS connection is a direct cross-origin socket (not proxied) — set it
       // to your Centrifugo endpoint and add the app origin to Centrifugo's
@@ -126,6 +128,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/_user/api/**': { proxy: `${BACKEND_ORIGIN}/_user/api/**` },
     '/_journal/api/**': { proxy: `${BACKEND_ORIGIN}/_journal/api/**` },
+    '/_inventory/api/**': { proxy: `${BACKEND_ORIGIN}/_inventory/api/**` },
     '/api/realtime/**': { proxy: `${BACKEND_ORIGIN}/api/realtime/**` },
   },
 
@@ -134,6 +137,7 @@ export default defineNuxtConfig({
     devProxy: {
       '/_user/api': { target: `${BACKEND_ORIGIN}/_user/api`, changeOrigin: true },
       '/_journal/api': { target: `${BACKEND_ORIGIN}/_journal/api`, changeOrigin: true },
+      '/_inventory/api': { target: `${BACKEND_ORIGIN}/_inventory/api`, changeOrigin: true },
       '/api/realtime': { target: `${BACKEND_ORIGIN}/api/realtime`, changeOrigin: true },
     },
   },
@@ -159,6 +163,7 @@ export default defineNuxtConfig({
       proxy: {
         '/_user/api': { target: BACKEND_ORIGIN, changeOrigin: true },
         '/_journal/api': { target: BACKEND_ORIGIN, changeOrigin: true },
+        '/_inventory/api': { target: BACKEND_ORIGIN, changeOrigin: true },
         '/api/realtime': { target: BACKEND_ORIGIN, changeOrigin: true },
       },
     },

@@ -6,7 +6,10 @@ import { Button } from '~/components/ui/button'
  *   - auth state (login/logout) from the Pinia auth store (17-02)
  *   - realtime status badge + a live-event feed from useCentrifugo (this plan)
  *   - i18n via useI18n() (the locale switcher lives in the default layout)
- *   - a link into the SSR blog (17-03)
+ *
+ * NOTE: minimal placeholder dashboard — Plan 05-05 rewrites this into the real
+ * Inventory dashboard (totals strip, Area cards, Recent items). The blog demo
+ * link was removed when the blog scaffold was stripped (Plan 05-02).
  *
  * Realtime is gated on `centrifugoWsUrl`: when it is unset the composable warns
  * and no-ops (graceful-degrade), and this page surfaces an honest "realtime not
@@ -119,10 +122,5 @@ useSeoMeta({
         {{ t('demo.noEvents') }}
       </p>
     </div>
-
-    <!-- Blog (17-03) -->
-    <NuxtLink to="/blog" class="inline-block text-sm underline">
-      {{ t('demo.blogLink') }}
-    </NuxtLink>
   </section>
 </template>
