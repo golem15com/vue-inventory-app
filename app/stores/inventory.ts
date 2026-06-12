@@ -23,7 +23,7 @@ import { toast } from 'vue-sonner'
 import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse } from '~~/shared/types/inventory'
 
 export const useInventoryStore = defineStore('inventory', () => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
 
   // ---------------------------------------------------------------
   // Shared reactive caches (pickers / counts / cross-Area grouping)
@@ -284,6 +284,9 @@ export const useInventoryStore = defineStore('inventory', () => {
       const fd = new FormData()
       fd.append('photo', photoFile)
       fd.append('area_id', String(areaId))
+      // Pass the active UI locale so the AI returns names/categories/descriptions
+      // in the user's selected language (backend degrades to English if unknown).
+      fd.append('locale', String(locale.value))
       // CRITICAL: leave the request header untouched — the browser sets the
       // multipart boundary itself (mirror saveItem's photo step).
       const res = await $api<{ items: Array<{ name: string, category: string | null, quantity: number, description: string | null }> }>(
