@@ -13,11 +13,15 @@ const { locale, locales, setLocale, t } = useI18n()
 // Auth store — surface the existing logout action (do NOT reimplement auth).
 const auth = useAuthStore()
 
-// Top-bar search on-ramp (D-02) — always visible (phone + desktop). The typed
-// query is handed to router.push as a structured `query: { q }` object (Nuxt
-// encodes it); never concatenated into a URL string (T-06-09).
+// Top-bar search on-ramp (D-02) — visible everywhere EXCEPT /search, where the
+// page hosts its own live debounced query box (a second box there is redundant
+// and confusing: this on-ramp navigates on Enter, it does not live-search). The
+// typed query is handed to router.push as a structured `query: { q }` object
+// (Nuxt encodes it); never concatenated into a URL string (T-06-09).
 const router = useRouter()
+const route = useRoute()
 const topbarQ = ref('')
+const showTopbarSearch = computed(() => route.path !== '/search')
 
 function goSearch() {
   router.push({ path: '/search', query: topbarQ.value ? { q: topbarQ.value } : {} })
@@ -48,19 +52,25 @@ function onLocaleChange(event: Event) {
         <!-- App name — always visible. -->
         <NuxtLink to="/" class="shrink-0 font-semibold">Inventory</NuxtLink>
 
-        <!-- Top-bar search box (D-02) — always visible on phone + desktop. -->
-        <form class="min-w-0 flex-1 sm:max-w-sm" @submit.prevent="goSearch">
-          <div class="relative">
-            <Search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              v-model="topbarQ"
-              :placeholder="t('inventory.search.placeholder')"
-              :aria-label="t('inventory.search.label')"
-              class="min-h-11 pl-8"
-              data-testid="topbar-search-input"
-            />
-          </div>
-        </form>
+        <!-- Top-bar search on-ramp (D-02) — visible everywhere except /search,
+             where the page hosts its own live debounced box. The flex-1 wrapper
+             is ALWAYS rendered (stable hydration: no v-if/v-else sibling pairing,
+             no interleaved comment node) so chrome stays right-aligned and the
+             server/client vnode shape never diverges. -->
+        <div class="min-w-0 flex-1 sm:max-w-sm">
+          <form v-if="showTopbarSearch" @submit.prevent="goSearch">
+            <div class="relative">
+              <Search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                v-model="topbarQ"
+                :placeholder="t('inventory.search.placeholder')"
+                :aria-label="t('inventory.search.label')"
+                class="min-h-11 pl-8"
+                data-testid="topbar-search-input"
+              />
+            </div>
+          </form>
+        </div>
 
         <!-- Desktop chrome — inline only at lg: and above (D-10). -->
         <div class="hidden items-center gap-3 text-sm lg:flex">
