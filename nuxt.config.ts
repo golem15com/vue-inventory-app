@@ -103,8 +103,8 @@ export default defineNuxtConfig({
   // -------------------------------------------------------------------------
   site: {
     url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3118',
-    name: 'Wn Inventory App',
-    description: 'Headless WinterCMS Nuxt 4 starter (auth, realtime, i18n, SEO, blog).',
+    name: 'whereiput.it',
+    description: 'Find anything you own — type a name, see where it lives.',
     defaultLocale: 'en',
   },
 
@@ -179,13 +179,20 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Wn Inventory App',
+      title: 'whereiput.it',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Headless WinterCMS Nuxt 4 starter.' },
+        { name: 'description', content: 'Find anything you own — type a name, see where it lives.' },
       ],
-      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icon-192.png' },
+        { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/icon-512.png' },
+      ],
     },
   },
 })

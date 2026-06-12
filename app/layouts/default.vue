@@ -173,15 +173,10 @@ function onLocaleChange(event: Event) {
     <footer class="border-t">
       <div class="mx-auto flex max-w-5xl items-center justify-center gap-2 px-4 py-6 text-xs text-muted-foreground">
         <span>{{ t('footer.poweredBy') }}</span>
-        <a
-          href="https://www.golem15.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center opacity-60 transition-opacity hover:opacity-100"
-          aria-label="Golem15 Stack"
-        >
-          <img src="/brand/golem15.svg" alt="Golem15" class="h-4 w-auto" width="150" height="16" >
-        </a>
+        <span class="inline-flex items-center gap-2 opacity-80">
+          <img src="/brand/logo.png" alt="whereiput.it" class="h-5 w-auto" width="20" height="20" >
+          <span class="font-semibold tracking-tight">whereiput.it</span>
+        </span>
       </div>
     </footer>
 
