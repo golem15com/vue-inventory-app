@@ -92,6 +92,7 @@ function select(id: number) {
         type="button"
         variant="outline"
         role="combobox"
+        data-testid="location-combobox"
         :aria-expanded="open"
         :aria-invalid="invalid"
         class="w-full justify-between font-normal"

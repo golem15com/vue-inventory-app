@@ -86,6 +86,7 @@ async function createOption() {
         type="button"
         variant="outline"
         role="combobox"
+        data-testid="category-combobox"
         :aria-expanded="open"
         :aria-invalid="invalid"
         class="w-full justify-between font-normal"
@@ -132,6 +133,7 @@ async function createOption() {
             <CommandItem
               v-if="showCreate"
               :value="`__create__${query}`"
+              data-testid="combobox-create"
               @select="createOption"
             >
               <Plus class="mr-2 size-4" />

@@ -37,22 +37,32 @@ test.describe('@inventory @item', () => {
   test('create an Item from the form → single success toast → appears in lists', async ({ page }) => {
     test.skip(!(await inventoryReachable()), `Inventory API unreachable at ${BACKEND_URL}/_inventory/api/v1 — backend-gated, skipped`)
 
+    const itemName = `USB-C cable ${Date.now()}`
+
     await page.goto('/items/new')
 
-    await page.getByTestId('item-name').fill('USB-C cable')
+    await page.getByTestId('item-name').fill(itemName)
 
-    // Grouped-by-Area Location combobox.
+    // Grouped-by-Area Location combobox (Popover + Command; items are role=option).
     await page.getByTestId('location-combobox').click()
     await page.getByRole('option').first().click()
 
-    // Category combobox — pick or create-on-the-fly.
+    // Category combobox — pick the first existing option (seed provides a category).
     await page.getByTestId('category-combobox').click()
     await page.getByRole('option').first().click()
 
     await page.getByTestId('item-quantity').fill('3')
 
+    // Add a tag chip (add-on-Enter).
+    await page.getByTestId('tag-input').getByRole('textbox').fill('cable')
+    await page.getByTestId('tag-input').getByRole('textbox').press('Enter')
+
     // Save — exactly ONE success toast (D-07), even though photo is a 2nd request.
     await page.getByTestId('item-save').click()
     await expect(page.getByText(/Item saved|Rzecz zapisana/i)).toBeVisible({ timeout: 10_000 })
+
+    // After save it navigates to the Location list, where the new Item appears.
+    await expect(page.getByTestId('item-row').filter({ hasText: itemName }))
+      .toBeVisible({ timeout: 10_000 })
   })
 })

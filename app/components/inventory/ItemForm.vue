@@ -147,6 +147,7 @@ function onCancel() {
       <Input
         id="item-name"
         v-model="form.name"
+        data-testid="item-name"
         :aria-invalid="nameError"
         autocomplete="off"
       />
@@ -179,6 +180,7 @@ function onCancel() {
       <Input
         id="item-quantity"
         v-model="quantityModel"
+        data-testid="item-quantity"
         type="number"
         min="0"
         inputmode="numeric"
@@ -218,7 +220,7 @@ function onCancel() {
 
     <!-- Footer: single accent Save Item + Cancel -->
     <div class="flex items-center gap-3 pt-2">
-      <Button type="submit" :disabled="submitting || store.isLoading">
+      <Button type="submit" data-testid="item-save" :disabled="submitting || store.isLoading">
         {{ t('inventory.item.save') }}
       </Button>
       <Button type="button" variant="outline" @click="onCancel">

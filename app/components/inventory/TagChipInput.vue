@@ -35,6 +35,7 @@ function update(value: string[] | undefined) {
 <template>
   <TagsInput
     :model-value="modelValue"
+    data-testid="tag-input"
     @update:model-value="update($event as string[])"
   >
     <TagsInputItem v-for="tag in modelValue" :key="tag" :value="tag">
