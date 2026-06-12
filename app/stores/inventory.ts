@@ -1,0 +1,319 @@
+/**
+ * Pinia inventory store (setup-store shape) — all Inventory MUTATIONS plus the
+ * shared reactive caches the pickers/breadcrumbs read.
+ *
+ * Mirrors stores/auth.ts's try/catch/finally + `error.value` structure, but the
+ * CALL MECHANISM differs deliberately: every write goes through the starter
+ * `$api` ($fetch instance from plugins/api.ts) — NOT bare `$fetch`. `$api`
+ * attaches the JWT bearer from the auth_token cookie and transparently refreshes
+ * on 401 (RESEARCH Pitfall 1 / Anti-Patterns). Never re-implement auth here, and
+ * never use `useFetch` for a write — reads live in composables/useInventory.ts.
+ *
+ * Reads are SSR-cached under keys owned by useInventory(); after each mutation we
+ * `refreshNuxtData()` exactly the affected key(s) so lists/counts stay live
+ * without a full reload.
+ *
+ * Security: the store renders only what the permission-scoped API returns — it
+ * never treats client-side filtering as an authz boundary (T-05-04). The 404
+ * surfaces as the generic `inventory.error.notFound` copy (no enumeration).
+ */
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { toast } from 'vue-sonner'
+import type { Area, Location, Item, ItemCategory, Tag } from '~~/shared/types/inventory'
+
+export const useInventoryStore = defineStore('inventory', () => {
+  const { t } = useI18n()
+
+  // ---------------------------------------------------------------
+  // Shared reactive caches (pickers / counts / cross-Area grouping)
+  // ---------------------------------------------------------------
+  const locationsByArea = ref<Record<number, Location[]>>({})
+  const categories = ref<ItemCategory[]>([])
+  const tags = ref<Tag[]>([])
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
+
+  // ---------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------
+  function inventoryBase(): string {
+    return useRuntimeConfig().public.inventoryApiBase as string // /_inventory/api/v1
+  }
+
+  /** Shared catch handler: set generic error copy, toast it, rethrow. */
+  function fail(err: unknown): never {
+    error.value = t('inventory.error.saveFailed')
+    toast.error(error.value)
+    throw err
+  }
+
+  // ---------------------------------------------------------------
+  // Area
+  // ---------------------------------------------------------------
+  async function saveArea(form: Partial<Area>) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = form.id
+        ? await $api<{ data: Area }>(`/areas/${form.id}`, { baseURL, method: 'PUT', body: form })
+        : await $api<{ data: Area }>('/areas', { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.area.saved'))
+      await refreshNuxtData('inv:areas')
+      return res.data
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  async function deleteArea(id: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/areas/${id}`, { baseURL, method: 'DELETE' })
+      delete locationsByArea.value[id]
+      toast.success(t('inventory.deleted'))
+      await refreshNuxtData('inv:areas')
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Location
+  // ---------------------------------------------------------------
+  async function saveLocation(areaId: number, form: Partial<Location>) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = form.id
+        ? await $api<{ data: Location }>(`/locations/${form.id}`, { baseURL, method: 'PUT', body: form })
+        : await $api<{ data: Location }>(`/areas/${areaId}/locations`, { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.location.saved'))
+      // Refresh the Area's location list + the dashboard counts.
+      await refreshNuxtData([`inv:area:${areaId}:locations`, 'inv:areas'])
+      // Keep the shared picker cache for this Area in sync.
+      const list = locationsByArea.value[areaId]
+      if (list) {
+        const idx = list.findIndex(l => l.id === res.data.id)
+        if (idx >= 0) list[idx] = res.data
+        else list.push(res.data)
+      }
+      return res.data
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  async function deleteLocation(areaId: number, id: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/locations/${id}`, { baseURL, method: 'DELETE' })
+      const list = locationsByArea.value[areaId]
+      if (list) locationsByArea.value[areaId] = list.filter(l => l.id !== id)
+      toast.success(t('inventory.deleted'))
+      await refreshNuxtData([`inv:area:${areaId}:locations`, 'inv:areas'])
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Category (create-only taxonomy, D-12)
+  // ---------------------------------------------------------------
+  async function saveCategory(form: Partial<ItemCategory>) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<{ data: ItemCategory }>('/categories', { baseURL, method: 'POST', body: form })
+      categories.value.push(res.data)
+      toast.success(t('inventory.category.saved'))
+      await refreshNuxtData('inv:categories')
+      // Return the created category — the inline-create combobox needs its id.
+      return res.data
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Tag (create-only taxonomy, D-12; create-on-the-fly from the chip input)
+  // ---------------------------------------------------------------
+  async function createTag(name: string) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<{ data: Tag }>('/tags', { baseURL, method: 'POST', body: { name } })
+      // Backend returns the existing record on duplicate name (D-12) — de-dupe the pool.
+      if (!tags.value.some(tg => tg.id === res.data.id)) tags.value.push(res.data)
+      await refreshNuxtData('inv:tags')
+      return res.data
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Item — the D-07 seamless two-request, single-surface save
+  // ---------------------------------------------------------------
+  async function saveItem(form: Partial<Item>, photoFile?: File, locationId?: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = form.id
+        ? await $api<{ data: Item }>(`/items/${form.id}`, { baseURL, method: 'PUT', body: form })
+        : await $api<{ data: Item }>(`/locations/${locationId}/items`, { baseURL, method: 'POST', body: form })
+      const item = res.data
+
+      if (photoFile) {
+        const fd = new FormData()
+        fd.append('file', photoFile)
+        // CRITICAL: leave the request header untouched — the browser sets the
+        // multipart boundary itself (RESEARCH Pitfall 3 / T-05-07).
+        await $api(`/items/${item.id}/photos`, { baseURL, method: 'POST', body: fd })
+      }
+
+      // ONE success surface even though photo is a second request (D-07).
+      toast.success(t('inventory.item.saved'))
+      const keys = ['inv:recent:8']
+      if (item.location) keys.push(`inv:loc:${item.location.id}:items:1`)
+      await refreshNuxtData(keys)
+      return item
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  async function deleteItem(item: Item) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/items/${item.id}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.deleted'))
+      const keys = ['inv:recent:8']
+      if (item.location) keys.push(`inv:loc:${item.location.id}:items:1`)
+      await refreshNuxtData(keys)
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  async function removePhoto(itemId: number, fileId: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/items/${itemId}/photos/${fileId}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.deleted'))
+      await refreshNuxtData(`inv:item:${itemId}`)
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Cross-Area grouped Location cache for the Item-form pickers (D-08)
+  // ---------------------------------------------------------------
+  async function loadLocationsForPickers() {
+    // Memoize: skip the fan-out if the cache is already populated.
+    if (Object.keys(locationsByArea.value).length > 0) return locationsByArea.value
+
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const areasRes = await $api<{ data: Area[] }>('/areas', { baseURL })
+      // Bounded fan-out at personal scale (RESEARCH Gap 2): one call per Area.
+      await Promise.all(
+        areasRes.data.map(async (a) => {
+          const locRes = await $api<{ data: Location[] }>(`/areas/${a.id}/locations`, { baseURL })
+          locationsByArea.value[a.id] = locRes.data
+        }),
+      )
+      return locationsByArea.value
+    }
+    catch (err: unknown) {
+      error.value = t('inventory.error.loadFailed')
+      toast.error(error.value)
+      throw err
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    // State
+    locationsByArea,
+    categories,
+    tags,
+    isLoading,
+    error,
+    // Actions
+    saveArea,
+    deleteArea,
+    saveLocation,
+    deleteLocation,
+    saveCategory,
+    createTag,
+    saveItem,
+    deleteItem,
+    removePhoto,
+    loadLocationsForPickers,
+  }
+})
