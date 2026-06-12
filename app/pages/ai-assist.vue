@@ -264,6 +264,7 @@ useSeoMeta({
         <LocationCombobox
           v-model="locationId"
           :locations="areaLocations"
+          :create-area-id="areaId"
         />
       </div>
     </Card>

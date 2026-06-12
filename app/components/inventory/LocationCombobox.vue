@@ -13,15 +13,18 @@
  *  - optional `locations` prop: a single Area's Locations supplied directly by a
  *    parent (e.g. arriving from an Area drill), which skips the cross-Area cache.
  *
- * No inline-create here — Locations are created through LocationFormDialog, never
- * from the Item form (only Category/Tag are create-on-the-fly, D-08).
+ * Inline-create (gated): when the optional `createAreaId` prop is a real Area id
+ * (> 0), a "Create '{query}'" affordance mirrors CategoryCombobox — selecting it
+ * calls store.saveLocation(createAreaId, { name }) and auto-selects the result.
+ * Without `createAreaId` (ItemForm's cross-Area usage) the picker is read-only,
+ * exactly as before: Locations are otherwise created via LocationFormDialog.
  *
  * Security: this only ever offers Locations the permission-scoped API returned;
  * a crafted Location id the user can't access is rejected server-side on save
  * (T-05-13). Names render via interpolation, never v-html.
  */
 import { computed, ref } from 'vue'
-import { Check, ChevronsUpDown } from '@lucide/vue'
+import { Check, ChevronsUpDown, Plus } from '@lucide/vue'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import {
   Command,
@@ -41,6 +44,12 @@ const props = defineProps<{
   locations?: Location[]
   /** Optional invalid flag to surface a required-field error border. */
   invalid?: boolean
+  /**
+   * Optional Area id that ENABLES inline quick-create (ai-assist Step 1). When a
+   * real id (> 0), the typed query offers a "Create '{query}'" affordance scoped
+   * to this Area. Absent/null → no create (ItemForm cross-Area usage, unchanged).
+   */
+  createAreaId?: number | null
 }>()
 
 const emit = defineEmits<{
@@ -51,6 +60,38 @@ const { t } = useI18n()
 const store = useInventoryStore()
 
 const open = ref(false)
+const query = ref('')
+const creating = ref(false)
+
+/** Inline-create is only offered when a real Area id is supplied. */
+const canCreate = computed(() => typeof props.createAreaId === 'number' && props.createAreaId > 0)
+
+/** All Locations currently offered (across every group), for the exact-match guard. */
+const offeredLocations = computed<Location[]>(() => groups.value.flatMap(g => g.locations))
+
+/** Show the inline-create row only when create is enabled and the query has no exact name match. */
+const showCreate = computed(() => {
+  if (!canCreate.value) return false
+  const q = query.value.trim()
+  if (!q) return false
+  return !offeredLocations.value.some(l => l.name.toLowerCase() === q.toLowerCase())
+})
+
+async function createOption() {
+  const name = query.value.trim()
+  if (!name || !canCreate.value || creating.value || props.createAreaId == null) return
+  creating.value = true
+  try {
+    const created = await store.saveLocation(props.createAreaId, { name })
+    if (created) select(created.id)
+  }
+  catch {
+    // Store surfaced the failure toast.
+  }
+  finally {
+    creating.value = false
+  }
+}
 
 /** Area id → Location[] groups: either the passed-in single Area or the store cache. */
 const groups = computed<{ areaId: number, areaName: string, locations: Location[] }[]>(() => {
@@ -105,9 +146,24 @@ function select(id: number) {
     </PopoverTrigger>
     <PopoverContent class="w-(--reka-popover-trigger-width) p-0" align="start">
       <Command>
-        <CommandInput :placeholder="t('inventory.field.name')" />
+        <CommandInput
+          :placeholder="t('inventory.field.name')"
+          @input="query = ($event.target as HTMLInputElement).value"
+        />
         <CommandList>
-          <CommandEmpty>{{ t('inventory.empty.locations.title') }}</CommandEmpty>
+          <CommandEmpty>
+            <button
+              v-if="showCreate"
+              type="button"
+              class="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+              :disabled="creating"
+              @click="createOption"
+            >
+              <Plus class="size-4" />
+              {{ t('inventory.combobox.createOption', { name: query.trim() }) }}
+            </button>
+            <span v-else>{{ t('inventory.empty.locations.title') }}</span>
+          </CommandEmpty>
           <CommandGroup
             v-for="group in groups"
             :key="group.areaId"
@@ -124,6 +180,16 @@ function select(id: number) {
                 :class="location.id === modelValue ? 'opacity-100' : 'opacity-0'"
               />
               {{ location.name }}
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup v-if="showCreate">
+            <CommandItem
+              :value="`__create__${query}`"
+              data-testid="location-combobox-create"
+              @select="createOption"
+            >
+              <Plus class="mr-2 size-4" />
+              {{ t('inventory.combobox.createOption', { name: query.trim() }) }}
             </CommandItem>
           </CommandGroup>
         </CommandList>
