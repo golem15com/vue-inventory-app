@@ -108,6 +108,38 @@ export function useInventory() {
     })
   }
 
+  /**
+   * Scoped item search — the Phase 6 search box + filters read.
+   *
+   * Accepts a reactive (MaybeRefOrGetter) query carrying all seven backend
+   * params (q/area/location/category/tag/page/per_page). The reactive `query`
+   * drives useFetch to re-run AND auto-abort the prior in-flight request on
+   * change (RESEARCH Pattern 1A), so callers just mutate the source and the
+   * key stays stable at `inv:search`.
+   *
+   * Param names are exact, singular ints (area/location/category/tag); the
+   * backend trims `q` ('' → browse) and caps per_page at 50 (default 20).
+   * Reuses authHeaders() + the exported ItemsResponse envelope — fetchRecent's
+   * `inv:recent:${perPage}` key is left untouched (it is targeted by
+   * refreshNuxtData in stores/inventory.ts — Pitfall 7).
+   */
+  function fetchSearch(query: MaybeRefOrGetter<{
+    q: string
+    area: number | null
+    location: number | null
+    category: number | null
+    tag: number | null
+    page: number
+    per_page: number
+  }>) {
+    return useFetch<ItemsResponse>('/items/search', {
+      baseURL,
+      query,
+      key: 'inv:search',
+      headers: authHeaders(),
+    })
+  }
+
   /** Global category pool (create-only taxonomy, D-12). */
   function fetchCategories() {
     return useFetch<CategoriesResponse>('/categories', {
@@ -132,6 +164,7 @@ export function useInventory() {
     fetchItems,
     fetchItem,
     fetchRecent,
+    fetchSearch,
     fetchCategories,
     fetchTags,
   }
