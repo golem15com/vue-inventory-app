@@ -45,6 +45,7 @@
       "filtersActive": "Filtry · {count}",
       "filterArea": "Obszar",
       "filterTag": "Tag",
+      "filterAny": "Dowolny",
       "clearFilters": "Wyczyść filtry",
       "recent": "Ostatnie",
       "loadMore": "Załaduj więcej",
@@ -106,6 +107,9 @@
       },
       "categories": {
         "title": "Brak kategorii"
+      },
+      "tags": {
+        "title": "Brak tagów"
       },
       "recent": {
         "title": "Jeszcze nic nie dodano"
