@@ -121,6 +121,7 @@ async function onConfirm() {
         <Button
           type="button"
           variant="destructive"
+          data-testid="confirm-delete"
           :disabled="confirmDisabled"
           @click="onConfirm"
         >

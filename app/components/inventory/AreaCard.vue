@@ -36,12 +36,14 @@ function onDelete() {
 <template>
   <NuxtLink
     :to="`/areas/${area.id}`"
+    data-testid="area-card"
     class="relative block rounded-lg border bg-card p-4 transition-colors hover:bg-muted"
   >
     <Button
       v-if="area.is_owner === true"
       variant="ghost"
       size="icon-sm"
+      data-testid="area-delete"
       class="absolute top-2 right-2 text-destructive hover:text-destructive"
       :aria-label="t('inventory.action.deleteLabel', { name: area.name })"
       @click.prevent.stop="onDelete"
