@@ -67,6 +67,7 @@
     "location": {
       "create": "Add Location",
       "saved": "Location saved",
+      "photos": "Photos",
       "delete": {
         "title": "Delete \"{name}\"?",
         "body": "Its {items} Items will move to General. This can't be undone."

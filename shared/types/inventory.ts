@@ -46,6 +46,8 @@ export interface Location {
   /** True for the auto-created catch-all Location — hides the delete affordance. */
   is_general?: boolean
   item_count?: number
+  /** Attached Location photos (D-14) — present after the serializer change. */
+  photos?: Photo[]
   created_at: string
   updated_at: string
 }

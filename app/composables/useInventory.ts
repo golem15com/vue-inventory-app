@@ -30,6 +30,7 @@ import type { Area, Location, Item, ItemCategory, Tag, Meta } from '~~/shared/ty
 
 export type AreasResponse = { data: Area[] }
 export type LocationsResponse = { data: Location[] }
+export type LocationResponse = { data: Location }
 export type ItemsResponse = { data: Item[]; meta: Meta }
 export type ItemResponse = { data: Item }
 export type CategoriesResponse = { data: ItemCategory[] }
@@ -72,6 +73,15 @@ export function useInventory() {
     return useFetch<LocationsResponse>(`/areas/${areaId}/locations`, {
       baseURL,
       key: `inv:area:${areaId}:locations`,
+      headers: authHeaders(),
+    })
+  }
+
+  /** Single Location by id (embedded area + attached photos, D-14). 404 → { error }. */
+  function fetchLocation(id: number) {
+    return useFetch<LocationResponse>(`/locations/${id}`, {
+      baseURL,
+      key: `inv:loc:${id}`,
       headers: authHeaders(),
     })
   }
@@ -161,6 +171,7 @@ export function useInventory() {
   return {
     fetchAreas,
     fetchLocations,
+    fetchLocation,
     fetchItems,
     fetchItem,
     fetchRecent,

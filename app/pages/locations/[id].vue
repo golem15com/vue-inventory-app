@@ -34,7 +34,7 @@ definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
-const { fetchItems } = useInventory()
+const { fetchItems, fetchLocation } = useInventory()
 const store = useInventoryStore()
 
 const locationId = computed(() => Number(route.params.id))
@@ -49,14 +49,24 @@ if (error.value) {
   throw createError({ statusCode: 404, statusMessage: t('inventory.error.notFound') })
 }
 
+// Fetch the Location itself for its attached photos + an authoritative name. Best-
+// effort: the items-based fetch above already owns the 404, so a Location-fetch
+// miss must NOT double-throw — fall through to the item-derived header.
+const { data: locationData } = await fetchLocation(locationId.value)
+const location = computed(() => locationData.value?.data ?? null)
+const locationPhotos = computed(() => location.value?.photos ?? [])
+
 const items = computed(() => data.value?.data ?? [])
 const meta = computed(() => data.value?.meta)
 const loadFailed = computed(() => status.value === 'error')
 
-// Resolve Location + Area names from any embedded item ref (3-segment breadcrumb).
-const locationName = computed(() => items.value.find(i => i.location)?.location?.name ?? '')
-const areaName = computed(() => items.value.find(i => i.area)?.area?.name ?? '')
-const areaId = computed(() => items.value.find(i => i.area)?.area?.id ?? null)
+// Prefer the Location's own name/Area, fall back to any embedded item ref.
+const locationName = computed(() =>
+  location.value?.name ?? items.value.find(i => i.location)?.location?.name ?? '')
+const areaName = computed(() =>
+  location.value?.area?.name ?? items.value.find(i => i.area)?.area?.name ?? '')
+const areaId = computed(() =>
+  location.value?.area?.id ?? items.value.find(i => i.area)?.area?.id ?? null)
 
 const hasPrev = computed(() => (meta.value?.current_page ?? 1) > 1)
 const hasNext = computed(() => (meta.value?.current_page ?? 1) < (meta.value?.last_page ?? 1))
@@ -111,6 +121,22 @@ useSeoMeta({
         {{ t('inventory.item.add') }}
       </Button>
     </header>
+
+    <!-- Attached Location photos (D-14) — small thumbnail gallery near the header. -->
+    <section v-if="locationPhotos.length" class="space-y-2">
+      <h2 class="text-sm font-medium text-muted-foreground">{{ t('inventory.location.photos') }}</h2>
+      <ul class="flex flex-wrap gap-4">
+        <li v-for="photo in locationPhotos" :key="photo.id">
+          <a :href="photo.url" target="_blank" rel="noopener" class="block">
+            <img
+              :src="photo.thumb_url"
+              :alt="locationName"
+              class="size-24 rounded-md object-cover"
+            >
+          </a>
+        </li>
+      </ul>
+    </section>
 
     <p v-if="loadFailed" class="rounded-md border border-destructive/40 p-4 text-sm text-destructive">
       {{ t('inventory.error.loadFailed') }}

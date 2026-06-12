@@ -67,6 +67,7 @@
     "location": {
       "create": "Dodaj miejsce",
       "saved": "Miejsce zapisane",
+      "photos": "Zdjęcia",
       "delete": {
         "title": "Usunąć „{name}”?",
         "body": "Jego {items} rzeczy zostanie przeniesionych do „Ogólne”. Tej operacji nie można cofnąć."
