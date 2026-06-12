@@ -39,7 +39,7 @@ import AiAssistRow, { type AiAssistRowModel } from '~/components/inventory/AiAss
 import { useInventoryStore } from '~/stores/inventory'
 import type { Item, Location } from '~~/shared/types/inventory'
 
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: ['auth', 'ai-gate'] })
 
 const { t } = useI18n()
 const store = useInventoryStore()

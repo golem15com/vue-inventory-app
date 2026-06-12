@@ -28,12 +28,21 @@ import AreaCard from '~/components/inventory/AreaCard.vue'
 import AreaFormDialog from '~/components/inventory/AreaFormDialog.vue'
 import DeleteConfirmDialog from '~/components/inventory/DeleteConfirmDialog.vue'
 import EmptyState from '~/components/inventory/EmptyState.vue'
+import { useAuthStore } from '~/stores/auth'
+import { storeToRefs } from 'pinia'
 import type { Area } from '~~/shared/types/inventory'
 
 definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const { fetchAreas, fetchRecent, fetchCategories } = useInventory()
+
+// AI gate (D-14/D-15): read `can_use_ai` from the auth store (hydrated from the
+// me/areas envelope) — the AI button is structurally ABSENT for non-AI users
+// (hide-not-dim; no teaser, no greyed-out affordance). The server 403 (Plan 01)
+// is the real boundary; this v-if is convenience only.
+const auth = useAuthStore()
+const { canUseAi } = storeToRefs(auth)
 
 // Prominent dashboard search box (D-02) — the same goSearch on-ramp as the
 // top bar. The typed query is handed to router.push as a structured
@@ -163,6 +172,7 @@ useSeoMeta({
         {{ t('inventory.item.quickAdd') }}
       </Button>
       <Button
+        v-if="canUseAi"
         class="min-h-11 w-full sm:w-auto"
         :aria-label="t('inventory.aiAssist.entryLabel')"
         @click="navigateTo('/ai-assist')"

@@ -29,6 +29,12 @@ import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta } from '~
 // READS use useFetch (SSR, keyed); writes live in stores/inventory.ts via $api.
 
 export type AreasResponse = { data: Area[] }
+/**
+ * me/areas envelope (Plan 01, D-14): the caller's accessible Areas PLUS the
+ * explicit `can_use_ai` boolean computed server-side from AiGate::allows($user).
+ * The SPA READS this flag — it NEVER infers AI access from a differential 403.
+ */
+export type MeAreasResponse = { data: Area[]; can_use_ai: boolean }
 export type LocationsResponse = { data: Location[] }
 export type LocationResponse = { data: Location }
 export type ItemsResponse = { data: Item[]; meta: Meta }
@@ -67,6 +73,16 @@ export function useInventory() {
   /** All Areas the current user can access (owner or editor). */
   function fetchAreas() {
     return useFetch<AreasResponse>('/areas', { baseURL, key: 'inv:areas', headers: authHeaders() })
+  }
+
+  /**
+   * The me/areas envelope (Plan 01) — the single source of truth for
+   * `can_use_ai` (D-14). The auth store hydrates `auth.canUseAi` from this read
+   * so the AI affordances can be hidden via `v-if`; the SPA NEVER infers AI
+   * access by catching a 403 (the server 403 is the real boundary, not a signal).
+   */
+  function fetchMe() {
+    return useFetch<MeAreasResponse>('/me/areas', { baseURL, key: 'inv:me', headers: authHeaders() })
   }
 
   /** Locations within a single Area. */
@@ -180,6 +196,7 @@ export function useInventory() {
 
   return {
     fetchAreas,
+    fetchMe,
     fetchLocations,
     fetchLocation,
     fetchItems,

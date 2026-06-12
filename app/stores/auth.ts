@@ -50,6 +50,13 @@ export const useAuthStore = defineStore('auth', () => {
   const fieldErrors = ref<Record<string, string[]>>({})
   /** Set when the backend demands a second factor — no starter UI (per-project). */
   const twoFactorRequired = ref(false)
+  /**
+   * Whether the current user may use AI features (D-14). Read from the explicit
+   * `can_use_ai` boolean on the me/areas envelope (single source of truth) — the
+   * SPA NEVER infers AI access from a 403. Drives the dashboard AI `v-if` and the
+   * `ai-gate` route guard; the server 403 (Plan 01) remains the real boundary.
+   */
+  const canUseAi = ref(false)
 
   // ---------------------------------------------------------------
   // Token (cookie-based, shared with plugins/api.ts + utils/tokenRefresh.ts)
@@ -88,6 +95,32 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     fieldErrors.value = {}
     twoFactorRequired.value = false
+    canUseAi.value = false
+  }
+
+  /**
+   * Hydrate `canUseAi` from the me/areas envelope's explicit `can_use_ai`
+   * boolean (D-14). Called after login/register and during SSR hydrate
+   * (auth-init plugin). On any failure the flag stays false (fail-closed UX) —
+   * the server 403 is the real boundary regardless.
+   */
+  async function fetchCanUseAi() {
+    if (!token.value) {
+      canUseAi.value = false
+      return
+    }
+    try {
+      const base = useRuntimeConfig().public.inventoryApiBase as string
+      const response = await $fetch<{ data: unknown[], can_use_ai?: boolean }>(
+        `${base}/me/areas`,
+        { headers: { Authorization: `Bearer ${token.value}` } },
+      )
+      canUseAi.value = response.can_use_ai === true
+    }
+    catch {
+      // Fail-closed: an unreachable/erroring envelope hides the AI affordances.
+      canUseAi.value = false
+    }
   }
 
   // ---------------------------------------------------------------
@@ -114,6 +147,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (response.token && response.user) {
         applySession(response.token, response.user)
+        // Hydrate the AI gate flag from me/areas (D-14) — read, never inferred.
+        await fetchCanUseAi()
       }
     }
     catch (err: unknown) {
@@ -146,6 +181,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (response.token && response.user) {
         applySession(response.token, response.user)
+        // Hydrate the AI gate flag from me/areas (D-14) — read, never inferred.
+        await fetchCanUseAi()
       }
     }
     catch (err: unknown) {
@@ -180,6 +217,9 @@ export const useAuthStore = defineStore('auth', () => {
         { headers: { Authorization: `Bearer ${token.value}` } },
       )
       user.value = response.user
+      // Hydrate the AI gate flag alongside the user (SSR + manual refresh) so the
+      // dashboard v-if + ai-gate guard have it before first paint (D-14).
+      await fetchCanUseAi()
     }
     catch {
       // Token invalid or expired — clear it.
@@ -224,12 +264,14 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     fieldErrors,
     twoFactorRequired,
+    canUseAi,
     // Computed
     isLoggedIn,
     // Actions
     login,
     register,
     fetchUser,
+    fetchCanUseAi,
     logout,
   }
 })
