@@ -286,7 +286,7 @@ useSeoMeta({
       <Button
         variant="ghost"
         class="min-h-11 -ml-2"
-        @click="navigateTo('/')"
+        @click="navigateTo('/dashboard')"
       >
         {{ t('inventory.aiAssist.back') }}
       </Button>

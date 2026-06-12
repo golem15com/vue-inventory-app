@@ -238,5 +238,117 @@
       "tokenRevoked": "Token odwołany",
       "loadError": "Nie udało się wczytać tokenów. Spróbuj ponownie."
     }
+  },
+  "public": {
+    "header": {
+      "login": "Zaloguj się",
+      "brandAlt": "Logo whereiput.it"
+    },
+    "footer": {
+      "privacy": "Prywatność",
+      "terms": "Regulamin",
+      "help": "Pomoc"
+    },
+    "landing": {
+      "hero": {
+        "title": "Znajdź wszystko, co masz.",
+        "subhead": "Wpisz nazwę i zobacz dokładnie, gdzie się znajduje — w każdej przestrzeni, do której masz dostęp.",
+        "cta": "Zaloguj się"
+      },
+      "features": {
+        "search": {
+          "title": "Szukaj po lokalizacji",
+          "body": "Wpisz nazwę i przejdź prosto do szuflady."
+        },
+        "hierarchy": {
+          "title": "Obszary, Lokalizacje, Przedmioty",
+          "body": "Porządkuj według tego, gdzie rzeczy naprawdę są."
+        },
+        "ai": {
+          "title": "Asystent ze zdjęć",
+          "body": "Zrób zdjęcie półki, a AI naszkicuje katalog."
+        },
+        "sharing": {
+          "title": "Udostępnianie obszarów",
+          "body": "Udostępnij jedną przestrzeń, resztę zachowaj prywatnie."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Polityka prywatności",
+      "draftNotice": "Wersja robocza — przejrzyj przed wdrożeniem.",
+      "intro": "Niniejsza polityka opisuje, jakie dane whereiput.it przechowuje na Twój temat, dlaczego i kto może je zobaczyć. Odzwierciedla aktualne działanie aplikacji i zostanie zweryfikowana przez prawnika przed publicznym uruchomieniem.",
+      "email": {
+        "title": "Adres e-mail konta",
+        "body": "Przechowujemy adres e-mail, którym się logujesz. Identyfikuje Twoje konto, umożliwia logowanie i jest sposobem kontaktu w sprawach konta. Nie sprzedajemy go."
+      },
+      "photos": {
+        "title": "Zdjęcia przedmiotów",
+        "body": "Gdy dodajesz zdjęcie przedmiotu lub lokalizacji, obraz jest przesyłany i przechowywany, aby można było pokazać go z powrotem w Twoim inwentarzu."
+      },
+      "ai": {
+        "title": "Przetwarzanie zdjęć przez AI za pomocą Claude API",
+        "body": "Jeśli korzystasz z asystenta zdjęć, przesłane zdjęcie jest wysyłane do Claude API firmy Anthropic w celu rozpoznania przedmiotów. Anthropic przetwarza obraz, aby zwrócić sugerowane przedmioty; nie używamy Twoich zdjęć do trenowania modeli."
+      },
+      "typesense": {
+        "title": "Indeksowanie wyszukiwania w Typesense",
+        "body": "Nazwy i szczegóły przedmiotów, które zapisujesz, są indeksowane w Typesense, aby umożliwić szybkie wyszukiwanie. Indeks jest ograniczony do przestrzeni, do których masz dostęp, i nigdy nie jest współdzielony między kontami."
+      },
+      "sharing": {
+        "title": "Udostępnianie obszarów przez administratora",
+        "body": "Administrator może przyznać innemu użytkownikowi dostęp do jednego z Twoich obszarów. Wtedy zaproszony edytor widzi i edytuje wyłącznie przedmioty w tym udostępnionym obszarze — nigdy reszty Twojego inwentarza. W tej wersji nie ma samodzielnych zaproszeń."
+      },
+      "gdpr": {
+        "title": "Usuwanie danych (RODO)",
+        "body": "Możesz zażądać usunięcia konta i jego danych. Usunięcie jest realizowane przez zaplanowaną ścieżkę usuwania, która kasuje Twoje konto, przedmioty i zdjęcia. Wpisy w indeksie wyszukiwania są usuwane w ramach tego procesu."
+      }
+    },
+    "terms": {
+      "title": "Regulamin",
+      "draftNotice": "Wersja robocza — przejrzyj przed wdrożeniem.",
+      "intro": "Korzystając z whereiput.it, akceptujesz niniejszy regulamin. Jest to wstępna wersja robocza, która zostanie zweryfikowana przed publicznym uruchomieniem.",
+      "use": {
+        "title": "Dozwolone użycie",
+        "body": "Używaj whereiput.it wyłącznie do katalogowania rzeczy, które posiadasz lub którymi masz prawo zarządzać. Nie przesyłaj nielegalnych treści, nie próbuj uzyskać dostępu do obszarów, do których nie masz uprawnień, ani nie zakłócaj działania usługi."
+      },
+      "content": {
+        "title": "Twoje treści",
+        "body": "Zachowujesz własność przedmiotów, zdjęć i danych, które dodajesz. Udzielasz nam jedynie uprawnień niezbędnych do przechowywania i wyświetlania tych treści Tobie oraz osobom, którym administrator udostępnił obszar."
+      },
+      "warranty": {
+        "title": "Brak gwarancji",
+        "body": "Usługa jest świadczona „tak jak jest”, bez jakichkolwiek gwarancji. Nie gwarantujemy, że Twoje dane nigdy nie zostaną utracone; przechowuj własne kopie zapasowe ważnych informacji."
+      },
+      "draft": {
+        "title": "Status roboczy",
+        "body": "Niniejszy regulamin to wersja robocza do oceny. Zostanie zweryfikowany i sfinalizowany przed wdrożeniem produkcyjnym i może ulec zmianie."
+      }
+    },
+    "help": {
+      "title": "Pomoc i pierwsze kroki",
+      "intro": "whereiput.it pomaga pamiętać, gdzie są Twoje rzeczy. Oto jak to działa.",
+      "howItWorks": {
+        "title": "Jak to działa",
+        "body": "Utwórz Obszar dla miejsca, w którym trzymasz rzeczy — np. „Mieszkanie” lub „Garaż”. W Obszarze dodajesz Lokalizacje, takie jak „Górna szuflada” czy „Półka B”. Następnie dodajesz Przedmioty do Lokalizacji i opisujesz je kategoriami. Aby coś później znaleźć, wpisz nazwę i przejdź prosto do miejsca, w którym to leży. Możesz zrobić zdjęcie i pozwolić AI naszkicować listę przedmiotów, a administrator może udostępnić pojedynczy Obszar innej osobie."
+      },
+      "faq": {
+        "search": {
+          "q": "Jak znaleźć przedmiot?",
+          "a": "Wpisz jego nazwę w polu wyszukiwania. Wyniki pokazują, gdzie znajduje się każdy przedmiot — Lokalizację i Obszar — więc możesz przejść prosto do niego."
+        },
+        "ai": {
+          "q": "Jak działa asystent ze zdjęć?",
+          "a": "Zrób zdjęcie półki lub szuflady, a AI zaproponuje listę widocznych przedmiotów. Przeglądasz i edytujesz listę, a następnie zapisujesz ją do Lokalizacji."
+        },
+        "sharing": {
+          "q": "Czy ktoś inny może zobaczyć mój inwentarz?",
+          "a": "Tylko jeśli administrator przyzna mu dostęp do konkretnego Obszaru. Wtedy widzi i edytuje ten jeden Obszar; reszta Twojego inwentarza pozostaje prywatna."
+        },
+        "delete": {
+          "q": "Jak usunąć moje dane?",
+          "a": "Zażądaj usunięcia konta, a Twoje konto, przedmioty i zdjęcia zostaną usunięte przez proces zaplanowanego usuwania, łącznie z wpisami w indeksie wyszukiwania."
+        }
+      }
+    }
   }
 }

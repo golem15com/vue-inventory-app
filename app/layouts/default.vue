@@ -49,8 +49,9 @@ function onLocaleChange(event: Event) {
   <div class="flex min-h-screen flex-col bg-background text-foreground font-body">
     <header class="border-b">
       <div class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 sm:gap-4">
-        <!-- App name — always visible. -->
-        <NuxtLink to="/" class="shrink-0 font-semibold">Inventory</NuxtLink>
+        <!-- App name — always visible. Points at /dashboard (the authed home);
+             `/` is now the public landing. -->
+        <NuxtLink to="/dashboard" class="shrink-0 font-semibold">Inventory</NuxtLink>
 
         <!-- Top-bar search on-ramp (D-02) — visible everywhere except /search,
              where the page hosts its own live debounced box. The flex-1 wrapper

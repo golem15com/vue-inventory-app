@@ -29,7 +29,7 @@ async function onSubmit() {
   submitting.value = false
 
   if (authStore.isLoggedIn) {
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
     await navigateTo(redirect)
     return
   }

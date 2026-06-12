@@ -238,5 +238,117 @@
       "tokenRevoked": "Token revoked",
       "loadError": "Couldn't load your tokens. Try again."
     }
+  },
+  "public": {
+    "header": {
+      "login": "Log in",
+      "brandAlt": "whereiput.it logo"
+    },
+    "footer": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "help": "Help"
+    },
+    "landing": {
+      "hero": {
+        "title": "Find anything you own.",
+        "subhead": "Type a name and see exactly where it lives — across every space you can access.",
+        "cta": "Log in"
+      },
+      "features": {
+        "search": {
+          "title": "Search to location",
+          "body": "Type a name, jump straight to the drawer."
+        },
+        "hierarchy": {
+          "title": "Areas, Locations, Items",
+          "body": "Organize by where things actually are."
+        },
+        "ai": {
+          "title": "Photo assist",
+          "body": "Snap a shelf, let AI draft the catalog."
+        },
+        "sharing": {
+          "title": "Per-area sharing",
+          "body": "Share one space, keep the rest private."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "draftNotice": "Draft policy — review before production.",
+      "intro": "This policy describes what data whereiput.it stores about you, why, and who can see it. It reflects how the app works today and will be reviewed by legal counsel before any public launch.",
+      "email": {
+        "title": "Account email",
+        "body": "We store the email address you sign in with. It identifies your account, lets you sign in, and is how we reach you about your account. We do not sell it."
+      },
+      "photos": {
+        "title": "Item photos",
+        "body": "When you add a photo of an item or a location, the image is uploaded and stored so it can be shown back to you in your inventory."
+      },
+      "ai": {
+        "title": "AI photo processing via the Claude API",
+        "body": "If you use the photo assist feature, the photo you submit is sent to Anthropic's Claude API to recognize the items in it. Anthropic processes the image to return suggested items; we do not use your photos to train any model."
+      },
+      "typesense": {
+        "title": "Typesense search indexing",
+        "body": "Item names and details you save are indexed in Typesense so you can search your inventory quickly. The index is scoped to the spaces you can access and is never shared across accounts."
+      },
+      "sharing": {
+        "title": "Admin-granted area sharing",
+        "body": "An administrator can grant another user access to one of your areas. When that happens, the invited editor can see and edit the items in that shared area only — never the rest of your inventory. There is no self-service invite in this version."
+      },
+      "gdpr": {
+        "title": "Deleting your data (GDPR)",
+        "body": "You can request deletion of your account and its data. Deletion is processed through the platform's scheduled-deletion path, which removes your account, items, and photos. Search index entries are removed as part of that process."
+      }
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "draftNotice": "Draft terms — review before production.",
+      "intro": "By using whereiput.it you agree to these terms. They are a first-pass draft and will be reviewed before any public launch.",
+      "use": {
+        "title": "Acceptable use",
+        "body": "Use whereiput.it only to catalog things you own or are authorized to manage. Do not upload unlawful content, attempt to access areas you have not been granted, or disrupt the service for others."
+      },
+      "content": {
+        "title": "Your content",
+        "body": "You keep ownership of the items, photos, and data you add. You grant us only the permission needed to store and display that content back to you and to anyone an administrator has shared an area with."
+      },
+      "warranty": {
+        "title": "No warranty",
+        "body": "The service is provided \"as is\" without warranties of any kind. We do not guarantee that your data will never be lost; keep your own backups of anything important."
+      },
+      "draft": {
+        "title": "Draft status",
+        "body": "These terms are a draft for evaluation. They will be reviewed and finalized before production use, and may change."
+      }
+    },
+    "help": {
+      "title": "Help & Getting Started",
+      "intro": "whereiput.it helps you remember where your things are. Here is how it fits together.",
+      "howItWorks": {
+        "title": "How it works",
+        "body": "Create an Area for a place you keep things — like \"Apartment\" or \"Garage\". Inside an Area you add Locations, such as \"Top drawer\" or \"Shelf B\". Then you add Items to a Location and tag them with categories. To find something later, just search its name and jump straight to where it lives. You can snap a photo and let the AI draft a list of items, and an administrator can share a single Area with another person."
+      },
+      "faq": {
+        "search": {
+          "q": "How do I find an item?",
+          "a": "Type its name in the search box. Results show where each item lives — the Location and Area — so you can go straight to it."
+        },
+        "ai": {
+          "q": "How does the photo assist work?",
+          "a": "Take a photo of a shelf or drawer and the AI suggests a list of items it sees. You review and edit the list, then save it to a Location."
+        },
+        "sharing": {
+          "q": "Can someone else see my inventory?",
+          "a": "Only if an administrator grants them access to a specific Area. They then see and edit that one Area; the rest of your inventory stays private."
+        },
+        "delete": {
+          "q": "How do I delete my data?",
+          "a": "Request account deletion and your account, items, and photos are removed through the scheduled-deletion process, including search index entries."
+        }
+      }
+    }
   }
 }
