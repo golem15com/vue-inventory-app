@@ -85,3 +85,44 @@ export interface Meta {
   per_page: number
   total: number
 }
+
+// ---------------------------------------------------------------------------
+// Personal API tokens (Phase 8) — the SPA Integrations surface.
+//
+// Mirrors the JZ.Inventory backend contract on the JWT/cookie group (Plan 03):
+//   POST   /_inventory/api/v1/tokens   -> 201 { token: 'inv_…', meta: TokenMeta }
+//   GET    /_inventory/api/v1/tokens   -> 200 { data: TokenMeta[] }
+//   DELETE /_inventory/api/v1/tokens/{id} -> 200 { data: { revoked: true } }
+//
+// `TokenMeta` is SECRET-FREE by construction — the backend never emits the raw
+// secret or the hash in the list/meta. The plaintext `inv_…` value arrives ONLY
+// in the mint response's `token` field and is shown once (held in local
+// component state, never persisted, never re-fetched).
+// ---------------------------------------------------------------------------
+
+/** The three mintable scopes (in:read,write,ai) — matches ApiTokenManager. */
+export type TokenScope = 'read' | 'write' | 'ai'
+
+/** Secret-free token metadata as returned by list/mint `meta`. */
+export interface TokenMeta {
+  id: number
+  name: string
+  scopes: TokenScope[]
+  last_used_at: string | null
+  expires_at: string | null
+  revoked_at: string | null
+  created_at: string
+}
+
+/** The mint form payload (name + chosen scopes + optional expiry). */
+export interface TokenMintForm {
+  name: string
+  scopes: TokenScope[]
+  expires_at?: string | null
+}
+
+/** Mint response: the raw secret ONCE + the secret-free meta. */
+export interface TokenMintResponse {
+  token: string
+  meta: TokenMeta
+}

@@ -1,5 +1,9 @@
 {
-  "nav": { "home": "Home", "blog": "Blog", "login": "Log in" },
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "login": "Log in"
+  },
   "demo": {
     "welcome": "Welcome to the Wn Inventory App",
     "authState": "Auth state",
@@ -29,13 +33,18 @@
     "pageOf": "Page {current} of {last}",
     "notFound": "Post not found"
   },
-  "auth": { "login": "Log in" },
-  "footer": { "poweredBy": "Built in" },
+  "auth": {
+    "login": "Log in"
+  },
+  "footer": {
+    "poweredBy": "Built in"
+  },
   "inventory": {
     "nav": {
       "categories": "Categories",
       "logout": "Log out",
-      "menu": "Open menu"
+      "menu": "Open menu",
+      "settings": "Settings"
     },
     "search": {
       "title": "Search",
@@ -187,6 +196,47 @@
       "retry": "Try another photo",
       "error": "Couldn't analyze that photo. Try again or add items manually.",
       "back": "Back to dashboard"
+    },
+    "settings": {
+      "title": "Settings",
+      "integrations": {
+        "title": "Integrations",
+        "description": "Generate personal API tokens to connect external tools and the MCP server to your inventory."
+      },
+      "token": {
+        "name": "Token name",
+        "namePlaceholder": "e.g. Laptop CLI",
+        "scopes": "Scopes",
+        "scope": {
+          "read": "Read",
+          "write": "Write",
+          "ai": "AI"
+        },
+        "scopeReadHint": "View areas, locations and items",
+        "scopeWriteHint": "Create and edit items",
+        "scopeAiHint": "Use AI photo recognition",
+        "expires": "Expires",
+        "lastUsed": "Last used",
+        "never": "Never",
+        "created": "Created"
+      },
+      "mint": "Generate token",
+      "mintTitle": "Generate a new token",
+      "revoke": "Revoke",
+      "revokeConfirm": "Revoke this token? Any tool using it will immediately lose access. This cannot be undone.",
+      "revokeTitle": "Revoke {name}",
+      "secretOnceWarning": "Copy this token now — for your security it will never be shown again.",
+      "secretLabel": "Your new token",
+      "copy": "Copy",
+      "copied": "Copied to clipboard",
+      "done": "Done",
+      "empty": "You have no API tokens yet. Generate one to connect external tools.",
+      "installHint": "Install the MCP server, then paste this token when prompted:",
+      "nameRequired": "Give your token a name.",
+      "scopeRequired": "Select at least one scope.",
+      "tokenMinted": "Token generated",
+      "tokenRevoked": "Token revoked",
+      "loadError": "Couldn't load your tokens. Try again."
     }
   }
 }

@@ -20,7 +20,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
-import type { Area, Location, Item, ItemCategory, Tag } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse } from '~~/shared/types/inventory'
 
 export const useInventoryStore = defineStore('inventory', () => {
   const { t } = useI18n()
@@ -351,6 +351,59 @@ export const useInventoryStore = defineStore('inventory', () => {
   }
 
   // ---------------------------------------------------------------
+  // Personal API tokens (Phase 8) — Integrations surface.
+  //
+  // CRITICAL (D-02): token CRUD goes through `$api` against inventoryBase()
+  // (= /_inventory/api/v1, the JWT/cookie group) — NEVER the token route group
+  // (/api/v1/inventory). A token must never be usable to mint a token, so these
+  // mutations carry the interactive JWT/cookie credential by construction.
+  // ---------------------------------------------------------------
+
+  /**
+   * Mint a personal API token. Returns the FULL mint response so the dialog can
+   * surface the raw `inv_…` secret ONCE — the secret is never stored here, never
+   * re-fetched, and the list read (inv:tokens) only ever sees the secret-free
+   * meta. Refreshes the token list so the new row appears after the reveal.
+   */
+  async function mintToken(form: TokenMintForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<TokenMintResponse>('/tokens', { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.settings.tokenMinted'))
+      await refreshNuxtData('inv:tokens')
+      return res
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /** Revoke a token by id (owner-scoped server-side; a foreign/missing id 404s). */
+  async function revokeToken(id: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/tokens/${id}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.settings.tokenRevoked'))
+      await refreshNuxtData('inv:tokens')
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
   // Cross-Area grouped Location cache for the Item-form pickers (D-08)
   // ---------------------------------------------------------------
   async function loadLocationsForPickers() {
@@ -403,5 +456,7 @@ export const useInventoryStore = defineStore('inventory', () => {
     bulkSaveItems,
     attachLocationPhoto,
     loadLocationsForPickers,
+    mintToken,
+    revokeToken,
   }
 })

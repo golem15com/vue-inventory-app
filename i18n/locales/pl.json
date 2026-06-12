@@ -1,5 +1,9 @@
 {
-  "nav": { "home": "Strona główna", "blog": "Blog", "login": "Zaloguj się" },
+  "nav": {
+    "home": "Strona główna",
+    "blog": "Blog",
+    "login": "Zaloguj się"
+  },
   "demo": {
     "welcome": "Witaj w Wn Inventory App",
     "authState": "Stan uwierzytelnienia",
@@ -29,13 +33,18 @@
     "pageOf": "Strona {current} z {last}",
     "notFound": "Nie znaleziono wpisu"
   },
-  "auth": { "login": "Zaloguj się" },
-  "footer": { "poweredBy": "Zbudowano w" },
+  "auth": {
+    "login": "Zaloguj się"
+  },
+  "footer": {
+    "poweredBy": "Zbudowano w"
+  },
   "inventory": {
     "nav": {
       "categories": "Kategorie",
       "logout": "Wyloguj",
-      "menu": "Otwórz menu"
+      "menu": "Otwórz menu",
+      "settings": "Ustawienia"
     },
     "search": {
       "title": "Szukaj",
@@ -187,6 +196,47 @@
       "retry": "Spróbuj z innym zdjęciem",
       "error": "Nie udało się przeanalizować tego zdjęcia. Spróbuj ponownie lub dodaj rzeczy ręcznie.",
       "back": "Powrót do pulpitu"
+    },
+    "settings": {
+      "title": "Ustawienia",
+      "integrations": {
+        "title": "Integracje",
+        "description": "Generuj osobiste tokeny API, aby połączyć zewnętrzne narzędzia i serwer MCP z Twoim inwentarzem."
+      },
+      "token": {
+        "name": "Nazwa tokenu",
+        "namePlaceholder": "np. Laptop CLI",
+        "scopes": "Uprawnienia",
+        "scope": {
+          "read": "Odczyt",
+          "write": "Zapis",
+          "ai": "AI"
+        },
+        "scopeReadHint": "Przeglądanie obszarów, lokalizacji i przedmiotów",
+        "scopeWriteHint": "Tworzenie i edycja przedmiotów",
+        "scopeAiHint": "Rozpoznawanie zdjęć przez AI",
+        "expires": "Wygasa",
+        "lastUsed": "Ostatnio użyto",
+        "never": "Nigdy",
+        "created": "Utworzono"
+      },
+      "mint": "Wygeneruj token",
+      "mintTitle": "Wygeneruj nowy token",
+      "revoke": "Odwołaj",
+      "revokeConfirm": "Odwołać ten token? Każde narzędzie, które go używa, natychmiast straci dostęp. Tej operacji nie można cofnąć.",
+      "revokeTitle": "Odwołaj {name}",
+      "secretOnceWarning": "Skopiuj ten token teraz — ze względów bezpieczeństwa nie zostanie wyświetlony ponownie.",
+      "secretLabel": "Twój nowy token",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano do schowka",
+      "done": "Gotowe",
+      "empty": "Nie masz jeszcze żadnych tokenów API. Wygeneruj token, aby połączyć zewnętrzne narzędzia.",
+      "installHint": "Zainstaluj serwer MCP, a następnie wklej ten token, gdy pojawi się prośba:",
+      "nameRequired": "Nadaj tokenowi nazwę.",
+      "scopeRequired": "Wybierz co najmniej jedno uprawnienie.",
+      "tokenMinted": "Token wygenerowany",
+      "tokenRevoked": "Token odwołany",
+      "loadError": "Nie udało się wczytać tokenów. Spróbuj ponownie."
     }
   }
 }

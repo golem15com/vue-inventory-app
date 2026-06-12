@@ -22,7 +22,7 @@
  * foreign/missing resource 404s identically (no enumeration). `inventoryApiBase`
  * is single-owned by Plan 05-02's nuxt.config and reached through the dev proxy.
  */
-import type { Area, Location, Item, ItemCategory, Tag, Meta } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta } from '~~/shared/types/inventory'
 // NOTE: the embedded-reference type is exported as `InventoryRef` (not `Ref`) to
 // avoid shadowing Nuxt's auto-imported `Ref` from vue — see shared/types/inventory.ts.
 //
@@ -35,6 +35,7 @@ export type ItemsResponse = { data: Item[]; meta: Meta }
 export type ItemResponse = { data: Item }
 export type CategoriesResponse = { data: ItemCategory[] }
 export type TagsResponse = { data: Tag[] }
+export type TokensResponse = { data: TokenMeta[] }
 
 /** Default page size for a Location's Items list. */
 const DEFAULT_PER_PAGE = 20
@@ -168,6 +169,15 @@ export function useInventory() {
     })
   }
 
+  /**
+   * The caller's personal API tokens (Phase 8 Integrations surface). Reads the
+   * JWT/cookie group — token CRUD lives on the same group as mint/revoke (D-02);
+   * the response is secret-free (name/scopes/last-used/expiry only).
+   */
+  function fetchTokens() {
+    return useFetch<TokensResponse>('/tokens', { baseURL, key: 'inv:tokens', headers: authHeaders() })
+  }
+
   return {
     fetchAreas,
     fetchLocations,
@@ -178,5 +188,6 @@ export function useInventory() {
     fetchSearch,
     fetchCategories,
     fetchTags,
+    fetchTokens,
   }
 }
