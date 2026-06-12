@@ -130,6 +130,9 @@ export default defineNuxtConfig({
     '/_journal/api/**': { proxy: `${BACKEND_ORIGIN}/_journal/api/**` },
     '/_inventory/api/**': { proxy: `${BACKEND_ORIGIN}/_inventory/api/**` },
     '/api/realtime/**': { proxy: `${BACKEND_ORIGIN}/api/realtime/**` },
+    // Uploaded media (Winter File storage). Serializers emit same-origin
+    // relative /storage/... paths; in dev they proxy to the backend.
+    '/storage/**': { proxy: `${BACKEND_ORIGIN}/storage/**` },
   },
 
   nitro: {
@@ -139,6 +142,7 @@ export default defineNuxtConfig({
       '/_journal/api': { target: `${BACKEND_ORIGIN}/_journal/api`, changeOrigin: true },
       '/_inventory/api': { target: `${BACKEND_ORIGIN}/_inventory/api`, changeOrigin: true },
       '/api/realtime': { target: `${BACKEND_ORIGIN}/api/realtime`, changeOrigin: true },
+      '/storage': { target: `${BACKEND_ORIGIN}/storage`, changeOrigin: true },
     },
   },
 
@@ -165,6 +169,7 @@ export default defineNuxtConfig({
         '/_journal/api': { target: BACKEND_ORIGIN, changeOrigin: true },
         '/_inventory/api': { target: BACKEND_ORIGIN, changeOrigin: true },
         '/api/realtime': { target: BACKEND_ORIGIN, changeOrigin: true },
+        '/storage': { target: BACKEND_ORIGIN, changeOrigin: true },
       },
     },
   },
