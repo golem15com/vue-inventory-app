@@ -45,6 +45,19 @@
   "footer": {
     "poweredBy": "Zbudowano w"
   },
+  "pwa": {
+    "install": {
+      "title": "Zainstaluj whereiput.it",
+      "androidBody": "Dodaj do ekranu głównego, aby mieć szybki dostęp i działanie offline.",
+      "iosTitle": "Dodaj do ekranu głównego",
+      "iosBody": "Zainstaluj whereiput.it na swoim urządzeniu:",
+      "iosStep1": "Dotknij przycisku Udostępnij",
+      "iosStep2": "Wybierz „Dodaj do ekranu głównego”",
+      "installCta": "Zainstaluj",
+      "notNow": "Nie teraz",
+      "gotIt": "OK"
+    }
+  },
   "inventory": {
     "nav": {
       "account": "Konto",

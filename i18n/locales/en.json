@@ -45,6 +45,19 @@
   "footer": {
     "poweredBy": "Built in"
   },
+  "pwa": {
+    "install": {
+      "title": "Install whereiput.it",
+      "androidBody": "Add it to your home screen for quick access and offline use.",
+      "iosTitle": "Add to Home Screen",
+      "iosBody": "Install whereiput.it on your device:",
+      "iosStep1": "Tap the Share button",
+      "iosStep2": "Select \"Add to Home Screen\"",
+      "installCta": "Install",
+      "notNow": "Not now",
+      "gotIt": "Got it"
+    }
+  },
   "inventory": {
     "nav": {
       "account": "Account",

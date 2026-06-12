@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from '~/components/ui/popover'
 import LanguageSwitcher from '~/components/common/LanguageSwitcher.vue'
+import PwaInstallPrompt from '~/components/pwa/PwaInstallPrompt.vue'
 
 const { t } = useI18n()
 
@@ -227,6 +228,9 @@ async function onLogout() {
         </span>
       </div>
     </footer>
+
+    <!-- PWA install affordance — floating overlay, hidden unless installable. -->
+    <PwaInstallPrompt />
 
     <!-- Global toast outlet (vue-sonner via shadcn). -->
     <Toaster />
