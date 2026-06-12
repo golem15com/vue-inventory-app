@@ -14,22 +14,11 @@
  * Semantic tokens only — no hex (D-20).
  */
 import { Button } from '~/components/ui/button'
+import LanguageSwitcher from '~/components/common/LanguageSwitcher.vue'
 
-// Locale switcher — reuse the EXACT pattern from default.vue (writes the
-// i18n_locale cookie via setLocale; public copy is localized en + pl, D-10).
-const { locale, locales, setLocale, t } = useI18n()
-
-const availableLocales = computed(() =>
-  (locales.value as Array<{ code: string; name?: string }>).map(l => ({
-    code: l.code,
-    name: l.name ?? l.code.toUpperCase(),
-  })),
-)
-
-function onLocaleChange(event: Event) {
-  const code = (event.target as HTMLSelectElement).value
-  setLocale(code as typeof locale.value)
-}
+// Public copy is localized en + pl (D-10). The locale switcher itself is the
+// reusable LanguageSwitcher popover (also used by the authed navbar, 09-04).
+const { t } = useI18n()
 </script>
 
 <template>
@@ -48,18 +37,9 @@ function onLocaleChange(event: Event) {
           <span class="text-base font-semibold tracking-tight">whereiput.it</span>
         </NuxtLink>
 
-        <div class="ml-auto flex items-center gap-4">
-          <!-- Locale switcher (writes the i18n_locale cookie). -->
-          <select
-            :value="locale"
-            aria-label="Language"
-            class="min-h-11 rounded-md border bg-background px-2 py-1 text-sm"
-            @change="onLocaleChange"
-          >
-            <option v-for="l in availableLocales" :key="l.code" :value="l.code">
-              {{ l.name }}
-            </option>
-          </select>
+        <div class="ml-auto flex items-center gap-2">
+          <!-- Reusable language switcher popover (writes the i18n_locale cookie). -->
+          <LanguageSwitcher />
 
           <!-- Log in — the single public CTA, --primary filled (UI-SPEC §Color). -->
           <NuxtLink to="/login">

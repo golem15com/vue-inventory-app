@@ -1,4 +1,10 @@
 {
+  "common": {
+    "language": {
+      "label": "Choose language",
+      "title": "Language"
+    }
+  },
   "nav": {
     "home": "Home",
     "blog": "Blog",
@@ -237,6 +243,10 @@
       "tokenMinted": "Token generated",
       "tokenRevoked": "Token revoked",
       "loadError": "Couldn't load your tokens. Try again."
+    },
+    "dashboard": {
+      "brandAlt": "whereiput.it logo",
+      "title": "Inventory"
     }
   },
   "public": {

@@ -1,4 +1,10 @@
 {
+  "common": {
+    "language": {
+      "label": "Wybierz język",
+      "title": "Język"
+    }
+  },
   "nav": {
     "home": "Strona główna",
     "blog": "Blog",
@@ -237,6 +243,10 @@
       "tokenMinted": "Token wygenerowany",
       "tokenRevoked": "Token odwołany",
       "loadError": "Nie udało się wczytać tokenów. Spróbuj ponownie."
+    },
+    "dashboard": {
+      "brandAlt": "Logo whereiput.it",
+      "title": "Inwentarz"
     }
   },
   "public": {
