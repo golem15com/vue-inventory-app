@@ -115,6 +115,18 @@ useSeoMeta({
 
   <!-- Dashboard sections (UI-SPEC §"Dashboard composition"). -->
   <section v-else class="space-y-8">
+    <!-- Hero heading — whereiput.it mark beside the page title (09-03 checkpoint). -->
+    <div class="flex items-center gap-2">
+      <img
+        src="/brand/logo.png"
+        :alt="t('inventory.dashboard.brandAlt')"
+        class="h-8 w-auto"
+        width="32"
+        height="32"
+      >
+      <h1 class="text-base font-semibold tracking-tight">{{ t('inventory.dashboard.title') }}</h1>
+    </div>
+
     <p v-if="loadFailed" class="rounded-md border border-destructive/40 p-4 text-sm text-destructive">
       {{ t('inventory.error.loadFailed') }}
     </p>
