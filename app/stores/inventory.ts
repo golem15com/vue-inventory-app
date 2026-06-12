@@ -266,6 +266,91 @@ export const useInventoryStore = defineStore('inventory', () => {
   }
 
   // ---------------------------------------------------------------
+  // AI Inventory Assist — recognize (read-only) + bulk save + attach photo
+  // ---------------------------------------------------------------
+
+  /**
+   * POST a single photo to /items/recognize (multipart) and return the AI's
+   * suggested items. Writes NOTHING — so no refreshNuxtData. On failure we
+   * surface the error via fail() but the rejection propagates so the page can
+   * choose retry-vs-manual (D-10).
+   */
+  async function recognize(photoFile: File, areaId: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const fd = new FormData()
+      fd.append('photo', photoFile)
+      fd.append('area_id', String(areaId))
+      // CRITICAL: leave the request header untouched — the browser sets the
+      // multipart boundary itself (mirror saveItem's photo step).
+      const res = await $api<{ items: Array<{ name: string, category: string | null, quantity: number, description: string | null }> }>(
+        '/items/recognize',
+        { baseURL, method: 'POST', body: fd },
+      )
+      return res.items
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * Bulk-create reviewed items in ONE request (D-12, never a loop) at
+   * /locations/{id}/items/bulk. One success toast, one refresh.
+   */
+  async function bulkSaveItems(locationId: number, rows: Array<Partial<Item>>) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<{ data: Item[] }>(
+        `/locations/${locationId}/items/bulk`,
+        { baseURL, method: 'POST', body: { items: rows } },
+      )
+      toast.success(t('inventory.aiAssist.saved', { count: res.data.length }))
+      await refreshNuxtData(['inv:recent:8', `inv:loc:${locationId}:items:1`])
+      return res.data
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * Best-effort: attach the analyzed photo to the chosen Location (D-14),
+   * performed alongside bulkSaveItems. No toast (the bulk save owns the one
+   * success surface). On error, fail() surfaces it but must not block save.
+   */
+  async function attachLocationPhoto(locationId: number, photoFile: File) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const fd = new FormData()
+      fd.append('file', photoFile)
+      // CRITICAL: leave the request header untouched — browser sets the boundary.
+      await $api(`/locations/${locationId}/photos`, { baseURL, method: 'POST', body: fd })
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
   // Cross-Area grouped Location cache for the Item-form pickers (D-08)
   // ---------------------------------------------------------------
   async function loadLocationsForPickers() {
@@ -314,6 +399,9 @@ export const useInventoryStore = defineStore('inventory', () => {
     saveItem,
     deleteItem,
     removePhoto,
+    recognize,
+    bulkSaveItems,
+    attachLocationPhoto,
     loadLocationsForPickers,
   }
 })
