@@ -20,7 +20,7 @@
  * names render via {{ }} interpolation, never v-html (T-05-17).
  */
 import { computed, ref } from 'vue'
-import { Search } from '@lucide/vue'
+import { Search, Sparkles } from '@lucide/vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
@@ -145,10 +145,18 @@ useSeoMeta({
       </Card>
     </div>
 
-    <!-- 2. Quick-add Item. -->
-    <div>
+    <!-- 2. Quick-add Item + AI catalog entry (the dashboard's one accent cluster). -->
+    <div class="flex items-center gap-3 flex-wrap">
       <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo('/items/new')">
         {{ t('inventory.item.quickAdd') }}
+      </Button>
+      <Button
+        class="min-h-11 w-full sm:w-auto"
+        :aria-label="t('inventory.aiAssist.entryLabel')"
+        @click="navigateTo('/ai-assist')"
+      >
+        <Sparkles class="size-4" />
+        {{ t('inventory.aiAssist.entry') }}
       </Button>
     </div>
 
