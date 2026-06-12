@@ -19,6 +19,9 @@ import LanguageSwitcher from '~/components/common/LanguageSwitcher.vue'
 // Public copy is localized en + pl (D-10). The locale switcher itself is the
 // reusable LanguageSwitcher popover (also used by the authed navbar, 09-04).
 const { t } = useI18n()
+
+// Hide the header "Log in" CTA when already on the sign-in page (redundant).
+const route = useRoute()
 </script>
 
 <template>
@@ -41,8 +44,9 @@ const { t } = useI18n()
           <!-- Reusable language switcher popover (writes the i18n_locale cookie). -->
           <LanguageSwitcher />
 
-          <!-- Log in — the single public CTA, --primary filled (UI-SPEC §Color). -->
-          <NuxtLink to="/login">
+          <!-- Log in — the single public CTA, --primary filled (UI-SPEC §Color).
+               Hidden on /login itself (you're already there). -->
+          <NuxtLink v-if="route.path !== '/login'" to="/login">
             <Button class="min-h-11">{{ t('public.header.login') }}</Button>
           </NuxtLink>
         </div>

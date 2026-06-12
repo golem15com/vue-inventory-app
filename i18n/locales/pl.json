@@ -40,7 +40,15 @@
     "notFound": "Nie znaleziono wpisu"
   },
   "auth": {
-    "login": "Zaloguj się"
+    "login": "Zaloguj się",
+    "heading": "Witaj ponownie",
+    "subtitle": "Zaloguj się, aby znaleźć wszystko, co masz.",
+    "emailLabel": "E-mail",
+    "passwordLabel": "Hasło",
+    "emailPlaceholder": "ty@przyklad.pl",
+    "submit": "Zaloguj się",
+    "submitting": "Logowanie…",
+    "noAccount": "Nie masz konta? Poproś administratora o zaproszenie."
   },
   "footer": {
     "poweredBy": "Zbudowano w"
