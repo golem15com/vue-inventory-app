@@ -43,9 +43,28 @@ const RECENT_PER_PAGE = 8
 export function useInventory() {
   const baseURL = useRuntimeConfig().public.inventoryApiBase as string // /_inventory/api/v1
 
+  // The Inventory API is JWT-protected (jwt.auth). The JWT lives in the
+  // `auth_token` cookie (set by the auth store on login); plugins/api.ts attaches
+  // it as a Bearer header for WRITES. These useFetch READS must do the same — the
+  // backend returns 401 without it and the page would otherwise look empty/first-run.
+  // SSR reads the cookie from the request via useCookie; the client reads
+  // document.cookie directly (each useCookie() ref is independent and can be stale
+  // after login — mirrors plugins/api.ts onRequest).
+  function authHeaders(): Record<string, string> {
+    let token: string | null = null
+    if (import.meta.server) {
+      token = (useCookie('auth_token').value as string | null) ?? null
+    }
+    else {
+      const match = document.cookie.match(/(?:^|;\s*)auth_token=([^;]*)/)
+      token = match?.[1] ? decodeURIComponent(match[1]) : null
+    }
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }
+
   /** All Areas the current user can access (owner or editor). */
   function fetchAreas() {
-    return useFetch<AreasResponse>('/areas', { baseURL, key: 'inv:areas' })
+    return useFetch<AreasResponse>('/areas', { baseURL, key: 'inv:areas', headers: authHeaders() })
   }
 
   /** Locations within a single Area. */
@@ -53,6 +72,7 @@ export function useInventory() {
     return useFetch<LocationsResponse>(`/areas/${areaId}/locations`, {
       baseURL,
       key: `inv:area:${areaId}:locations`,
+      headers: authHeaders(),
     })
   }
 
@@ -62,6 +82,7 @@ export function useInventory() {
       baseURL,
       query: { page, per_page: DEFAULT_PER_PAGE },
       key: `inv:loc:${locationId}:items:${page}`,
+      headers: authHeaders(),
     })
   }
 
@@ -70,6 +91,7 @@ export function useInventory() {
     return useFetch<ItemResponse>(`/items/${id}`, {
       baseURL,
       key: `inv:item:${id}`,
+      headers: authHeaders(),
     })
   }
 
@@ -82,6 +104,7 @@ export function useInventory() {
       baseURL,
       query: { q: '', per_page: perPage },
       key: `inv:recent:${perPage}`,
+      headers: authHeaders(),
     })
   }
 
@@ -90,6 +113,7 @@ export function useInventory() {
     return useFetch<CategoriesResponse>('/categories', {
       baseURL,
       key: 'inv:categories',
+      headers: authHeaders(),
     })
   }
 
@@ -98,6 +122,7 @@ export function useInventory() {
     return useFetch<TagsResponse>('/tags', {
       baseURL,
       key: 'inv:tags',
+      headers: authHeaders(),
     })
   }
 
