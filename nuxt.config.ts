@@ -40,6 +40,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@nuxtjs/seo',
     '@nuxtjs/color-mode',
+    '@vite-pwa/nuxt',
   ],
 
   // -------------------------------------------------------------------------
@@ -193,6 +194,54 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icon-192.png' },
         { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/icon-512.png' },
       ],
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // PWA — installable + offline app shell. generateSW strategy (the default):
+  // @vite-pwa/nuxt auto-generates a Workbox service worker that precaches the
+  // app shell. No push notifications here, so NO custom SW / injectManifest /
+  // workbox-* deps (unlike queststream). PWA is disabled in dev — test via
+  // `npm run build && npm run preview`. Manifest reuses the Phase-9 icons in
+  // public/ and the royal-blue brand colors (sRGB hex of the main.css oklch
+  // tokens). registerType:'autoUpdate' = new SW versions activate on next
+  // navigation, no user-facing update prompt needed.
+  pwa: {
+    registerType: 'autoUpdate',
+    devOptions: {
+      enabled: false,
+      suppressWarnings: true,
+    },
+    disable: process.env.NODE_ENV === 'development',
+    manifest: {
+      name: 'whereiput.it',
+      short_name: 'whereiput.it',
+      description: 'Find anything you own — type a name, see where it lives.',
+      theme_color: '#0060d5',
+      background_color: '#fcfdfe',
+      display: 'standalone',
+      start_url: '/',
+      scope: '/',
+      id: '/',
+      icons: [
+        { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+        {
+          src: '/icon-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+        {
+          src: '/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+      ],
+    },
+    client: {
+      installPrompt: true,
     },
   },
 })
