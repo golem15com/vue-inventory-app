@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { Toaster } from '~/components/ui/sonner'
+import { Button } from '~/components/ui/button'
 
 // Locale switcher. @nuxtjs/i18n writes the `i18n_locale` cookie
 // (detectBrowserLanguage.useCookie) when `setLocale` is called.
 const { locale, locales, setLocale, t } = useI18n()
+
+// Auth store — surface the existing logout action (do NOT reimplement auth).
+const auth = useAuthStore()
+
+async function onLogout() {
+  await auth.logout()
+  await navigateTo('/login')
+}
 
 const availableLocales = computed(() =>
   (locales.value as Array<{ code: string; name?: string }>).map(l => ({
@@ -23,13 +32,19 @@ function onLocaleChange(event: Event) {
     <header class="border-b">
       <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <nav class="flex items-center gap-4 text-sm">
-          <NuxtLink to="/" class="font-semibold">{{ t('nav.home') }}</NuxtLink>
-          <NuxtLink to="/blog">{{ t('nav.blog') }}</NuxtLink>
+          <NuxtLink to="/" class="font-semibold">Inventory</NuxtLink>
         </nav>
 
-        <div class="flex items-center gap-3">
-          <!-- auth slot — filled by 17-02 (auth store + login state) -->
-          <!-- <AuthState /> -->
+        <div class="flex items-center gap-3 text-sm">
+          <!-- Categories — neutral chrome (ghost), never accent-filled (D-03). -->
+          <NuxtLink to="/categories" class="text-muted-foreground hover:text-foreground">
+            {{ t('inventory.nav.categories') }}
+          </NuxtLink>
+
+          <!-- Logout — surfaces the existing auth store action (no reimplement). -->
+          <Button variant="ghost" size="sm" @click="onLogout">
+            {{ t('inventory.nav.logout') }}
+          </Button>
 
           <!-- Locale switcher (writes the i18n_locale cookie). -->
           <select

@@ -30,5 +30,87 @@
     "notFound": "Post not found"
   },
   "auth": { "login": "Log in" },
-  "footer": { "poweredBy": "Built in" }
+  "footer": { "poweredBy": "Built in" },
+  "inventory": {
+    "nav": {
+      "categories": "Categories",
+      "logout": "Log out"
+    },
+    "area": {
+      "create": "Create Area",
+      "saved": "Area saved",
+      "delete": {
+        "title": "Delete \"{name}\"?",
+        "body": "This removes {locations} Locations and {items} Items. This can't be undone."
+      }
+    },
+    "location": {
+      "create": "Add Location",
+      "saved": "Location saved",
+      "delete": {
+        "title": "Delete \"{name}\"?",
+        "body": "Its {items} Items will move to General. This can't be undone."
+      }
+    },
+    "category": {
+      "create": "Add Category",
+      "saved": "Category created"
+    },
+    "item": {
+      "quickAdd": "Quick-add Item",
+      "add": "Add Item",
+      "save": "Save Item",
+      "saved": "Item saved",
+      "photo": {
+        "delete": {
+          "title": "Remove this photo?"
+        }
+      }
+    },
+    "combobox": {
+      "createOption": "Create \"{name}\""
+    },
+    "deleted": "Deleted",
+    "empty": {
+      "firstArea": {
+        "title": "Start your inventory",
+        "body": "Create your first Area to start cataloguing your things.",
+        "cta": "Create your first Area"
+      },
+      "locations": {
+        "title": "No Locations yet",
+        "body": "Add a Location to start placing things here."
+      },
+      "items": {
+        "title": "No items here yet",
+        "body": "Add an Item to record what lives here."
+      },
+      "categories": {
+        "title": "No categories yet"
+      },
+      "recent": {
+        "title": "Nothing added yet"
+      }
+    },
+    "error": {
+      "saveFailed": "Couldn't save. Check your connection and try again.",
+      "loadFailed": "Couldn't load this. Refresh to try again.",
+      "notFound": "This doesn't exist or isn't available to you.",
+      "photoRejected": "That image couldn't be uploaded. Use JPG, PNG, GIF, or WebP under 10 MB.",
+      "nameRequired": "Give this thing a name.",
+      "categoryRequired": "Pick or create a category."
+    },
+    "action": {
+      "confirmDelete": "Delete",
+      "cancel": "Cancel",
+      "editLabel": "Edit {name}",
+      "deleteLabel": "Delete {name}"
+    },
+    "totals": {
+      "areas": "Areas",
+      "locations": "Locations",
+      "items": "Items",
+      "categories": "Categories"
+    }
+  }
 }

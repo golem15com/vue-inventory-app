@@ -30,5 +30,87 @@
     "notFound": "Nie znaleziono wpisu"
   },
   "auth": { "login": "Zaloguj się" },
-  "footer": { "poweredBy": "Zbudowano w" }
+  "footer": { "poweredBy": "Zbudowano w" },
+  "inventory": {
+    "nav": {
+      "categories": "Kategorie",
+      "logout": "Wyloguj"
+    },
+    "area": {
+      "create": "Dodaj obszar",
+      "saved": "Obszar zapisany",
+      "delete": {
+        "title": "Usunąć „{name}”?",
+        "body": "Spowoduje to usunięcie {locations} miejsc i {items} rzeczy. Tej operacji nie można cofnąć."
+      }
+    },
+    "location": {
+      "create": "Dodaj miejsce",
+      "saved": "Miejsce zapisane",
+      "delete": {
+        "title": "Usunąć „{name}”?",
+        "body": "Jego {items} rzeczy zostanie przeniesionych do „Ogólne”. Tej operacji nie można cofnąć."
+      }
+    },
+    "category": {
+      "create": "Dodaj kategorię",
+      "saved": "Kategoria utworzona"
+    },
+    "item": {
+      "quickAdd": "Szybko dodaj rzecz",
+      "add": "Dodaj rzecz",
+      "save": "Zapisz rzecz",
+      "saved": "Rzecz zapisana",
+      "photo": {
+        "delete": {
+          "title": "Usunąć to zdjęcie?"
+        }
+      }
+    },
+    "combobox": {
+      "createOption": "Utwórz „{name}”"
+    },
+    "deleted": "Usunięto",
+    "empty": {
+      "firstArea": {
+        "title": "Zacznij swój spis",
+        "body": "Utwórz pierwszy obszar, aby zacząć katalogować swoje rzeczy.",
+        "cta": "Utwórz pierwszy obszar"
+      },
+      "locations": {
+        "title": "Brak miejsc",
+        "body": "Dodaj miejsce, aby zacząć tu umieszczać rzeczy."
+      },
+      "items": {
+        "title": "Tu jeszcze nic nie ma",
+        "body": "Dodaj rzecz, aby zapisać, co się tu znajduje."
+      },
+      "categories": {
+        "title": "Brak kategorii"
+      },
+      "recent": {
+        "title": "Jeszcze nic nie dodano"
+      }
+    },
+    "error": {
+      "saveFailed": "Nie udało się zapisać. Sprawdź połączenie i spróbuj ponownie.",
+      "loadFailed": "Nie udało się wczytać. Odśwież, aby spróbować ponownie.",
+      "notFound": "To nie istnieje lub nie jest dla Ciebie dostępne.",
+      "photoRejected": "Nie udało się przesłać obrazu. Użyj JPG, PNG, GIF lub WebP poniżej 10 MB.",
+      "nameRequired": "Nadaj tej rzeczy nazwę.",
+      "categoryRequired": "Wybierz lub utwórz kategorię."
+    },
+    "action": {
+      "confirmDelete": "Usuń",
+      "cancel": "Anuluj",
+      "editLabel": "Edytuj {name}",
+      "deleteLabel": "Usuń {name}"
+    },
+    "totals": {
+      "areas": "Obszary",
+      "locations": "Miejsca",
+      "items": "Rzeczy",
+      "categories": "Kategorie"
+    }
+  }
 }
