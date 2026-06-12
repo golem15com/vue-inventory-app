@@ -61,6 +61,9 @@ export default defineNuxtConfig({
       journalApiBase: '/_journal/api/v1',
       // JZ.Inventory read/write API (relative → proxied in dev, same-origin in prod).
       inventoryApiBase: '/_inventory/api/v1',
+      // MCP install one-liner surfaced in the token-mint reveal (Phase 8).
+      // Override with NUXT_PUBLIC_MCP_INSTALL_COMMAND per deployment.
+      mcpInstallCommand: 'curl -fsSL https://mcp.jakubzych.com | bash',
       // Centrifugo websocket URL. Empty = realtime gracefully degrades (no-op).
       // The WS connection is a direct cross-origin socket (not proxied) — set it
       // to your Centrifugo endpoint and add the app origin to Centrifugo's
