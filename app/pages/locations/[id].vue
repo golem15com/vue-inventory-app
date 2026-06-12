@@ -103,11 +103,11 @@ useSeoMeta({
       ]"
     />
 
-    <header class="flex items-center justify-between">
-      <h1 class="text-3xl font-semibold tracking-tight">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ locationName }}
       </h1>
-      <Button @click="navigateTo(`/items/new?location=${locationId}`)">
+      <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo(`/items/new?location=${locationId}`)">
         {{ t('inventory.item.add') }}
       </Button>
     </header>
@@ -133,26 +133,27 @@ useSeoMeta({
             v-for="item in items"
             :key="item.id"
             data-testid="item-row"
-            class="flex items-center justify-between rounded-md px-2 py-2 hover:bg-muted"
+            class="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-3 hover:bg-muted"
           >
-            <NuxtLink :to="`/items/${item.id}`" class="flex min-w-0 flex-1 items-center gap-3">
+            <NuxtLink :to="`/items/${item.id}`" class="flex min-h-11 min-w-0 flex-1 items-center gap-3">
               <img
                 v-if="item.photos?.[0]"
                 :src="item.photos[0].thumb_url"
                 :alt="item.name"
-                class="size-10 rounded-md object-cover"
+                class="size-10 shrink-0 rounded-md object-cover"
               >
               <span class="truncate text-base">{{ item.name }}</span>
-              <span class="text-sm text-muted-foreground">
+              <span class="shrink-0 text-sm text-muted-foreground">
                 {{ item.category?.name ?? '—' }}
                 <span v-if="item.quantity != null" class="text-xs">· × {{ item.quantity }}</span>
               </span>
             </NuxtLink>
 
-            <div class="flex items-center gap-1">
+            <div class="flex shrink-0 items-center gap-1">
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
+                class="size-11"
                 :aria-label="t('inventory.action.editLabel', { name: item.name })"
                 @click="navigateTo(`/items/${item.id}`)"
               >
@@ -160,8 +161,8 @@ useSeoMeta({
               </Button>
               <Button
                 variant="ghost"
-                size="icon-sm"
-                class="text-destructive hover:text-destructive"
+                size="icon"
+                class="size-11 text-destructive hover:text-destructive"
                 :aria-label="t('inventory.action.deleteLabel', { name: item.name })"
                 @click="openDelete(item)"
               >
@@ -176,7 +177,7 @@ useSeoMeta({
       <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between">
         <Button
           variant="outline"
-          size="sm"
+          class="min-h-11"
           :disabled="!hasPrev"
           @click="navigateTo({ query: { page: meta.current_page - 1 } })"
         >
@@ -187,7 +188,7 @@ useSeoMeta({
         </span>
         <Button
           variant="outline"
-          size="sm"
+          class="min-h-11"
           :disabled="!hasNext"
           @click="navigateTo({ query: { page: meta.current_page + 1 } })"
         >
@@ -207,12 +208,13 @@ useSeoMeta({
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
-        <Button type="button" variant="outline" @click="deleteOpen = false">
+        <Button type="button" variant="outline" class="min-h-11" @click="deleteOpen = false">
           {{ t('inventory.action.cancel') }}
         </Button>
         <Button
           type="button"
           variant="destructive"
+          class="min-h-11"
           :disabled="deleting || store.isLoading"
           @click="confirmDelete"
         >

@@ -42,11 +42,11 @@ useSeoMeta({
   <section class="space-y-6">
     <Breadcrumbs :segments="[{ label: t('inventory.totals.categories') }]" />
 
-    <header class="flex items-center justify-between">
-      <h1 class="text-3xl font-semibold tracking-tight">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ t('inventory.totals.categories') }}
       </h1>
-      <Button data-testid="add-category" @click="createOpen = true">
+      <Button class="min-h-11 w-full sm:w-auto" data-testid="add-category" @click="createOpen = true">
         {{ t('inventory.category.create') }}
       </Button>
     </header>

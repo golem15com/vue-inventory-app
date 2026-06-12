@@ -147,6 +147,7 @@ function onCancel() {
       <Input
         id="item-name"
         v-model="form.name"
+        class="min-h-11"
         data-testid="item-name"
         :aria-invalid="nameError"
         autocomplete="off"
@@ -180,6 +181,7 @@ function onCancel() {
       <Input
         id="item-quantity"
         v-model="quantityModel"
+        class="min-h-11"
         data-testid="item-quantity"
         type="number"
         min="0"
@@ -200,7 +202,7 @@ function onCancel() {
         id="item-notes"
         v-model="form.description"
         rows="3"
-        class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3"
+        class="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 md:text-sm"
       />
     </div>
 
@@ -219,11 +221,11 @@ function onCancel() {
     </div>
 
     <!-- Footer: single accent Save Item + Cancel -->
-    <div class="flex items-center gap-3 pt-2">
-      <Button type="submit" data-testid="item-save" :disabled="submitting || store.isLoading">
+    <div class="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+      <Button type="submit" class="min-h-11" data-testid="item-save" :disabled="submitting || store.isLoading">
         {{ t('inventory.item.save') }}
       </Button>
-      <Button type="button" variant="outline" @click="onCancel">
+      <Button type="button" variant="outline" class="min-h-11" @click="onCancel">
         {{ t('inventory.action.cancel') }}
       </Button>
     </div>

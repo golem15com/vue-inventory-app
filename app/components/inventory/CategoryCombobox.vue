@@ -89,7 +89,7 @@ async function createOption() {
         data-testid="category-combobox"
         :aria-expanded="open"
         :aria-invalid="invalid"
-        class="w-full justify-between font-normal"
+        class="min-h-11 w-full justify-between font-normal"
       >
         <span :class="selectedCategory ? '' : 'text-muted-foreground'">
           {{ selectedCategory?.name ?? t('inventory.category.create') }}

@@ -35,6 +35,7 @@ function update(value: string[] | undefined) {
 <template>
   <TagsInput
     :model-value="modelValue"
+    class="min-h-11"
     data-testid="tag-input"
     @update:model-value="update($event as string[])"
   >

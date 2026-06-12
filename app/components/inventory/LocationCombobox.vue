@@ -95,7 +95,7 @@ function select(id: number) {
         data-testid="location-combobox"
         :aria-expanded="open"
         :aria-invalid="invalid"
-        class="w-full justify-between font-normal"
+        class="min-h-11 w-full justify-between font-normal"
       >
         <span :class="selectedLocation ? '' : 'text-muted-foreground'">
           {{ selectedLocation?.name ?? t('inventory.location.create') }}

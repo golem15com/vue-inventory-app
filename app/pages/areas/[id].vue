@@ -82,11 +82,11 @@ useSeoMeta({
       ]"
     />
 
-    <header class="flex items-center justify-between">
-      <h1 class="text-3xl font-semibold tracking-tight">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ areaName }}
       </h1>
-      <Button data-testid="add-location" @click="openCreate">
+      <Button class="min-h-11 w-full sm:w-auto" data-testid="add-location" @click="openCreate">
         {{ t('inventory.location.create') }}
       </Button>
     </header>
@@ -109,19 +109,20 @@ useSeoMeta({
           v-for="location in locations"
           :key="location.id"
           :data-testid="location.is_general === true ? 'location-general' : 'location-row'"
-          class="flex items-center justify-between rounded-md px-2 py-2 hover:bg-muted"
+          class="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-3 hover:bg-muted"
         >
-          <NuxtLink :to="`/locations/${location.id}`" class="min-w-0 flex-1">
-            <span class="text-base">{{ location.name }}</span>
-            <span class="ml-2 text-sm text-muted-foreground">
+          <NuxtLink :to="`/locations/${location.id}`" class="flex min-h-11 min-w-0 flex-1 items-center">
+            <span class="truncate text-base">{{ location.name }}</span>
+            <span class="ml-2 shrink-0 text-sm text-muted-foreground">
               {{ location.item_count ?? 0 }} {{ t('inventory.totals.items') }}
             </span>
           </NuxtLink>
 
-          <div class="flex items-center gap-1">
+          <div class="flex shrink-0 items-center gap-1">
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon"
+              class="size-11"
               :aria-label="t('inventory.action.editLabel', { name: location.name })"
               @click="openEdit(location)"
             >
@@ -131,9 +132,9 @@ useSeoMeta({
             <Button
               v-if="location.is_general !== true"
               variant="ghost"
-              size="icon-sm"
+              size="icon"
               data-testid="location-delete"
-              class="text-destructive hover:text-destructive"
+              class="size-11 text-destructive hover:text-destructive"
               :aria-label="t('inventory.action.deleteLabel', { name: location.name })"
               @click="openDelete(location)"
             >
