@@ -79,6 +79,11 @@ function onLocaleChange(event: Event) {
             {{ t('inventory.nav.categories') }}
           </NuxtLink>
 
+          <!-- Settings (Integrations / API tokens) — neutral chrome (D-03). -->
+          <NuxtLink to="/settings" class="text-muted-foreground hover:text-foreground">
+            {{ t('inventory.nav.settings') }}
+          </NuxtLink>
+
           <!-- Logout — surfaces the existing auth store action (no reimplement). -->
           <Button variant="ghost" size="sm" @click="onLogout">
             {{ t('inventory.nav.logout') }}
@@ -119,6 +124,15 @@ function onLocaleChange(event: Event) {
                   class="flex min-h-11 items-center rounded-md px-3 text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
                   {{ t('inventory.nav.categories') }}
+                </NuxtLink>
+              </SheetClose>
+
+              <SheetClose as-child>
+                <NuxtLink
+                  to="/settings"
+                  class="flex min-h-11 items-center rounded-md px-3 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  {{ t('inventory.nav.settings') }}
                 </NuxtLink>
               </SheetClose>
 
