@@ -20,8 +20,10 @@
  * names render via {{ }} interpolation, never v-html (T-05-17).
  */
 import { computed, ref } from 'vue'
+import { Search } from '@lucide/vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import { Input } from '~/components/ui/input'
 import AreaCard from '~/components/inventory/AreaCard.vue'
 import AreaFormDialog from '~/components/inventory/AreaFormDialog.vue'
 import DeleteConfirmDialog from '~/components/inventory/DeleteConfirmDialog.vue'
@@ -32,6 +34,16 @@ definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const { fetchAreas, fetchRecent, fetchCategories } = useInventory()
+
+// Prominent dashboard search box (D-02) — the same goSearch on-ramp as the
+// top bar. The typed query is handed to router.push as a structured
+// `query: { q }` object (Nuxt encodes it); never concatenated (T-06-09).
+const router = useRouter()
+const topbarQ = ref('')
+
+function goSearch() {
+  router.push({ path: '/search', query: topbarQ.value ? { q: topbarQ.value } : {} })
+}
 
 // SSR reads (PATTERNS "SSR envelope → computed").
 const { data: areasData, status } = await fetchAreas()
@@ -95,7 +107,7 @@ useSeoMeta({
       :title="t('inventory.empty.firstArea.title')"
       :body="t('inventory.empty.firstArea.body')"
     >
-      <Button data-testid="create-area" @click="createOpen = true">
+      <Button class="min-h-11" data-testid="create-area" @click="createOpen = true">
         {{ t('inventory.empty.firstArea.cta') }}
       </Button>
     </EmptyState>
@@ -107,6 +119,24 @@ useSeoMeta({
       {{ t('inventory.error.loadFailed') }}
     </p>
 
+    <!-- 0. Prominent dashboard search box (D-02) — the one accent on-ramp.
+         Routes to /search via the shared goSearch, reusing the layout pattern. -->
+    <form class="flex flex-col gap-2 sm:flex-row" @submit.prevent="goSearch">
+      <div class="relative min-w-0 flex-1">
+        <Search class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          v-model="topbarQ"
+          :placeholder="t('inventory.search.placeholder')"
+          :aria-label="t('inventory.search.label')"
+          class="min-h-11 w-full pl-10 text-base"
+          data-testid="dashboard-search-input"
+        />
+      </div>
+      <Button type="submit" class="min-h-11 sm:w-auto">
+        {{ t('inventory.search.title') }}
+      </Button>
+    </form>
+
     <!-- 1. Totals strip -->
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4" data-testid="totals">
       <Card v-for="total in totals" :key="total.key" class="bg-card p-4">
@@ -115,18 +145,18 @@ useSeoMeta({
       </Card>
     </div>
 
-    <!-- 2. Quick-add Item — the one accent CTA on the dashboard. -->
+    <!-- 2. Quick-add Item. -->
     <div>
-      <Button @click="navigateTo('/items/new')">
+      <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo('/items/new')">
         {{ t('inventory.item.quickAdd') }}
       </Button>
     </div>
 
     <!-- 3. Area cards -->
     <div class="space-y-4">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="text-lg font-semibold">{{ t('inventory.totals.areas') }}</h2>
-        <Button data-testid="create-area" @click="createOpen = true">
+        <Button class="min-h-11" data-testid="create-area" @click="createOpen = true">
           {{ t('inventory.area.create') }}
         </Button>
       </div>
@@ -148,7 +178,7 @@ useSeoMeta({
           <li v-for="item in recent" :key="item.id">
             <NuxtLink
               :to="`/items/${item.id}`"
-              class="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-muted"
+              class="flex min-h-11 items-center gap-3 rounded-md px-2 py-3 hover:bg-muted"
             >
               <img
                 v-if="item.photos?.[0]"
