@@ -160,6 +160,7 @@ async function confirmRemove() {
       ref="createInput"
       type="file"
       accept="image/*"
+      capture="environment"
       class="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border file:border-input file:bg-background file:px-3 file:py-1.5 file:text-sm hover:file:bg-accent"
       @change="onCreatePick"
     >

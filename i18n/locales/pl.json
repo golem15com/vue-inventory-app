@@ -145,6 +145,37 @@
       "locations": "Miejsca",
       "items": "Rzeczy",
       "categories": "Kategorie"
+    },
+    "aiAssist": {
+      "entry": "Skataloguj z AI",
+      "entryLabel": "Użyj AI, aby skatalogować swój inwentarz",
+      "title": "Katalogowanie z AI",
+      "subtitle": "Zrób zdjęcie swoich rzeczy, a my przygotujemy ich listę do sprawdzenia.",
+      "step": {
+        "where": "Gdzie te rzeczy się znajdują?",
+        "photo": "Dodaj zdjęcie",
+        "review": "Sprawdź rzeczy"
+      },
+      "photoHint": "Zrób zdjęcie lub wybierz je z urządzenia.",
+      "analyze": "Analizuj zdjęcie",
+      "analyzing": "Analizowanie zdjęcia…",
+      "reviewHint": "Edytuj, usuń lub dodaj rzeczy przed zapisaniem.",
+      "addItem": "Dodaj rzecz",
+      "removeRow": "Usuń tę rzecz",
+      "duplicate": "Możliwy duplikat",
+      "duplicateHint": "Podobna rzecz może już istnieć.",
+      "saveAll": "Zapisz wszystko",
+      "saveAllCount": "Zapisz wszystko ({count})",
+      "attachPhoto": "Zdjęcie zostanie dodane do {location}.",
+      "saved": "Zapisano rzeczy: {count}",
+      "empty": {
+        "title": "Nie rozpoznano żadnych rzeczy",
+        "body": "Dodaj rzeczy ręcznie lub spróbuj z innym zdjęciem."
+      },
+      "addManually": "Dodaj ręcznie",
+      "retry": "Spróbuj z innym zdjęciem",
+      "error": "Nie udało się przeanalizować tego zdjęcia. Spróbuj ponownie lub dodaj rzeczy ręcznie.",
+      "back": "Powrót do pulpitu"
     }
   }
 }

@@ -145,6 +145,37 @@
       "locations": "Locations",
       "items": "Items",
       "categories": "Categories"
+    },
+    "aiAssist": {
+      "entry": "Use AI to catalog",
+      "entryLabel": "Use AI to catalog your inventory",
+      "title": "Catalog with AI",
+      "subtitle": "Snap a photo of your things and we'll list them for you to review.",
+      "step": {
+        "where": "Where do these things live?",
+        "photo": "Add a photo",
+        "review": "Review items"
+      },
+      "photoHint": "Take a photo or choose one from your device.",
+      "analyze": "Analyze photo",
+      "analyzing": "Analyzing photo…",
+      "reviewHint": "Edit, remove, or add items before saving.",
+      "addItem": "Add item",
+      "removeRow": "Remove this item",
+      "duplicate": "Possible duplicate",
+      "duplicateHint": "An item like this may already exist.",
+      "saveAll": "Save all",
+      "saveAllCount": "Save all ({count})",
+      "attachPhoto": "Photo will be added to {location}.",
+      "saved": "{count} items saved",
+      "empty": {
+        "title": "No items recognized",
+        "body": "Add items manually or try another photo."
+      },
+      "addManually": "Add manually",
+      "retry": "Try another photo",
+      "error": "Couldn't analyze that photo. Try again or add items manually.",
+      "back": "Back to dashboard"
     }
   }
 }
