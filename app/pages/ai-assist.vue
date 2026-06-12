@@ -26,7 +26,7 @@
  * renders via the AiAssistRow input/textarea VALUES — never raw HTML (T-07-17).
  */
 import { computed, onMounted, reactive, ref } from 'vue'
-import { Loader2, Plus, Sparkles } from '@lucide/vue'
+import { Loader2, MapPin, Plus, RotateCcw, Sparkles } from '@lucide/vue'
 import { toast } from 'vue-sonner'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
@@ -50,7 +50,7 @@ const { fetchCategories } = useInventory()
 // ---------------------------------------------------------------
 // Flow state
 // ---------------------------------------------------------------
-type Status = 'idle' | 'analyzing' | 'reviewed' | 'empty' | 'error'
+type Status = 'idle' | 'analyzing' | 'reviewed' | 'empty' | 'error' | 'saved'
 
 const areaId = ref<number | null>(null)
 const locationId = ref<number | null>(null)
@@ -58,6 +58,12 @@ const photoFile = ref<File | null>(null)
 const status = ref<Status>('idle')
 const saving = ref(false)
 const touched = ref(false)
+
+// Post-save success panel (D-07 "Scan more" flow): remember what was saved so the
+// success branch can confirm it and offer "Go to {location}" without re-fetching.
+const savedLocationId = ref<number | null>(null)
+const savedLocationName = ref<string>('')
+const savedCount = ref<number>(0)
 
 /**
  * Each entry pairs the editable row with its (non-blocking) duplicate flag and
@@ -160,6 +166,28 @@ function tryAnotherPhoto() {
   status.value = 'idle'
 }
 
+/**
+ * "Scan more" (D-07) — reset the screen for the next drawer while KEEPING the
+ * chosen Area pre-selected. The next drawer is a new Location, so Location, the
+ * staged photo, the item rows, and all transient/success state reset; Area stays.
+ * Used both from the review step (discards the current unsaved rows) and from the
+ * post-save success panel.
+ */
+function scanMore() {
+  locationId.value = null
+  photoFile.value = null
+  rows.splice(0)
+  touched.value = false
+  saving.value = false
+  status.value = 'idle'
+  // Clear the saved-success state.
+  savedLocationId.value = null
+  savedLocationName.value = ''
+  savedCount.value = 0
+  // Return to the top so Step 1 (Location pick for the next drawer) is in view.
+  if (import.meta.client) window.scrollTo({ top: 0 })
+}
+
 // ---------------------------------------------------------------
 // Duplicate flagging (D-13) — reuse the scoped /items/search read
 // ---------------------------------------------------------------
@@ -227,7 +255,13 @@ async function saveAll() {
         // Attach is best-effort; the items are already saved.
       }
     }
-    await navigateTo(`/locations/${locationId.value}`)
+    // D-07 deviation: instead of auto-navigating to the Location, enter a success
+    // panel so the user can immediately "Scan more" (the next drawer in the same
+    // Area). The Location stays one click away via "Go to {location}".
+    savedCount.value = payload.length
+    savedLocationId.value = locationId.value
+    savedLocationName.value = locationName.value
+    status.value = 'saved'
   }
   catch {
     // Store surfaced the failure toast; stay on the page so the user can retry.
@@ -357,7 +391,34 @@ useSeoMeta({
         </div>
       </div>
 
-      <!-- Reviewed: the editable repeater + Add item + Save all. -->
+      <!-- Saved: post-save success panel with "Scan more" + "Go to location". -->
+      <div v-else-if="status === 'saved'" class="space-y-4" data-testid="saved-panel">
+        <p class="rounded-md border border-primary/30 bg-primary/5 p-4 text-sm">
+          {{ t('inventory.aiAssist.savedBody', { count: savedCount, location: savedLocationName }) }}
+        </p>
+        <div class="flex flex-col gap-4 sm:flex-row">
+          <Button
+            class="min-h-11 w-full sm:w-auto"
+            data-testid="scan-more-saved"
+            @click="scanMore"
+          >
+            <RotateCcw class="size-4" />
+            {{ t('inventory.aiAssist.scanMore') }}
+          </Button>
+          <Button
+            v-if="savedLocationId != null"
+            variant="outline"
+            class="min-h-11 w-full sm:w-auto"
+            data-testid="go-to-location"
+            @click="navigateTo(`/locations/${savedLocationId}`)"
+          >
+            <MapPin class="size-4" />
+            {{ t('inventory.aiAssist.goToLocation', { location: savedLocationName }) }}
+          </Button>
+        </div>
+      </div>
+
+      <!-- Reviewed: the editable repeater + Add item + Scan more + Save all. -->
       <template v-else>
         <div class="space-y-4">
           <AiAssistRow
@@ -371,10 +432,14 @@ useSeoMeta({
           />
         </div>
 
-        <div>
+        <div class="flex flex-col gap-4 sm:flex-row">
           <Button variant="outline" class="min-h-11" data-testid="add-item" @click="addRow">
             <Plus class="size-4" />
             {{ t('inventory.aiAssist.addItem') }}
+          </Button>
+          <Button variant="ghost" class="min-h-11" data-testid="scan-more" @click="scanMore">
+            <RotateCcw class="size-4" />
+            {{ t('inventory.aiAssist.scanMore') }}
           </Button>
         </div>
 

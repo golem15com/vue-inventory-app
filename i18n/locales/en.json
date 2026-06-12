@@ -175,6 +175,10 @@
       "saveAllCount": "Save all ({count})",
       "attachPhoto": "Photo will be added to {location}.",
       "saved": "{count} items saved",
+      "scanMore": "Scan more",
+      "savedTitle": "Saved",
+      "savedBody": "{count} items saved to {location}.",
+      "goToLocation": "Go to {location}",
       "empty": {
         "title": "No items recognized",
         "body": "Add items manually or try another photo."

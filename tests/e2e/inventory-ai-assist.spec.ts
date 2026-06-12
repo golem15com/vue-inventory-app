@@ -29,6 +29,10 @@ import { test, expect, request as playwrightRequest } from '@playwright/test'
  *   - data-testid="add-manually"   → empty/error recovery "Add manually"
  *   - data-testid="add-item"       → Review "Add item" row
  *   - data-testid="save-all"       → Step 4 "Save all ({n})"
+ *   - data-testid="scan-more"      → Review-step "Scan more" (reset, keep Area)
+ *   - data-testid="scan-more-saved"→ Post-save success-panel "Scan more"
+ *   - data-testid="go-to-location" → Post-save success-panel "Go to {location}"
+ *   - data-testid="saved-panel"    → Post-save success panel container
  *   - data-testid="filter-area"    → AreaCombobox trigger (reused)
  *   - data-testid="location-combobox" → LocationCombobox trigger (reused)
  *   - data-testid="category-combobox" → CategoryCombobox trigger (reused)
@@ -143,6 +147,9 @@ test.describe('Inventory AI assist @inventory @ai-assist', () => {
     const addManually = page.getByTestId('add-manually')
     await expect(addManually).toBeVisible({ timeout: 10_000 })
     await addManually.click()
+
+    // The review step exposes a "Scan more" reset (D-07) alongside Save all.
+    await expect(page.getByTestId('scan-more')).toBeVisible()
 
     // Save all is disabled with zero valid rows (the new row has no name/category).
     const saveAll = page.getByTestId('save-all')

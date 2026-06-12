@@ -175,6 +175,10 @@
       "saveAllCount": "Zapisz wszystko ({count})",
       "attachPhoto": "Zdjęcie zostanie dodane do {location}.",
       "saved": "Zapisano rzeczy: {count}",
+      "scanMore": "Skanuj dalej",
+      "savedTitle": "Zapisano",
+      "savedBody": "Zapisano rzeczy: {count} w lokalizacji {location}.",
+      "goToLocation": "Przejdź do {location}",
       "empty": {
         "title": "Nie rozpoznano żadnych rzeczy",
         "body": "Dodaj rzeczy ręcznie lub spróbuj z innym zdjęciem."
