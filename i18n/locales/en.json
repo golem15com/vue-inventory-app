@@ -56,6 +56,7 @@
     "search": {
       "title": "Search",
       "placeholder": "Search your things…",
+      "placeholderShort": "Search…",
       "label": "Search inventory",
       "filters": "Filters",
       "filtersActive": "Filters · {count}",

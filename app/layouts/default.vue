@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Menu, Search, CircleUser } from '@lucide/vue'
 import { Toaster } from '~/components/ui/sonner'
 import { Button } from '~/components/ui/button'
@@ -39,6 +39,22 @@ const router = useRouter()
 const route = useRoute()
 const topbarQ = ref('')
 const showTopbarSearch = computed(() => route.path !== '/search')
+
+// Responsive top-bar placeholder — the narrow mobile input truncates the full
+// "Search your things…" to "Search your th…", so use a short "Search…" below lg.
+// Defaults to the short form during SSR + first client paint (mobile-first) so
+// there is no hydration mismatch; widens to the full text after mount on lg+.
+const isLgViewport = ref(false)
+onMounted(() => {
+  const mq = window.matchMedia('(min-width: 1024px)')
+  isLgViewport.value = mq.matches
+  mq.addEventListener('change', (e) => { isLgViewport.value = e.matches })
+})
+const searchPlaceholder = computed(() =>
+  isLgViewport.value
+    ? t('inventory.search.placeholder')
+    : t('inventory.search.placeholderShort'),
+)
 
 // Avatar Popover open state (desktop). Closes on a menu selection.
 const accountOpen = ref(false)
@@ -87,7 +103,7 @@ async function onLogout() {
               <Search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 v-model="topbarQ"
-                :placeholder="t('inventory.search.placeholder')"
+                :placeholder="searchPlaceholder"
                 :aria-label="t('inventory.search.label')"
                 class="min-h-11 pl-8"
                 data-testid="topbar-search-input"
