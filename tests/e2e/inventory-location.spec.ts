@@ -34,16 +34,23 @@ test.describe('@inventory @location', () => {
   test('add a Location; General has no delete; regular delete reassigns to General', async ({ page }) => {
     test.skip(!(await inventoryReachable()), `Inventory API unreachable at ${BACKEND_URL}/_inventory/api/v1 — backend-gated, skipped`)
 
+    // Unique Location name so re-runs against the same seed never collide.
+    const locName = `Półka ${Date.now()}`
+
     // Drill into the first Area from the dashboard.
     await page.goto('/')
+    // Wait for Nuxt hydration so the card link + dialog handlers are live before
+    // clicking — an interaction before hydration is a silent no-op.
+    await page.waitForLoadState('networkidle')
     await page.getByTestId('area-card').first().click()
+    await page.waitForLoadState('networkidle')
 
     // Add a Location via the modal.
     await page.getByTestId('add-location').click()
-    await page.getByLabel(/name/i).fill('Warsztat')
+    await page.getByLabel(/name/i).fill(locName)
     await page.getByRole('button', { name: /save|add/i }).click()
 
-    const row = page.getByTestId('location-row').filter({ hasText: 'Warsztat' })
+    const row = page.getByTestId('location-row').filter({ hasText: locName })
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // The General Location row exposes NO delete affordance (D-06 / is_general).

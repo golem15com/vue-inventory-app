@@ -36,15 +36,22 @@ test.describe('@inventory @area', () => {
   test('create → edit → delete an Area with consequence dialog', async ({ page }) => {
     test.skip(!(await inventoryReachable()), `Inventory API unreachable at ${BACKEND_URL}/_inventory/api/v1 — backend-gated, skipped`)
 
+    // Unique name so this create→delete cycle never collides with (or removes)
+    // the seeded "Reymonta" Area the other @inventory specs rely on.
+    const areaName = `Garaż ${Date.now()}`
+
     await page.goto('/')
+    // Wait for Nuxt hydration before clicking — a click on the SSR-rendered button
+    // before its @click handler attaches is a no-op (the dialog would never open).
+    await page.waitForLoadState('networkidle')
 
     // Create an Area via the dashboard "Create Area" modal.
     await page.getByTestId('create-area').click()
-    await page.getByLabel(/name/i).fill('Reymonta')
+    await page.getByLabel(/name/i).fill(areaName)
     await page.getByRole('button', { name: /save|create/i }).click()
 
     // It appears as a card with location/item counts.
-    const card = page.getByTestId('area-card').filter({ hasText: 'Reymonta' })
+    const card = page.getByTestId('area-card').filter({ hasText: areaName })
     await expect(card).toBeVisible({ timeout: 10_000 })
 
     // Delete → the consequence dialog spells out the cascade, then confirm.

@@ -40,16 +40,21 @@ test.describe('@inventory @item', () => {
     const itemName = `USB-C cable ${Date.now()}`
 
     await page.goto('/items/new')
+    // Wait for hydration so the comboboxes (Popover + Command) are interactive and
+    // the store has loaded the grouped Locations / Categories the options render from.
+    await page.waitForLoadState('networkidle')
 
     await page.getByTestId('item-name').fill(itemName)
 
     // Grouped-by-Area Location combobox (Popover + Command; items are role=option).
+    // Scope to the open listbox — the header language <select> also renders
+    // role=option elements, so an unscoped getByRole('option') would match those.
     await page.getByTestId('location-combobox').click()
-    await page.getByRole('option').first().click()
+    await page.getByRole('listbox').getByRole('option').first().click()
 
     // Category combobox — pick the first existing option (seed provides a category).
     await page.getByTestId('category-combobox').click()
-    await page.getByRole('option').first().click()
+    await page.getByRole('listbox').getByRole('option').first().click()
 
     await page.getByTestId('item-quantity').fill('3')
 

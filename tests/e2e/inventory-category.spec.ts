@@ -34,13 +34,18 @@ test.describe('@inventory @category', () => {
   test('add a category (read-only list, create-only)', async ({ page }) => {
     test.skip(!(await inventoryReachable()), `Inventory API unreachable at ${BACKEND_URL}/_inventory/api/v1 — backend-gated, skipped`)
 
+    // Unique name so the create path is exercised every run regardless of seed.
+    const catName = `Elektronika ${Date.now()}`
+
     await page.goto('/categories')
+    // Wait for hydration before clicking the create trigger.
+    await page.waitForLoadState('networkidle')
 
     await page.getByTestId('add-category').click()
-    await page.getByLabel(/name/i).fill('Narzędzia')
+    await page.getByLabel(/name/i).fill(catName)
     await page.getByRole('button', { name: /save|add|create/i }).click()
 
-    const row = page.getByTestId('category-row').filter({ hasText: 'Narzędzia' })
+    const row = page.getByTestId('category-row').filter({ hasText: catName })
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // Create-only: no edit/delete affordance on a category row (D-12).
