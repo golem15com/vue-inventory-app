@@ -87,7 +87,7 @@ async function onSubmit() {
       </Button>
     </form>
 
-    <p v-if="authStore.isLoggedIn" class="mt-4 text-sm text-green-600">
+    <p v-if="authStore.isLoggedIn" class="mt-4 text-sm text-muted-foreground">
       Signed in as {{ authStore.user?.email }}.
     </p>
   </div>

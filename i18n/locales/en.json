@@ -47,6 +47,7 @@
   },
   "inventory": {
     "nav": {
+      "account": "Account",
       "categories": "Categories",
       "logout": "Log out",
       "menu": "Open menu",

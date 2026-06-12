@@ -185,7 +185,7 @@ useSeoMeta({
     <!-- 3. Area cards -->
     <div class="space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-lg font-semibold">{{ t('inventory.totals.areas') }}</h2>
+        <h2 class="text-base font-semibold">{{ t('inventory.totals.areas') }}</h2>
         <Button class="min-h-11" data-testid="create-area" @click="createOpen = true">
           {{ t('inventory.area.create') }}
         </Button>
@@ -202,7 +202,7 @@ useSeoMeta({
 
     <!-- 4. Recent items -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">{{ t('inventory.totals.items') }}</h2>
+      <h2 class="text-base font-semibold">{{ t('inventory.totals.items') }}</h2>
       <Card class="p-2">
         <ul v-if="recent.length" class="divide-y">
           <li v-for="item in recent" :key="item.id">

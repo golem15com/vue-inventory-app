@@ -1,17 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Menu, Search } from '@lucide/vue'
+import { computed, ref } from 'vue'
+import { Menu, Search, CircleUser } from '@lucide/vue'
 import { Toaster } from '~/components/ui/sonner'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '~/components/ui/sheet'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '~/components/ui/popover'
+import LanguageSwitcher from '~/components/common/LanguageSwitcher.vue'
 
-// Locale switcher. @nuxtjs/i18n writes the `i18n_locale` cookie
-// (detectBrowserLanguage.useCookie) when `setLocale` is called.
-const { locale, locales, setLocale, t } = useI18n()
+const { t } = useI18n()
 
-// Auth store — surface the existing logout action (do NOT reimplement auth).
+// Auth store — surface the existing logout action + the user for avatar initials
+// (do NOT reimplement auth).
 const auth = useAuthStore()
+
+// Avatar initials from the user's first/last name (falls back to a CircleUser
+// icon when neither is set). E.g. "Jakub Zych" → "JZ". Whitespace-only or empty
+// names yield no initials so the icon shows instead.
+const initials = computed(() => {
+  const u = auth.user
+  if (!u) return ''
+  const first = (u.first_name ?? '').trim()
+  const last = (u.last_name ?? '').trim()
+  const joined = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase()
+  return joined.trim()
+})
 
 // Top-bar search on-ramp (D-02) — visible everywhere EXCEPT /search, where the
 // page hosts its own live debounced query box (a second box there is redundant
@@ -23,25 +40,17 @@ const route = useRoute()
 const topbarQ = ref('')
 const showTopbarSearch = computed(() => route.path !== '/search')
 
+// Avatar Popover open state (desktop). Closes on a menu selection.
+const accountOpen = ref(false)
+
 function goSearch() {
   router.push({ path: '/search', query: topbarQ.value ? { q: topbarQ.value } : {} })
 }
 
 async function onLogout() {
+  accountOpen.value = false
   await auth.logout()
   await navigateTo('/login')
-}
-
-const availableLocales = computed(() =>
-  (locales.value as Array<{ code: string; name?: string }>).map(l => ({
-    code: l.code,
-    name: l.name ?? l.code.toUpperCase(),
-  })),
-)
-
-function onLocaleChange(event: Event) {
-  const code = (event.target as HTMLSelectElement).value
-  setLocale(code as typeof locale.value)
 }
 </script>
 
@@ -49,9 +58,19 @@ function onLocaleChange(event: Event) {
   <div class="flex min-h-screen flex-col bg-background text-foreground font-body">
     <header class="border-b">
       <div class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 sm:gap-4">
-        <!-- App name — always visible. Points at /dashboard (the authed home);
-             `/` is now the public landing. -->
-        <NuxtLink to="/dashboard" class="shrink-0 font-semibold">Inventory</NuxtLink>
+        <!-- Brand lockup — mark + lowercase wordmark, paired with gap-2 (mirrors
+             the public header so authed pages never degrade to a bare wordmark).
+             Points at /dashboard (the authed home); `/` is the public landing. -->
+        <NuxtLink to="/dashboard" class="flex shrink-0 items-center gap-2">
+          <img
+            src="/brand/logo.png"
+            alt="whereiput.it"
+            class="h-7 w-auto"
+            width="28"
+            height="28"
+          >
+          <span class="text-base font-semibold tracking-tight">whereiput.it</span>
+        </NuxtLink>
 
         <!-- Top-bar search on-ramp (D-02) — visible everywhere except /search,
              where the page hosts its own live debounced box. The flex-1 wrapper
@@ -74,37 +93,49 @@ function onLocaleChange(event: Event) {
         </div>
 
         <!-- Desktop chrome — inline only at lg: and above (D-10). -->
-        <div class="hidden items-center gap-3 text-sm lg:flex">
-          <!-- Categories — neutral chrome (ghost), never accent-filled (D-03). -->
-          <NuxtLink to="/categories" class="text-muted-foreground hover:text-foreground">
+        <div class="hidden items-center gap-2 text-sm lg:flex">
+          <!-- Categories — top-level neutral chrome (ghost), never accent-filled (D-03). -->
+          <NuxtLink to="/categories" class="px-2 text-muted-foreground hover:text-foreground">
             {{ t('inventory.nav.categories') }}
           </NuxtLink>
 
-          <!-- Settings (Integrations / API tokens) — neutral chrome (D-03). -->
-          <NuxtLink to="/settings" class="text-muted-foreground hover:text-foreground">
-            {{ t('inventory.nav.settings') }}
-          </NuxtLink>
+          <!-- Reusable language switcher popover (writes the i18n_locale cookie). -->
+          <LanguageSwitcher />
 
-          <!-- Logout — surfaces the existing auth store action (no reimplement). -->
-          <Button variant="ghost" size="sm" @click="onLogout">
-            {{ t('inventory.nav.logout') }}
-          </Button>
-
-          <!-- Locale switcher (writes the i18n_locale cookie). -->
-          <select
-            :value="locale"
-            aria-label="Language"
-            class="min-h-11 rounded-md border bg-background px-2 py-1 text-sm"
-            @change="onLocaleChange"
-          >
-            <option v-for="l in availableLocales" :key="l.code" :value="l.code">
-              {{ l.name }}
-            </option>
-          </select>
+          <!-- User avatar menu — initials (or CircleUser icon) opening a Popover
+               with Settings + Logout. Neutral chrome; semantic tokens only. -->
+          <Popover v-model:open="accountOpen">
+            <PopoverTrigger as-child>
+              <button
+                type="button"
+                :aria-label="t('inventory.nav.account')"
+                class="inline-flex size-11 items-center justify-center rounded-full border bg-muted text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span v-if="initials">{{ initials }}</span>
+                <CircleUser v-else class="size-5" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" class="w-48 p-1">
+              <NuxtLink
+                to="/settings"
+                class="flex min-h-11 items-center rounded-md px-3 text-sm text-foreground transition-colors hover:bg-muted"
+                @click="accountOpen = false"
+              >
+                {{ t('inventory.nav.settings') }}
+              </NuxtLink>
+              <button
+                type="button"
+                class="flex min-h-11 w-full items-center rounded-md px-3 text-left text-sm text-foreground transition-colors hover:bg-muted"
+                @click="onLogout"
+              >
+                {{ t('inventory.nav.logout') }}
+              </button>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <!-- Phone chrome — hamburger → right-side sheet below lg: (D-10).
-             Relocates the SAME Categories/logout/locale controls; no new data. -->
+             Relocates the SAME Categories / language / account controls. -->
         <Sheet>
           <SheetTrigger as-child>
             <Button
@@ -128,6 +159,15 @@ function onLocaleChange(event: Event) {
                 </NuxtLink>
               </SheetClose>
 
+              <!-- Language switcher (same reusable popover as desktop). -->
+              <div class="px-1">
+                <LanguageSwitcher />
+              </div>
+
+              <!-- Account group — Settings + Logout. -->
+              <p class="px-3 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {{ t('inventory.nav.account') }}
+              </p>
               <SheetClose as-child>
                 <NuxtLink
                   to="/settings"
@@ -136,7 +176,6 @@ function onLocaleChange(event: Event) {
                   {{ t('inventory.nav.settings') }}
                 </NuxtLink>
               </SheetClose>
-
               <Button
                 variant="ghost"
                 class="min-h-11 justify-start px-3 text-muted-foreground hover:text-foreground"
@@ -144,17 +183,6 @@ function onLocaleChange(event: Event) {
               >
                 {{ t('inventory.nav.logout') }}
               </Button>
-
-              <select
-                :value="locale"
-                aria-label="Language"
-                class="min-h-11 rounded-md border bg-background px-3 text-sm"
-                @change="onLocaleChange"
-              >
-                <option v-for="l in availableLocales" :key="l.code" :value="l.code">
-                  {{ l.name }}
-                </option>
-              </select>
             </nav>
           </SheetContent>
         </Sheet>
@@ -166,10 +194,9 @@ function onLocaleChange(event: Event) {
     </main>
 
     <!--
-      Golem15 Stack attribution. Intentionally subtle — the header/main are the
-      client project's space; this footer badge marks the starter as part of the
-      Golem15 Stack without competing with project branding. Safe to remove or
-      replace per project.
+      whereiput.it attribution. Intentionally subtle — the header/main are the
+      primary brand space; this footer badge marks the build without competing
+      with the page content. Semantic tokens only.
     -->
     <footer class="border-t">
       <div class="mx-auto flex max-w-5xl items-center justify-center gap-2 px-4 py-6 text-xs text-muted-foreground">

@@ -114,7 +114,7 @@ function scheduleClose() {
 <template>
   <div
     class="rounded-md border bg-card p-4"
-    :class="duplicate ? 'border-l-2 border-l-amber-500/60' : ''"
+    :class="duplicate ? 'border-l-2 border-l-accent' : ''"
   >
     <!-- Card header: name heading (left) + remove (top-right corner). -->
     <div class="mb-4 flex items-start justify-between gap-4">
@@ -132,7 +132,7 @@ function scheduleClose() {
           <PopoverTrigger as-child>
             <button
               type="button"
-              class="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-sm text-amber-700 outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 dark:text-amber-400"
+              class="inline-flex items-center gap-1 rounded-md border border-accent bg-accent px-2 py-1 text-sm text-accent-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               :aria-label="duplicateTriggerLabel"
               @mouseenter="openPopover"
               @mouseleave="scheduleClose"
