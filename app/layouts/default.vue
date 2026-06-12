@@ -81,7 +81,7 @@ async function onLogout() {
              is ALWAYS rendered (stable hydration: no v-if/v-else sibling pairing,
              no interleaved comment node) so chrome stays right-aligned and the
              server/client vnode shape never diverges. -->
-        <div class="min-w-0 flex-1 sm:max-w-sm">
+        <div class="min-w-0 w-full max-w-sm">
           <form v-if="showTopbarSearch" @submit.prevent="goSearch">
             <div class="relative">
               <Search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -96,8 +96,9 @@ async function onLogout() {
           </form>
         </div>
 
-        <!-- Desktop chrome — inline only at lg: and above (D-10). -->
-        <div class="hidden items-center gap-2 text-sm lg:flex">
+        <!-- Desktop chrome — inline only at lg: and above (D-10). Pinned to the
+             far right via ml-auto so the avatar menu reaches the screen edge. -->
+        <div class="ml-auto hidden items-center gap-2 text-sm lg:flex">
           <!-- Categories — top-level neutral chrome (ghost), never accent-filled (D-03). -->
           <NuxtLink to="/categories" class="px-2 text-muted-foreground hover:text-foreground">
             {{ t('inventory.nav.categories') }}
@@ -145,7 +146,7 @@ async function onLogout() {
             <Button
               variant="ghost"
               size="icon"
-              class="size-11 shrink-0 lg:hidden"
+              class="ml-auto size-11 shrink-0 lg:hidden"
               data-testid="nav-menu"
               :aria-label="t('inventory.nav.menu')"
             >
