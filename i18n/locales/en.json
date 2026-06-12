@@ -161,6 +161,7 @@
       "analyzing": "Analyzing photo…",
       "reviewHint": "Edit, remove, or add items before saving.",
       "addItem": "Add item",
+      "newItem": "New item",
       "removeRow": "Remove this item",
       "duplicate": "Possible duplicate",
       "duplicateHint": "An item like this may already exist.",

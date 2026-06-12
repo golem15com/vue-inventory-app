@@ -63,8 +63,11 @@ const quantityModel = computed<string | number>({
   },
 })
 
-/** Localized remove aria-label — falls back to the generic label when name is empty. */
+/** Localized remove aria-label. */
 const removeLabel = computed(() => t('inventory.aiAssist.removeRow'))
+
+/** Header heading: the row's current name, falling back to a generic label when empty. */
+const headingLabel = computed(() => row.value.name.trim() || t('inventory.aiAssist.newItem'))
 </script>
 
 <template>
@@ -72,19 +75,38 @@ const removeLabel = computed(() => t('inventory.aiAssist.removeRow'))
     class="rounded-md border bg-card p-4"
     :class="duplicate ? 'border-l-2 border-l-amber-500/60' : ''"
   >
-    <!-- Duplicate flag (text + icon, never color-only — Phase 6 a11y rule). -->
-    <div v-if="duplicate" class="mb-4">
-      <span
-        class="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-sm text-amber-700 dark:text-amber-400"
-        :title="t('inventory.aiAssist.duplicateHint')"
+    <!-- Card header: name heading (left) + remove (top-right corner). -->
+    <div class="mb-4 flex items-start justify-between gap-4">
+      <div class="min-w-0 space-y-2">
+        <h3 class="truncate text-base font-medium" :class="row.name.trim() ? '' : 'text-muted-foreground'">
+          {{ headingLabel }}
+        </h3>
+        <!-- Duplicate flag (text + icon, never color-only — Phase 6 a11y rule). -->
+        <span
+          v-if="duplicate"
+          class="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-sm text-amber-700 dark:text-amber-400"
+          :title="t('inventory.aiAssist.duplicateHint')"
+        >
+          <AlertTriangle class="size-4" />
+          {{ t('inventory.aiAssist.duplicate') }}
+        </span>
+      </div>
+
+      <!-- Remove (44px, no confirm — non-destructive on unsaved data). -->
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        class="shrink-0 text-destructive hover:text-destructive"
+        :aria-label="removeLabel"
+        @click="emit('remove')"
       >
-        <AlertTriangle class="size-4" />
-        {{ t('inventory.aiAssist.duplicate') }}
-      </span>
+        <X />
+      </Button>
     </div>
 
-    <!-- Phone: stacked. sm:+: name / category / quantity inline, remove trailing. -->
-    <div class="flex flex-col gap-4 sm:grid sm:grid-cols-[1fr_1fr_auto_auto] sm:items-start sm:gap-4">
+    <!-- Phone: stacked. sm:+: name / category / quantity inline. -->
+    <div class="flex flex-col gap-4 sm:grid sm:grid-cols-[1fr_1fr_auto] sm:items-start sm:gap-4">
       <!-- Name (required) -->
       <div class="space-y-2">
         <Label class="text-sm">{{ t('inventory.field.name') }}</Label>
@@ -115,21 +137,6 @@ const removeLabel = computed(() => t('inventory.aiAssist.removeRow'))
           min="0"
           inputmode="numeric"
         />
-      </div>
-
-      <!-- Remove (44px, no confirm — non-destructive on unsaved data) -->
-      <div class="space-y-2">
-        <Label class="text-sm sm:sr-only">&nbsp;</Label>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          class="text-destructive hover:text-destructive"
-          :aria-label="removeLabel"
-          @click="emit('remove')"
-        >
-          <X />
-        </Button>
       </div>
     </div>
 
