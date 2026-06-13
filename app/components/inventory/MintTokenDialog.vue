@@ -46,7 +46,7 @@ const { t } = useI18n()
 const store = useInventoryStore()
 const config = useRuntimeConfig()
 
-/** The MCP install one-liner shown for copy in the reveal step. */
+/** The token-less MCP install one-liner (installer prompts for the token). */
 const installCommand = computed(() => config.public.mcpInstallCommand)
 
 const ALL_SCOPES: TokenScope[] = ['read', 'write', 'ai']
@@ -61,6 +61,18 @@ const secret = ref<string | null>(null)
 const copied = ref(false)
 
 const revealed = computed(() => secret.value !== null)
+
+/**
+ * The one-paste install command with the freshly-minted secret embedded, so the
+ * installer runs non-interactively. Convenience over the token-less form — at the
+ * cost of the secret landing in shell history (surfaced via the history warning).
+ * Empty until the secret exists (reveal phase only).
+ */
+const prefilledInstallCommand = computed(() =>
+  secret.value
+    ? `curl -fsSL ${config.public.mcpInstallUrl} | bash -s -- ${secret.value}`
+    : '',
+)
 
 // Reset everything whenever the dialog (re)opens.
 watch(
@@ -132,6 +144,17 @@ async function copySecret() {
 async function copyInstall() {
   try {
     await navigator.clipboard.writeText(installCommand.value)
+    toast.success(t('inventory.settings.copied'))
+  }
+  catch {
+    // No-op — the command text remains selectable.
+  }
+}
+
+async function copyPrefilledInstall() {
+  if (!prefilledInstallCommand.value) return
+  try {
+    await navigator.clipboard.writeText(prefilledInstallCommand.value)
     toast.success(t('inventory.settings.copied'))
   }
   catch {
@@ -233,11 +256,28 @@ async function copyInstall() {
           </div>
         </div>
 
+        <!-- Install — prefilled one-paste command (secret embedded). -->
         <div class="space-y-1.5">
           <p class="text-sm text-muted-foreground">{{ t('inventory.settings.installHint') }}</p>
           <button
             type="button"
             class="flex w-full items-center justify-between gap-2 rounded-md border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
+            data-testid="token-install-prefilled"
+            @click="copyPrefilledInstall"
+          >
+            <span class="truncate">{{ prefilledInstallCommand }}</span>
+            <Copy class="size-4 shrink-0 text-muted-foreground" />
+          </button>
+          <p class="text-xs text-muted-foreground">{{ t('inventory.settings.installHistoryWarning') }}</p>
+        </div>
+
+        <!-- Install — token-less command (installer prompts for the token). -->
+        <div class="space-y-1.5">
+          <p class="text-sm text-muted-foreground">{{ t('inventory.settings.installHintSafe') }}</p>
+          <button
+            type="button"
+            class="flex w-full items-center justify-between gap-2 rounded-md border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
+            data-testid="token-install-safe"
             @click="copyInstall"
           >
             <span class="truncate">{{ installCommand }}</span>

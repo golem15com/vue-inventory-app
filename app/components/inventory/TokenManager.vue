@@ -25,6 +25,7 @@ import {
 } from '~/components/ui/dialog'
 import { Plus, Trash2 } from '@lucide/vue'
 import MintTokenDialog from '~/components/inventory/MintTokenDialog.vue'
+import McpInstallInstructions from '~/components/inventory/McpInstallInstructions.vue'
 import EmptyState from '~/components/inventory/EmptyState.vue'
 import { useInventoryStore } from '~/stores/inventory'
 import type { TokenMeta } from '~~/shared/types/inventory'
@@ -90,6 +91,8 @@ function formatStamp(value: string | null): string {
         {{ t('inventory.settings.mint') }}
       </Button>
     </header>
+
+    <McpInstallInstructions />
 
     <p v-if="loadFailed" class="rounded-md border border-destructive/40 p-4 text-sm text-destructive">
       {{ t('inventory.settings.loadError') }}

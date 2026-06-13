@@ -260,12 +260,23 @@
       "copied": "Skopiowano do schowka",
       "done": "Gotowe",
       "empty": "Nie masz jeszcze żadnych tokenów API. Wygeneruj token, aby połączyć zewnętrzne narzędzia.",
-      "installHint": "Zainstaluj serwer MCP, a następnie wklej ten token, gdy pojawi się prośba:",
+      "installHint": "Instalacja jednym wklejeniem — to polecenie zawiera już Twój token:",
+      "installHistoryWarning": "Uwaga: to polecenie zawiera Twój token, więc zostanie zapisane w historii powłoki.",
+      "installHintSafe": "Wolisz nie zapisywać tokenu w historii powłoki? Uruchom zamiast tego to polecenie i wklej token, gdy pojawi się prośba:",
       "nameRequired": "Nadaj tokenowi nazwę.",
       "scopeRequired": "Wybierz co najmniej jedno uprawnienie.",
       "tokenMinted": "Token wygenerowany",
       "tokenRevoked": "Token odwołany",
-      "loadError": "Nie udało się wczytać tokenów. Spróbuj ponownie."
+      "loadError": "Nie udało się wczytać tokenów. Spróbuj ponownie.",
+      "mcpInstall": {
+        "title": "Połącz narzędzie AI (MCP)",
+        "intro": "Zainstaluj serwer MCP Inventory, aby przeszukiwać i zarządzać inwentarzem z Claude Code, Codex lub dowolnego klienta MCP. Wygeneruj token poniżej, a następnie użyj jednej z opcji:",
+        "oneLinerLabel": "Najszybciej — uruchom instalator",
+        "oneLinerHint": "Konfiguruje Claude Code (globalnie lub w tym folderze) i/lub Codex oraz prosi o token.",
+        "claudeLabel": "Claude Code (ręcznie)",
+        "codexLabel": "Codex — ~/.codex/config.toml (ręcznie)",
+        "tokenNote": "Zastąp inv_YOUR_TOKEN tokenem wygenerowanym powyżej. Dostęp narzędzi odpowiada uprawnieniom tokenu (read / write / ai)."
+      }
     },
     "dashboard": {
       "brandAlt": "Logo whereiput.it",

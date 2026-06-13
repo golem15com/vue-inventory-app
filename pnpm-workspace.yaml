@@ -1,2 +1,8 @@
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  protobufjs: true
+  sharp: true
+  vue-demi: true
 patchedDependencies:
   nuxtseo-shared@5.2.2: patches/nuxtseo-shared@5.2.2.patch

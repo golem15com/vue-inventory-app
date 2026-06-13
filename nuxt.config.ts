@@ -64,7 +64,11 @@ export default defineNuxtConfig({
       inventoryApiBase: '/_inventory/api/v1',
       // MCP install one-liner surfaced in the token-mint reveal (Phase 8).
       // Override with NUXT_PUBLIC_MCP_INSTALL_COMMAND per deployment.
-      mcpInstallCommand: 'curl -fsSL https://mcp.jakubzych.com | bash',
+      mcpInstallCommand: 'curl -fsSL https://mcp.whereiput.it | bash',
+      // Bare MCP server origin — used to compose the token-prefilled install
+      // command and the manual Claude/Codex snippets in the Integrations tab.
+      // Override with NUXT_PUBLIC_MCP_INSTALL_URL per deployment.
+      mcpInstallUrl: 'https://mcp.whereiput.it',
       // Centrifugo websocket URL. Empty = realtime gracefully degrades (no-op).
       // The WS connection is a direct cross-origin socket (not proxied) — set it
       // to your Centrifugo endpoint and add the app origin to Centrifugo's

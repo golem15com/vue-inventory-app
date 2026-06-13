@@ -260,12 +260,23 @@
       "copied": "Copied to clipboard",
       "done": "Done",
       "empty": "You have no API tokens yet. Generate one to connect external tools.",
-      "installHint": "Install the MCP server, then paste this token when prompted:",
+      "installHint": "One-paste install — this command already includes your token:",
+      "installHistoryWarning": "Heads up: this command contains your token, so it will be saved in your shell history.",
+      "installHintSafe": "Prefer to keep the token out of your shell history? Run this instead and paste the token when prompted:",
       "nameRequired": "Give your token a name.",
       "scopeRequired": "Select at least one scope.",
       "tokenMinted": "Token generated",
       "tokenRevoked": "Token revoked",
-      "loadError": "Couldn't load your tokens. Try again."
+      "loadError": "Couldn't load your tokens. Try again.",
+      "mcpInstall": {
+        "title": "Connect an AI tool (MCP)",
+        "intro": "Install the Inventory MCP server to search and manage your inventory from Claude Code, Codex, or any MCP client. Generate a token below, then use one of these:",
+        "oneLinerLabel": "Quickest — run the installer",
+        "oneLinerHint": "Configures Claude Code (global or this-folder) and/or Codex, and prompts for your token.",
+        "claudeLabel": "Claude Code (manual)",
+        "codexLabel": "Codex — ~/.codex/config.toml (manual)",
+        "tokenNote": "Replace inv_YOUR_TOKEN with a token generated above. Tool access matches the token's scopes (read / write / ai)."
+      }
     },
     "dashboard": {
       "brandAlt": "whereiput.it logo",
