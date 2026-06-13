@@ -53,6 +53,15 @@ export default defineNuxtConfig({
   // headers for the app origin.
   // -------------------------------------------------------------------------
   runtimeConfig: {
+    // Server-only: absolute origin SSR uses to reach the PHP backend (Nitro
+    // can't serve relative /_user|/_inventory paths against itself — they
+    // resolve to the Nitro server and 502). Override per deployment with
+    // NUXT_INTERNAL_API_ORIGIN. Defaults to the public site URL so prod
+    // (same-origin) works without extra env, falling back to the canonical
+    // production origin.
+    internalApiOrigin: process.env.NUXT_INTERNAL_API_ORIGIN
+      || process.env.NUXT_PUBLIC_SITE_URL
+      || 'https://whereiput.it',
     public: {
       // Backend base — same-origin (empty) so $api uses relative URLs.
       apiBase: '',

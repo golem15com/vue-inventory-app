@@ -22,8 +22,15 @@ export default defineNuxtPlugin(() => {
   const ssrToken = import.meta.server ? useCookie('auth_token') : null
   const userApiBase = config.public.userApiBase as string
 
+  // SSR resolves relative paths against the Nitro server itself (502). Use the
+  // server-only absolute backend origin during SSR; keep the client baseURL
+  // exactly as before (empty/relative → same-origin, nginx-routed).
+  const baseURL = import.meta.server
+    ? (config.internalApiOrigin as string) || (config.public.apiBase as string)
+    : (config.public.apiBase as string)
+
   const rawApi = $fetch.create({
-    baseURL: config.public.apiBase as string,
+    baseURL,
 
     onRequest({ options }) {
       // Client: read directly from document.cookie on every request.

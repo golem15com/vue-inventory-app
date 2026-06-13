@@ -18,6 +18,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { AuthUser } from '~~/shared/types/auth'
+import { resolveApiUrl } from '~/utils/apiOrigin'
 
 interface LoginResponse {
   token?: string
@@ -112,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const base = useRuntimeConfig().public.inventoryApiBase as string
       const response = await $fetch<{ data: unknown[], can_use_ai?: boolean }>(
-        `${base}/me/areas`,
+        resolveApiUrl(`${base}/me/areas`),
         { headers: { Authorization: `Bearer ${token.value}` } },
       )
       canUseAi.value = response.can_use_ai === true
@@ -213,7 +214,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const response = await $fetch<{ user: AuthUser }>(
-        `${userApiBase()}/fetch`,
+        resolveApiUrl(`${userApiBase()}/fetch`),
         { headers: { Authorization: `Bearer ${token.value}` } },
       )
       user.value = response.user
@@ -221,9 +222,22 @@ export const useAuthStore = defineStore('auth', () => {
       // dashboard v-if + ai-gate guard have it before first paint (D-14).
       await fetchCanUseAi()
     }
-    catch {
-      // Token invalid or expired — clear it.
-      clearSession()
+    catch (err: unknown) {
+      // Only a real 401 means the token is invalid/expired — clear it.
+      // Network errors / 5xx (e.g. SSR backend unreachable, transient 502)
+      // must NOT delete a valid session cookie: leave it so the client can
+      // hydrate and retry. ofetch/Nuxt error objects expose `statusCode`
+      // (and a nested response.status); check both. If neither is present
+      // (true network error), treat as non-401 and KEEP the session.
+      const status = (err && typeof err === 'object' && 'status' in err)
+        ? (err as { status: number }).status
+        : (err && typeof err === 'object' && 'statusCode' in err)
+            ? (err as { statusCode: number }).statusCode
+            : undefined
+      if (status === 401) {
+        clearSession()
+      }
+      // else: keep token + session intact (client hydrate/retry).
     }
   }
 
