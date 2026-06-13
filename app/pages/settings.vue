@@ -12,6 +12,7 @@ import { computed } from 'vue'
 import { Button } from '~/components/ui/button'
 import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import TokenManager from '~/components/inventory/TokenManager.vue'
+import AiSettings from '~/components/inventory/AiSettings.vue'
 
 definePageMeta({ middleware: 'auth' })
 
@@ -19,14 +20,15 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-type Tab = 'integrations'
+type Tab = 'integrations' | 'ai'
 const TABS: Array<{ key: Tab, label: string }> = [
   { key: 'integrations', label: 'inventory.settings.integrations.title' },
+  { key: 'ai', label: 'inventory.settings.ai.title' },
 ]
 
 const activeTab = computed<Tab>(() => {
   const q = route.query.tab
-  return q === 'integrations' ? 'integrations' : 'integrations'
+  return q === 'ai' ? 'ai' : q === 'integrations' ? 'integrations' : 'integrations'
 })
 
 function selectTab(tab: Tab) {
@@ -67,5 +69,6 @@ useSeoMeta({
     </nav>
 
     <TokenManager v-if="activeTab === 'integrations'" />
+    <AiSettings v-else-if="activeTab === 'ai'" />
   </section>
 </template>
