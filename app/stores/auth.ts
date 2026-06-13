@@ -67,6 +67,18 @@ export const useAuthStore = defineStore('auth', () => {
     sameSite: 'lax',
   })
 
+  // Pre-resolve the me/areas URL at store-setup scope, where the Nuxt instance
+  // is guaranteed present. fetchCanUseAi() runs NESTED after fetchUser()'s first
+  // `await` during SSR (auth-init.server) — calling useRuntimeConfig()/
+  // resolveApiUrl() there throws "Nuxt instance unavailable" (context is lost
+  // across an await), which the catch swallowed → canUseAi silently false → the
+  // AI affordances vanished on every hard reload. Resolving once here is
+  // await-safe. resolveApiUrl is absolute on SSR (internalApiOrigin), relative
+  // (nginx-routed) in the browser.
+  const meAreasUrl = resolveApiUrl(
+    `${useRuntimeConfig().public.inventoryApiBase as string}/me/areas`,
+  )
+
   // ---------------------------------------------------------------
   // Computed
   // ---------------------------------------------------------------
@@ -111,9 +123,11 @@ export const useAuthStore = defineStore('auth', () => {
       return
     }
     try {
-      const base = useRuntimeConfig().public.inventoryApiBase as string
+      // meAreasUrl is pre-resolved at store-setup scope — DO NOT call
+      // useRuntimeConfig()/resolveApiUrl() here: this runs nested after an await
+      // during SSR, where the Nuxt instance is gone and those composables throw.
       const response = await $fetch<{ data: unknown[], can_use_ai?: boolean }>(
-        resolveApiUrl(`${base}/me/areas`),
+        meAreasUrl,
         { headers: { Authorization: `Bearer ${token.value}` } },
       )
       canUseAi.value = response.can_use_ai === true
