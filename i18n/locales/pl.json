@@ -96,6 +96,7 @@
     },
     "area": {
       "create": "Dodaj obszar",
+      "edit": "Edytuj obszar",
       "saved": "Obszar zapisany",
       "delete": {
         "title": "Usunąć „{name}”?",
@@ -104,6 +105,7 @@
     },
     "location": {
       "create": "Dodaj miejsce",
+      "edit": "Edytuj lokalizację",
       "saved": "Miejsce zapisane",
       "photos": "Zdjęcia",
       "delete": {
@@ -118,8 +120,11 @@
     "item": {
       "quickAdd": "Szybko dodaj rzecz",
       "add": "Dodaj rzecz",
+      "edit": "Edytuj przedmiot",
       "save": "Zapisz rzecz",
       "saved": "Rzecz zapisana",
+      "locationPhoto": "Zdjęcie lokalizacji",
+      "noPhoto": "Brak zdjęcia.",
       "photo": {
         "delete": {
           "title": "Usunąć to zdjęcie?"
@@ -157,6 +162,7 @@
     "error": {
       "saveFailed": "Nie udało się zapisać. Sprawdź połączenie i spróbuj ponownie.",
       "loadFailed": "Nie udało się wczytać. Odśwież, aby spróbować ponownie.",
+      "itemLoad": "Nie udało się wczytać tego przedmiotu. Odśwież lub wróć i spróbuj ponownie.",
       "notFound": "To nie istnieje lub nie jest dla Ciebie dostępne.",
       "photoRejected": "Nie udało się przesłać obrazu. Użyj JPG, PNG, GIF lub WebP poniżej 10 MB.",
       "nameRequired": "Nadaj tej rzeczy nazwę.",

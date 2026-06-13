@@ -27,6 +27,18 @@ export interface InventoryRef {
   name: string
 }
 
+/**
+ * Embedded Location carried on Item.location — like InventoryRef but with the
+ * optional attached photos (D-05 location-photo fallback). The serializer emits
+ * `location.photos` so View Item / SearchResultRow can fall back to a Location
+ * cover when the Item has no photo of its own.
+ */
+export interface EmbeddedLocation {
+  id: number
+  name: string
+  photos?: Photo[]
+}
+
 export interface Area {
   id: number
   name: string
@@ -35,6 +47,8 @@ export interface Area {
   /** Present after Plan 05-01 serializer change — drives totals + delete copy. */
   location_count?: number
   item_count?: number
+  /** Attached Area photos (D-09) — present after the serializer change. */
+  photos?: Photo[]
   created_at: string
   updated_at: string
 }
@@ -57,7 +71,7 @@ export interface Item {
   name: string
   quantity: number | null
   description: string | null
-  location: InventoryRef | null
+  location: EmbeddedLocation | null
   area: InventoryRef | null
   category: InventoryRef | null
   tags: InventoryRef[]

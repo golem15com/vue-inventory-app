@@ -96,6 +96,7 @@
     },
     "area": {
       "create": "Create Area",
+      "edit": "Edit Area",
       "saved": "Area saved",
       "delete": {
         "title": "Delete \"{name}\"?",
@@ -104,6 +105,7 @@
     },
     "location": {
       "create": "Add Location",
+      "edit": "Edit Location",
       "saved": "Location saved",
       "photos": "Photos",
       "delete": {
@@ -118,8 +120,11 @@
     "item": {
       "quickAdd": "Quick-add Item",
       "add": "Add Item",
+      "edit": "Edit item",
       "save": "Save Item",
       "saved": "Item saved",
+      "locationPhoto": "Location photo",
+      "noPhoto": "No photo yet.",
       "photo": {
         "delete": {
           "title": "Remove this photo?"
@@ -157,6 +162,7 @@
     "error": {
       "saveFailed": "Couldn't save. Check your connection and try again.",
       "loadFailed": "Couldn't load this. Refresh to try again.",
+      "itemLoad": "Couldn't load this item. Refresh, or go back and try again.",
       "notFound": "This doesn't exist or isn't available to you.",
       "photoRejected": "That image couldn't be uploaded. Use JPG, PNG, GIF, or WebP under 10 MB.",
       "nameRequired": "Give this thing a name.",
