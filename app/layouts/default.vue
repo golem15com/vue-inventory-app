@@ -130,7 +130,7 @@ async function onLogout() {
               <button
                 type="button"
                 :aria-label="t('inventory.nav.account')"
-                class="inline-flex size-11 items-center justify-center rounded-full border bg-muted text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                class="inline-flex size-11 items-center justify-center rounded-none border bg-muted text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span v-if="initials">{{ initials }}</span>
                 <CircleUser v-else class="size-5" />

@@ -63,7 +63,7 @@ async function onSubmit() {
       </div>
 
       <!-- Sign-in card -->
-      <div class="rounded-xl border bg-card p-6 shadow-sm">
+      <div class="rounded-none border bg-card p-6 shadow-sm">
         <form class="space-y-5" @submit.prevent="onSubmit">
           <div class="space-y-1.5">
             <label for="email" class="text-sm font-medium">{{ t('auth.emailLabel') }}</label>

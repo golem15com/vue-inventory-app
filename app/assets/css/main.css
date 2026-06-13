@@ -23,7 +23,7 @@
 
 /* shadcn-vue design tokens (zinc base). */
 :root {
-  --radius: 0.625rem;
+  --radius: 0;
 
   /* Neutrals — cool near-white surface, navy-cast ink (logo outline) */
   --background: oklch(0.994 0.002 255);
