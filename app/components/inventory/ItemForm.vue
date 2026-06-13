@@ -24,6 +24,14 @@
  */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { Button } from '~/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import LocationCombobox from '~/components/inventory/LocationCombobox.vue'
@@ -79,6 +87,10 @@ const submitting = ref(false)
 const nameError = ref(false)
 const locationError = ref(false)
 const categoryError = ref(false)
+
+// Edit-mode destructive delete (mirrors the locations/[id].vue confirm pattern).
+const deleteOpen = ref(false)
+const deleting = ref(false)
 
 onMounted(async () => {
   // Warm the cross-Area Location cache for the Quick-add path (no prefill Area).
@@ -136,6 +148,22 @@ async function onSubmit() {
 function onCancel() {
   const back = form.locationId ? `/locations/${form.locationId}` : '/'
   return navigateTo(back)
+}
+
+async function confirmDelete() {
+  if (deleting.value || !props.existing) return
+  deleting.value = true
+  try {
+    await store.deleteItem(props.existing)
+    deleteOpen.value = false
+    await navigateTo(form.locationId ? `/locations/${form.locationId}` : '/')
+  }
+  catch {
+    // Store surfaced the failure toast.
+  }
+  finally {
+    deleting.value = false
+  }
 }
 </script>
 
@@ -228,6 +256,42 @@ function onCancel() {
       <Button type="button" variant="outline" class="min-h-11" @click="onCancel">
         {{ t('inventory.action.cancel') }}
       </Button>
+      <Button
+        v-if="isEdit"
+        type="button"
+        variant="destructive"
+        class="min-h-11 sm:ml-auto"
+        data-testid="item-delete"
+        @click="deleteOpen = true"
+      >
+        {{ t('inventory.action.confirmDelete') }}
+      </Button>
     </div>
   </form>
+
+  <!-- Edit-mode delete confirm (sibling of the form so the destructive click never bubbles into submit). -->
+  <Dialog v-model:open="deleteOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{{ t('inventory.action.deleteLabel', { name: existing?.name ?? '' }) }}</DialogTitle>
+        <DialogDescription class="sr-only">
+          {{ t('inventory.action.confirmDelete') }}
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button type="button" variant="outline" class="min-h-11" @click="deleteOpen = false">
+          {{ t('inventory.action.cancel') }}
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          class="min-h-11"
+          :disabled="deleting || store.isLoading"
+          @click="confirmDelete"
+        >
+          {{ t('inventory.action.confirmDelete') }}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
