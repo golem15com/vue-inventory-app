@@ -193,7 +193,7 @@ export const useInventoryStore = defineStore('inventory', () => {
   // ---------------------------------------------------------------
   // Item — the D-07 seamless two-request, single-surface save
   // ---------------------------------------------------------------
-  async function saveItem(form: Partial<Item>, photoFile?: File, locationId?: number) {
+  async function saveItem(form: Partial<Item>, photoFiles?: File[], locationId?: number) {
     const { $api } = useNuxtApp()
     const baseURL = inventoryBase()
     isLoading.value = true
@@ -204,7 +204,9 @@ export const useInventoryStore = defineStore('inventory', () => {
         : await $api<{ data: Item }>(`/locations/${locationId}/items`, { baseURL, method: 'POST', body: form })
       const item = res.data
 
-      if (photoFile) {
+      // Multi-photo parity (D-07): loop the staged Files as sequential photo POSTs
+      // after the JSON create — all behind the ONE success surface below.
+      for (const photoFile of photoFiles ?? []) {
         const fd = new FormData()
         fd.append('file', photoFile)
         // CRITICAL: leave the request header untouched — the browser sets the
@@ -212,7 +214,7 @@ export const useInventoryStore = defineStore('inventory', () => {
         await $api(`/items/${item.id}/photos`, { baseURL, method: 'POST', body: fd })
       }
 
-      // ONE success surface even though photo is a second request (D-07).
+      // ONE success surface even though photos are extra requests (D-07).
       toast.success(t('inventory.item.saved'))
       const keys = ['inv:recent:8']
       if (item.location) keys.push(`inv:loc:${item.location.id}:items:1`)

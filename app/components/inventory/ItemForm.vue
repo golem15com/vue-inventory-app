@@ -10,11 +10,11 @@
  *   4 Quantity (Input type=number, optional, min 0)
  *   5 Tags (TagChipInput, string[] of NAMES)
  *   6 Notes (textarea, plain text only — no raw HTML rendering, XSS rule T-05-12)
- *   7 Photo (PhotoUploader: create stages one File; edit shows the gallery)
+ *   7 Photo (PhotoUploader: create stages multiple Files; edit shows the gallery)
  *
- * Save is the D-07 SEAMLESS single surface: saveItem(payload, photoFile, locationId)
- * does the JSON create/update then the optional photo POST behind ONE toast. The
- * two-request reality is never exposed (D-07). On create we POST to the chosen
+ * Save is the D-07 SEAMLESS single surface: saveItem(payload, photoFiles, locationId)
+ * does the JSON create/update then loops the staged photo POSTs behind ONE toast. The
+ * multi-request reality is never exposed (D-07). On create we POST to the chosen
  * Location; on edit we PUT /items/{id}. On read we map existing.tags ({id,name}[])
  * → names (RESEARCH Pitfall 6).
  *
@@ -68,8 +68,8 @@ const form = reactive({
   tags: (props.existing?.tags ?? []).map(tg => tg.name) as string[],
 })
 
-/** CREATE mode: the single staged photo File (auto-POSTed by saveItem). */
-const photoFile = ref<File | null>(null)
+/** CREATE mode: the staged photo Files (looped + auto-POSTed by saveItem). */
+const photoFiles = ref<File[]>([])
 
 /**
  * Quantity is `number | null` in the payload, but the Input modelValue is
@@ -130,11 +130,11 @@ async function onSubmit() {
     // names) — it is the API contract, not the read model — so cast via unknown.
     await store.saveItem(
       buildPayload() as unknown as Partial<Item>,
-      photoFile.value ?? undefined,
+      photoFiles.value,
       form.locationId ?? undefined,
     )
     // ONE success surface (the store toasts). Navigate back to where the Item lives.
-    const back = form.locationId ? `/locations/${form.locationId}` : '/'
+    const back = form.locationId ? `/locations/${form.locationId}` : '/dashboard'
     await navigateTo(back)
   }
   catch {
@@ -146,7 +146,7 @@ async function onSubmit() {
 }
 
 function onCancel() {
-  const back = form.locationId ? `/locations/${form.locationId}` : '/'
+  const back = form.locationId ? `/locations/${form.locationId}` : '/dashboard'
   return navigateTo(back)
 }
 
@@ -156,7 +156,7 @@ async function confirmDelete() {
   try {
     await store.deleteItem(props.existing)
     deleteOpen.value = false
-    await navigateTo(form.locationId ? `/locations/${form.locationId}` : '/')
+    await navigateTo(form.locationId ? `/locations/${form.locationId}` : '/dashboard')
   }
   catch {
     // Store surfaced the failure toast.
@@ -239,7 +239,7 @@ async function confirmDelete() {
       <Label>{{ t('inventory.field.photo') }}</Label>
       <PhotoUploader
         v-if="!isEdit"
-        v-model="photoFile"
+        v-model="photoFiles"
       />
       <PhotoUploader
         v-else

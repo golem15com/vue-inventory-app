@@ -54,7 +54,14 @@ type Status = 'idle' | 'analyzing' | 'reviewed' | 'empty' | 'error' | 'saved'
 
 const areaId = ref<number | null>(null)
 const locationId = ref<number | null>(null)
+// AI recognition is single-photo; PhotoUploader's create-mode v-model is File[]
+// (multi-photo parity, Phase 10), so bind through a single-File proxy that keeps
+// only the most-recently-picked File.
 const photoFile = ref<File | null>(null)
+const photoFiles = computed<File[]>({
+  get: () => (photoFile.value ? [photoFile.value] : []),
+  set: (files) => { photoFile.value = files.length ? files[files.length - 1]! : null },
+})
 const status = ref<Status>('idle')
 const saving = ref(false)
 const touched = ref(false)
@@ -331,7 +338,7 @@ useSeoMeta({
     <Card class="space-y-4 p-4" :class="whereReady ? '' : 'opacity-60'">
       <h2 class="text-lg font-semibold">{{ t('inventory.aiAssist.step.photo') }}</h2>
       <p class="text-sm text-muted-foreground">{{ t('inventory.aiAssist.photoHint') }}</p>
-      <PhotoUploader v-model="photoFile" />
+      <PhotoUploader v-model="photoFiles" />
       <p v-if="locationName" class="text-sm text-muted-foreground">
         {{ t('inventory.aiAssist.attachPhoto', { location: locationName }) }}
       </p>
