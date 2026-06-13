@@ -81,9 +81,20 @@ useSeoMeta({
       <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ areaName }}
       </h1>
-      <Button class="min-h-11 w-full sm:w-auto" data-testid="add-location" @click="openCreate">
-        {{ t('inventory.location.create') }}
-      </Button>
+      <div class="flex shrink-0 items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          class="size-11"
+          :aria-label="t('inventory.action.editLabel', { name: areaName })"
+          @click="navigateTo(`/areas/${areaId}/edit`)"
+        >
+          <Pencil />
+        </Button>
+        <Button class="min-h-11 w-full sm:w-auto" data-testid="add-location" @click="openCreate">
+          {{ t('inventory.location.create') }}
+        </Button>
+      </div>
     </header>
 
     <p v-if="loadFailed" class="rounded-md border border-destructive/40 p-4 text-sm text-destructive">
