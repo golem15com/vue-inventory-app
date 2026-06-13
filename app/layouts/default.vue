@@ -39,7 +39,12 @@ const initials = computed(() => {
 const router = useRouter()
 const route = useRoute()
 const topbarQ = ref('')
-const showTopbarSearch = computed(() => route.path !== '/search')
+const showTopbarSearch = computed(() => route.path !== '/search' && route.path !== '/dashboard')
+
+// Full-width opt-out (D-04) — pages set `definePageMeta({ fullWidth: true })`
+// to break out of the default max-w-5xl reading column into max-w-7xl (View
+// Item / Edit Item / /items/new / Edit Area / Edit Location consume this).
+const mainWidth = computed(() => route.meta.fullWidth ? 'max-w-7xl' : 'max-w-5xl')
 
 // Responsive top-bar placeholder — the narrow mobile input truncates the full
 // "Search your things…" to "Search your th…", so use a short "Search…" below lg.
@@ -77,7 +82,7 @@ async function onLogout() {
          <main> and the footer — brand lines up with the content's left edge,
          the avatar menu (ml-auto) with its right edge. -->
     <header class="border-b">
-      <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3">
+      <div class="mx-auto flex w-full items-center gap-4 px-4 py-3" :class="mainWidth">
         <!-- Brand lockup — mark + lowercase wordmark, paired with gap-2 (mirrors
              the public header so authed pages never degrade to a bare wordmark).
              Points at /dashboard (the authed home); `/` is the public landing. -->
@@ -210,7 +215,7 @@ async function onLogout() {
       </div>
     </header>
 
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+    <main class="mx-auto w-full flex-1 px-4 py-8" :class="mainWidth">
       <slot />
     </main>
 
