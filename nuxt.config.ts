@@ -84,7 +84,7 @@ export default defineNuxtConfig({
       // `client.allowed_origins`. Dev example: ws://localhost:8787/connection/websocket
       centrifugoWsUrl: '',
       // Public site URL (canonical/sitemap/OG via @nuxtjs/seo).
-      siteUrl: 'http://localhost:3118',
+      siteUrl: 'https://whereiput.it',
     },
   },
 
@@ -116,7 +116,7 @@ export default defineNuxtConfig({
   // The 3.x reference shape still holds.
   // -------------------------------------------------------------------------
   site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3118',
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://whereiput.it',
     name: 'whereiput.it',
     description: 'Find anything you own — type a name, see where it lives.',
     defaultLocale: 'en',
