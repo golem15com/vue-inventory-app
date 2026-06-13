@@ -123,7 +123,7 @@ function formatStamp(value: string | null): string {
               <span
                 v-for="scope in token.scopes"
                 :key="scope"
-                class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
+                class="inline-flex items-center rounded-none border px-2 py-0.5 text-sm text-muted-foreground"
               >
                 {{ t(`inventory.settings.token.scope.${scope}`) }}
               </span>
