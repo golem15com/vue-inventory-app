@@ -32,7 +32,7 @@ const paddingClass = computed(() => (props.variant === 'firstRun' ? 'py-16' : 'p
   <div :class="['flex flex-col items-center text-center', paddingClass]">
     <h2 class="text-lg font-semibold">{{ title }}</h2>
     <p v-if="body" class="mt-2 text-sm text-muted-foreground">{{ body }}</p>
-    <div v-if="$slots.default" class="mt-6">
+    <div v-if="$slots.default" class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
       <slot />
     </div>
   </div>
