@@ -20,7 +20,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
-import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse, AiCredentialForm, AiCredentialResponse, TestConnectionResult } from '~~/shared/types/inventory'
 
 export const useInventoryStore = defineStore('inventory', () => {
   const { t, locale } = useI18n()
@@ -502,6 +502,54 @@ export const useInventoryStore = defineStore('inventory', () => {
   }
 
   // ---------------------------------------------------------------
+  // BYOK AI credential (Phase 11) — AI-settings surface.
+  //
+  // Both mutations go through `$api` against inventoryBase() (= /_inventory/api/v1,
+  // the JWT/cookie group) — never the token route group (D-02). The stored key is
+  // never round-tripped: the request carries the key in its body, the responses
+  // are secret-free.
+  // ---------------------------------------------------------------
+
+  /**
+   * Persist the caller's BYOK credential (D-06 plain persist). On success the
+   * store fires the success toast, then refreshes `inv:me` so `can_use_ai`
+   * recomputes (D-04) and `inv:ai-credential` so the configured status updates.
+   * Returns the secret-free response. Save is decoupled from Test (D-06).
+   */
+  async function saveAiCredential(form: AiCredentialForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<AiCredentialResponse>('/ai-credential', { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.settings.ai.saved'))
+      await refreshNuxtData('inv:me') // recompute can_use_ai (D-04)
+      await refreshNuxtData('inv:ai-credential') // refresh the configured status
+      return res
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * Fire a cheap real provider call to verify the credential (D-06). Returns the
+   * `{ ok, error? }` result so the component can render it INLINE (UI-SPEC) — NO
+   * toast. This deliberately does NOT route through `fail()`: a failed connection
+   * is a valid `{ ok: false }` result with the verbatim provider message (D-08),
+   * not a thrown error to toast.
+   */
+  async function testAiConnection(form: AiCredentialForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    return await $api<TestConnectionResult>('/ai-credential/test', { baseURL, method: 'POST', body: form })
+  }
+
+  // ---------------------------------------------------------------
   // Cross-Area grouped Location cache for the Item-form pickers (D-08)
   // ---------------------------------------------------------------
   async function loadLocationsForPickers() {
@@ -560,5 +608,7 @@ export const useInventoryStore = defineStore('inventory', () => {
     loadLocationsForPickers,
     mintToken,
     revokeToken,
+    saveAiCredential,
+    testAiConnection,
   }
 })

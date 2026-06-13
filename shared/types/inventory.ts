@@ -140,3 +140,42 @@ export interface TokenMintResponse {
   token: string
   meta: TokenMeta
 }
+
+// ---------------------------------------------------------------------------
+// BYOK AI credential (Phase 11) — the SPA AI-settings surface.
+//
+// Mirrors the JZ.Inventory backend contract on the JWT/cookie group (Plan 03):
+//   GET  /_inventory/api/v1/ai-credential      -> 200 { configured, provider?, model?, base_url? }
+//   POST /_inventory/api/v1/ai-credential       -> 200 { configured: true, provider } | 422 { error, errors }
+//   POST /_inventory/api/v1/ai-credential/test  -> 200 { ok: boolean, error? }
+//
+// SECRET DISCIPLINE: the stored key is NEVER round-tripped to the SPA — the GET
+// returns only `{ configured }` + non-secret provider/model/base_url. The
+// plaintext key exists only in the request body of save/test; the SPA holds it
+// transiently in the form field and clears it after a successful save.
+// ---------------------------------------------------------------------------
+
+/** The two supported BYOK providers (D-05) — matches the backend validator. */
+export type AiProvider = 'claude' | 'openai'
+
+/** The save/test request body — the api_key is sent, never echoed back. */
+export interface AiCredentialForm {
+  provider: AiProvider
+  api_key: string
+  model?: string
+  base_url?: string
+}
+
+/** Secret-free credential status as returned by the GET read. */
+export interface AiCredentialResponse {
+  configured: boolean
+  provider?: AiProvider
+  model?: string | null
+  base_url?: string | null
+}
+
+/** Test-connection result — `{ ok: false, error }` carries the verbatim provider message (D-08). */
+export interface TestConnectionResult {
+  ok: boolean
+  error?: string
+}

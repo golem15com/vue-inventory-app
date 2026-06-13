@@ -22,7 +22,7 @@
  * foreign/missing resource 404s identically (no enumeration). `inventoryApiBase`
  * is single-owned by Plan 05-02's nuxt.config and reached through the dev proxy.
  */
-import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta, AiCredentialResponse } from '~~/shared/types/inventory'
 // NOTE: the embedded-reference type is exported as `InventoryRef` (not `Ref`) to
 // avoid shadowing Nuxt's auto-imported `Ref` from vue — see shared/types/inventory.ts.
 //
@@ -215,6 +215,16 @@ export function useInventory() {
     return useFetch<TokensResponse>('/tokens', { baseURL, key: 'inv:tokens', headers: authHeaders() })
   }
 
+  /**
+   * The caller's BYOK AI credential STATUS (Phase 11 AI-settings surface). Reads
+   * the JWT/cookie group; the response is secret-free by construction — only
+   * `{ configured }` + the non-secret provider/model/base_url, NEVER the key
+   * (UI-SPEC secret discipline / D-02).
+   */
+  function fetchAiCredential() {
+    return useFetch<AiCredentialResponse>('/ai-credential', { baseURL, key: 'inv:ai-credential', headers: authHeaders() })
+  }
+
   return {
     fetchAreas,
     fetchMe,
@@ -228,5 +238,6 @@ export function useInventory() {
     fetchCategories,
     fetchTags,
     fetchTokens,
+    fetchAiCredential,
   }
 }
