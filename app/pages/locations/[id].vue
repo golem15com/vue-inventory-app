@@ -16,7 +16,7 @@
 import { computed, ref } from 'vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
-import { Pencil, Trash2 } from '@lucide/vue'
+import { Pencil, Sparkles, Trash2 } from '@lucide/vue'
 import {
   Dialog,
   DialogContent,
@@ -25,9 +25,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
+import { storeToRefs } from 'pinia'
 import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import EmptyState from '~/components/inventory/EmptyState.vue'
 import { useInventoryStore } from '~/stores/inventory'
+import { useAuthStore } from '~/stores/auth'
 import type { Item } from '~~/shared/types/inventory'
 
 definePageMeta({ middleware: 'auth' })
@@ -36,6 +38,9 @@ const { t } = useI18n()
 const route = useRoute()
 const { fetchItems, fetchLocation } = useInventory()
 const store = useInventoryStore()
+// UX-only AI gate (mirrors dashboard.vue); the backend re-gates AI server-side.
+const auth = useAuthStore()
+const { canUseAi } = storeToRefs(auth)
 
 const locationId = computed(() => Number(route.params.id))
 const page = computed(() => {
@@ -117,9 +122,21 @@ useSeoMeta({
       <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ locationName }}
       </h1>
-      <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo(`/items/new?location=${locationId}`)">
-        {{ t('inventory.item.add') }}
-      </Button>
+      <div v-if="items.length" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo(`/items/new?location=${locationId}`)">
+          {{ t('inventory.item.add') }}
+        </Button>
+        <Button
+          v-if="canUseAi"
+          class="min-h-11 w-full sm:w-auto"
+          data-testid="scan-with-ai"
+          :aria-label="t('inventory.aiAssist.entryLabel')"
+          @click="navigateTo(`/ai-assist?area=${areaId}&location=${locationId}`)"
+        >
+          <Sparkles class="size-4" />
+          {{ t('inventory.aiAssist.entry') }}
+        </Button>
+      </div>
     </header>
 
     <!-- Attached Location photos (D-14) — small thumbnail gallery near the header. -->
@@ -149,6 +166,15 @@ useSeoMeta({
     >
       <Button @click="navigateTo(`/items/new?location=${locationId}`)">
         {{ t('inventory.item.add') }}
+      </Button>
+      <Button
+        v-if="canUseAi"
+        data-testid="scan-with-ai"
+        :aria-label="t('inventory.aiAssist.entryLabel')"
+        @click="navigateTo(`/ai-assist?area=${areaId}&location=${locationId}`)"
+      >
+        <Sparkles class="size-4" />
+        {{ t('inventory.aiAssist.entry') }}
       </Button>
     </EmptyState>
 
