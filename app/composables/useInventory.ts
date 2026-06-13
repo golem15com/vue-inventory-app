@@ -50,7 +50,11 @@ const DEFAULT_PER_PAGE = 20
 const RECENT_PER_PAGE = 8
 
 export function useInventory() {
-  const baseURL = useRuntimeConfig().public.inventoryApiBase as string // /_inventory/api/v1
+  // SSR-aware base: relative (/_inventory/api/v1) in the browser (nginx routes it),
+  // but absolute (internalApiOrigin) during SSR — otherwise useFetch resolves the
+  // relative path against the Nitro server itself (502/empty → "no areas" on F5).
+  // Mirrors plugins/api.ts's write path; resolveApiUrl is a no-op on the client.
+  const baseURL = resolveApiUrl(useRuntimeConfig().public.inventoryApiBase as string)
 
   // The Inventory API is JWT-protected (jwt.auth). The JWT lives in the
   // `auth_token` cookie (set by the auth store on login); plugins/api.ts attaches
