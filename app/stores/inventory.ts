@@ -268,6 +268,99 @@ export const useInventoryStore = defineStore('inventory', () => {
   }
 
   // ---------------------------------------------------------------
+  // Location / Area photo mutations for the full-page Edit screens (D-08)
+  //
+  // Each mirrors the proven item-photo pair: $api against inventoryBase()
+  // (the JWT/cookie group, the SPA's only credential), one toast, refresh the
+  // affected SSR read key. The multipart attach POST NEVER sets a content-type
+  // header — the browser sets the boundary itself (T-05-11). Server-side
+  // accessibleBy scoping + 404-no-leak is the real authz boundary (T-10-04-01).
+  // ---------------------------------------------------------------
+
+  /** Attach a photo to a Location (Edit Location). Mirrors attachLocationPhoto. */
+  async function attachLocationPhotoEdit(locationId: number, photoFile: File) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const fd = new FormData()
+      fd.append('file', photoFile)
+      // CRITICAL: leave the request header untouched — the browser sets the boundary.
+      await $api(`/locations/${locationId}/photos`, { baseURL, method: 'POST', body: fd })
+      toast.success(t('inventory.item.saved'))
+      await refreshNuxtData(`inv:loc:${locationId}`)
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /** Remove a photo from a Location (Edit Location). Mirrors removePhoto. */
+  async function removeLocationPhoto(locationId: number, fileId: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/locations/${locationId}/photos/${fileId}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.deleted'))
+      await refreshNuxtData(`inv:loc:${locationId}`)
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /** Attach a photo to an Area (Edit Area; the 10-02 route). Mirrors attachLocationPhoto. */
+  async function attachAreaPhoto(areaId: number, photoFile: File) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const fd = new FormData()
+      fd.append('file', photoFile)
+      // CRITICAL: leave the request header untouched — the browser sets the boundary.
+      await $api(`/areas/${areaId}/photos`, { baseURL, method: 'POST', body: fd })
+      toast.success(t('inventory.item.saved'))
+      // Refresh the single-Area read + the dashboard list (Area covers, D-09).
+      await refreshNuxtData([`inv:area:${areaId}`, 'inv:areas'])
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /** Remove a photo from an Area (Edit Area). Mirrors removePhoto. */
+  async function removeAreaPhoto(areaId: number, fileId: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/areas/${areaId}/photos/${fileId}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.deleted'))
+      await refreshNuxtData([`inv:area:${areaId}`, 'inv:areas'])
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
   // AI Inventory Assist — recognize (read-only) + bulk save + attach photo
   // ---------------------------------------------------------------
 
@@ -457,6 +550,10 @@ export const useInventoryStore = defineStore('inventory', () => {
     saveItem,
     deleteItem,
     removePhoto,
+    attachLocationPhotoEdit,
+    removeLocationPhoto,
+    attachAreaPhoto,
+    removeAreaPhoto,
     recognize,
     bulkSaveItems,
     attachLocationPhoto,

@@ -29,6 +29,7 @@ import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta } from '~
 // READS use useFetch (SSR, keyed); writes live in stores/inventory.ts via $api.
 
 export type AreasResponse = { data: Area[] }
+export type AreaResponse = { data: Area }
 /**
  * me/areas envelope (Plan 01, D-14): the caller's accessible Areas PLUS the
  * explicit `can_use_ai` boolean computed server-side from AiGate::allows($user).
@@ -83,6 +84,22 @@ export function useInventory() {
    */
   function fetchMe() {
     return useFetch<MeAreasResponse>('/me/areas', { baseURL, key: 'inv:me', headers: authHeaders() })
+  }
+
+  /**
+   * Single Area by id (embedded attached photos, D-09). 404 → { error }.
+   *
+   * The 6-line mirror of fetchLocation — valid now that the 10-02 serializer
+   * carries `area.photos[]`. Keyed `inv:area:{id}` (distinct from the
+   * `inv:area:{id}:locations` list key) so Edit Area's photo mutations can
+   * refresh just this read.
+   */
+  function fetchArea(id: number) {
+    return useFetch<AreaResponse>(`/areas/${id}`, {
+      baseURL,
+      key: `inv:area:${id}`,
+      headers: authHeaders(),
+    })
   }
 
   /** Locations within a single Area. */
@@ -197,6 +214,7 @@ export function useInventory() {
   return {
     fetchAreas,
     fetchMe,
+    fetchArea,
     fetchLocations,
     fetchLocation,
     fetchItems,
