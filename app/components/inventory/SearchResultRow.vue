@@ -22,6 +22,8 @@ const props = defineProps<{
   item: Item
 }>()
 
+const { t } = useI18n()
+
 // "{Location} · {Area}" — same join the dashboard uses (index.vue lines 63–65).
 const whereItLives = computed(() =>
   [props.item.location?.name, props.item.area?.name].filter(Boolean).join(' · '),
@@ -34,13 +36,33 @@ const whereItLives = computed(() =>
     data-testid="search-result-row"
     class="flex items-center gap-4 rounded-md px-2 py-4 hover:bg-muted"
   >
-    <!-- Thumbnail, with a placeholder box when the Item has no photo. -->
+    <!--
+      Thumbnail precedence (D-05): the Item's own photo → else its Location's first
+      photo (with a muted "Location photo" honesty hint) → else the Package
+      placeholder. The hint is a quiet caption, never an accent/CTA — borrowing the
+      Location's photo is disclosed, not celebrated.
+    -->
     <img
       v-if="item.photos?.[0]"
       :src="item.photos[0].thumb_url"
       :alt="item.name"
       class="size-12 shrink-0 rounded-md object-cover"
     >
+    <div
+      v-else-if="item.location?.photos?.[0]"
+      class="relative size-12 shrink-0"
+    >
+      <img
+        :src="item.location.photos[0].thumb_url"
+        :alt="item.name"
+        class="size-12 rounded-md object-cover"
+      >
+      <span
+        class="absolute bottom-0 left-0 bg-muted/80 text-muted-foreground text-sm px-1"
+      >
+        {{ t('inventory.item.locationPhoto') }}
+      </span>
+    </div>
     <div
       v-else
       class="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted"
