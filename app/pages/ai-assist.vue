@@ -79,6 +79,19 @@ onMounted(async () => {
     const { data } = await fetchCategories()
     if (data.value?.data) store.categories = data.value.data
   }
+
+  // Deep-link prefill: the Location screen's "Skataloguj z AI" button passes
+  // ?area=&location=. Set areaId BEFORE locationId so the areaLocations cascade
+  // (store.locationsByArea[areaId]) is populated for the Location combobox.
+  const q = useRoute().query
+  const qArea = Number(q.area)
+  if (Number.isFinite(qArea) && qArea > 0) {
+    areaId.value = qArea
+    const qLoc = Number(q.location)
+    if (Number.isFinite(qLoc) && qLoc > 0) {
+      locationId.value = qLoc
+    }
+  }
 })
 
 // ---------------------------------------------------------------
