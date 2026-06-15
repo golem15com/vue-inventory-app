@@ -35,10 +35,12 @@ import {
 } from '~/components/ui/select'
 import { Check, Eye, EyeOff } from '@lucide/vue'
 import { useInventoryStore } from '~/stores/inventory'
+import { useAuthStore } from '~/stores/auth'
 import type { AiProvider, TestConnectionResult } from '~~/shared/types/inventory'
 
 const { t } = useI18n()
 const store = useInventoryStore()
+const auth = useAuthStore()
 const { fetchAiCredential } = useInventory()
 
 const { data, status } = await fetchAiCredential()
@@ -140,6 +142,28 @@ async function onTest() {
     </p>
 
     <template v-else>
+      <!-- Org-locked fallback band (D-04). The whole AI tab is normally hidden
+           from the strip when the .env org-lock flag is set; this only renders if
+           the route is hit directly. Non-accent muted band — a steady state. -->
+      <div
+        v-if="auth.aiOrgLock"
+        class="bg-muted p-4 text-sm text-foreground"
+        data-testid="ai-org-locked-band"
+      >
+        {{ t('inventory.aiInherited.locked') }}
+      </div>
+
+      <!-- Inherited-org info band (D-13): an org credential is present, the caller
+           has no per-user key, and the lock flag is unset. Non-accent muted band —
+           it is informational, NOT a call to action. -->
+      <div
+        v-else-if="auth.aiInherited"
+        class="bg-muted p-4 text-sm text-foreground"
+        data-testid="ai-inherited-band"
+      >
+        {{ t('inventory.aiInherited.band') }}
+      </div>
+
       <!-- Unconfigured explainer — the form stays visible below in both states. -->
       <div
         v-if="!configured"

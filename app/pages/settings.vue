@@ -13,22 +13,33 @@ import { Button } from '~/components/ui/button'
 import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import TokenManager from '~/components/inventory/TokenManager.vue'
 import AiSettings from '~/components/inventory/AiSettings.vue'
+import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 
 type Tab = 'integrations' | 'ai'
-const TABS: Array<{ key: Tab, label: string }> = [
+const ALL_TABS: Array<{ key: Tab, label: string }> = [
   { key: 'integrations', label: 'inventory.settings.integrations.title' },
   { key: 'ai', label: 'inventory.settings.ai.title' },
 ]
 
+// Drop the per-user AI tab when this deployment enforces shared organisation
+// credentials (D-04, ai_org_lock from me/areas). This is COSMETIC on top of the
+// Plan 04 server gate — a user reaching the AI surface directly still hits the
+// server-enforced lock (defence in depth).
+const TABS = computed(() => ALL_TABS.filter(tab => !(tab.key === 'ai' && auth.aiOrgLock)))
+
 const activeTab = computed<Tab>(() => {
   const q = route.query.tab
-  return q === 'ai' ? 'ai' : q === 'integrations' ? 'integrations' : 'integrations'
+  // Never resolve to a filtered-out tab: ?tab=ai while org-locked falls back to
+  // integrations.
+  if (q === 'ai' && !auth.aiOrgLock) return 'ai'
+  return 'integrations'
 })
 
 function selectTab(tab: Tab) {
