@@ -33,8 +33,11 @@ else {
   // The server's onboarding/status is the boundary; this is the entry redirect
   // that surfaces /onboarding (which self-redirects back to /login once any user
   // exists). Only checked for logged-out visitors, never on authed routes.
+  // IN-05: default to "no onboarding needed" if the backend is unreachable during SSR
+  // so the public marketing landing still renders for an anonymous visitor instead of
+  // surfacing a useAsyncData error. The zero-user gate is enforced server-side anyway.
   const { data: needsOnboarding } = await useAsyncData('inv:onboarding-status', () =>
-    store.fetchOnboardingStatus(),
+    store.fetchOnboardingStatus().catch(() => false),
   )
   if (needsOnboarding.value === true) {
     await navigateTo('/onboarding')
