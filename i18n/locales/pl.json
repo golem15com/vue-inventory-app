@@ -332,6 +332,8 @@
       "title": "Organizacja",
       "loadError": "Coś poszło nie tak podczas ładowania. Odśwież i spróbuj ponownie.",
       "notAllowed": "Nie masz uprawnień do zarządzania tą organizacją.",
+      "noOrgTitle": "Nie należysz do organizacji",
+      "noOrgBody": "Twoje konto nie należy jeszcze do żadnej organizacji. Poproś administratora o dodanie Cię lub właściciela witryny o jej utworzenie.",
       "ai": {
         "heading": "Współdzielony dostawca AI",
         "description": "Ustaw tutaj jeden klucz API, a każdy członek użyje go do AI rozpoznającego zdjęcia. Członkowie nadal mogą dodać własny klucz, chyba że współdzielone poświadczenia są wymuszone.",

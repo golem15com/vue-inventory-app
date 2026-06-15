@@ -332,6 +332,8 @@
       "title": "Organisation",
       "loadError": "Something went wrong loading this. Refresh and try again.",
       "notAllowed": "You don't have permission to manage this organisation.",
+      "noOrgTitle": "Not in an organisation",
+      "noOrgBody": "Your account isn't part of an organisation yet. Ask an admin to add you, or your site owner to set one up.",
       "ai": {
         "heading": "Shared AI provider",
         "description": "Set one API key here and every member uses it for photo-to-catalog AI. Members can still add their own key unless shared credentials are enforced.",
