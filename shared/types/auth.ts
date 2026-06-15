@@ -14,6 +14,11 @@ export interface AuthUser {
   first_name: string | null
   last_name: string | null
   login: string
+  /**
+   * Whether the user must change an admin-provisioned temporary password before
+   * reaching the app (Phase 12). Surfaced by the Inventory getApiArray seam.
+   */
+  must_change_password?: boolean
   /** Per-project fields appended by individual client backends. */
   [key: string]: unknown
 }

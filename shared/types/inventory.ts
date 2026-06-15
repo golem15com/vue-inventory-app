@@ -224,6 +224,11 @@ export interface OrganisationMemberForm {
   role: 'member' | 'admin'
 }
 
+/** Role-change body (PATCH /org/members/{id}) — admin|member only (never owner, D-08). */
+export interface OrganisationMemberRoleForm {
+  role: 'member' | 'admin'
+}
+
 /** First-run onboarding gate (GET /onboarding/status) — true only on a zero-user deploy. */
 export interface OnboardingStatusResponse {
   needs_onboarding: boolean

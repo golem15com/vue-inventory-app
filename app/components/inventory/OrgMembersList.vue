@@ -30,6 +30,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select'
 import { Plus, Trash2 } from '@lucide/vue'
 import AddMemberDialog from '~/components/inventory/AddMemberDialog.vue'
 import EmptyState from '~/components/inventory/EmptyState.vue'
@@ -76,6 +83,27 @@ async function confirmRemove() {
     removing.value = false
   }
 }
+
+// Per-row role change (admin<->member; never owner — D-08). The control is only
+// rendered for non-owner rows; the server re-guards (owner/admin-only, 422 on the
+// owner) regardless of what the SPA renders.
+const changingRoleId = ref<number | null>(null)
+
+async function onRoleChange(member: OrganisationMember, role: unknown) {
+  // Select emits AcceptableValue (string | null); narrow to the two valid roles.
+  if (role !== 'member' && role !== 'admin') return
+  if (role === member.organisation_role) return
+  changingRoleId.value = member.id
+  try {
+    await store.updateOrgMemberRole(member.id, role)
+  }
+  catch {
+    // Store surfaced the failure toast; the refresh re-reads the true role.
+  }
+  finally {
+    changingRoleId.value = null
+  }
+}
 </script>
 
 <template>
@@ -117,9 +145,32 @@ async function confirmRemove() {
         >
           <div class="min-w-0 flex-1 space-y-1">
             <p class="truncate text-base">{{ member.email }}</p>
-            <span class="inline-flex items-center rounded-none border px-2 py-0.5 text-sm text-muted-foreground">
+            <!-- Owner role is fixed (D-08): a static badge, never editable. -->
+            <span
+              v-if="member.organisation_role === 'owner'"
+              class="inline-flex items-center rounded-none border px-2 py-0.5 text-sm text-muted-foreground"
+            >
               {{ roleLabel(member.organisation_role) }}
             </span>
+            <!-- Member/admin role is changeable inline (admin<->member only). -->
+            <Select
+              v-else
+              :model-value="member.organisation_role"
+              :disabled="store.isLoading && changingRoleId === member.id"
+              @update:model-value="(v) => onRoleChange(member, v)"
+            >
+              <SelectTrigger
+                class="h-8 w-36 rounded-none text-sm"
+                data-testid="member-role-select"
+                :aria-label="t('inventory.organisation.members.roleChangeLabel', { email: member.email })"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="member">{{ t('inventory.organisation.members.roleMember') }}</SelectItem>
+                <SelectItem value="admin">{{ t('inventory.organisation.members.roleAdmin') }}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Button

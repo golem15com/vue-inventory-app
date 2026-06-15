@@ -633,6 +633,30 @@ export const useInventoryStore = defineStore('inventory', () => {
   }
 
   /**
+   * Change a member's organisation_role (admin<->member; never owner — D-08).
+   * Owner/admin-guarded + org-scoped server-side (Plan 05/07). On success: success
+   * toast + refresh `inv:org-members`. Retargeting the owner is 422 server-side.
+   */
+  async function updateOrgMemberRole(id: number, role: 'member' | 'admin') {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<OrganisationMember>(`/org/members/${id}`, { baseURL, method: 'PATCH', body: { role } })
+      toast.success(t('inventory.organisation.members.roleUpdated'))
+      await refreshNuxtData('inv:org-members')
+      return res
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
    * Remove a member from the organisation (detaches without deleting the account,
    * Plan 05). The owner is non-removable server-side (422). On success: success
    * toast + refresh `inv:org-members`.
@@ -755,6 +779,7 @@ export const useInventoryStore = defineStore('inventory', () => {
     saveOrgAiCredential,
     testOrgAiConnection,
     addMember,
+    updateOrgMemberRole,
     removeMember,
     fetchOnboardingStatus,
     bootstrapOnboarding,

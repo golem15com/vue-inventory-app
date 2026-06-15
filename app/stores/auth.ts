@@ -99,6 +99,15 @@ export const useAuthStore = defineStore('auth', () => {
   // ---------------------------------------------------------------
   const isLoggedIn = computed(() => !!user.value)
 
+  /**
+   * Whether the current user must change a (admin-provisioned) temporary password
+   * before reaching the app (Phase 12). Read from the `must_change_password` flag
+   * the backend surfaces on the identity payload via the Inventory getApiArray
+   * seam. Drives the force-password-change route guard; cleared the moment the
+   * change succeeds (the change-password endpoint returns the refreshed user).
+   */
+  const mustChangePassword = computed(() => user.value?.must_change_password === true)
+
   // ---------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------
@@ -299,6 +308,57 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  /**
+   * Change the current user's password (Phase 12). Confirms the current password
+   * server-side, sets the new one, and clears the must_change_password flag. On
+   * success the backend returns the refreshed user, which we apply so the force-
+   * change guard releases immediately (no second round-trip). Field/general errors
+   * are surfaced the same way login()/register() do. Returns true on success.
+   */
+  async function changePassword(payload: {
+    current_password: string
+    password: string
+    password_confirmation: string
+  }): Promise<boolean> {
+    isLoading.value = true
+    error.value = null
+    fieldErrors.value = {}
+
+    try {
+      const response = await $fetch<{ message?: string, user?: AuthUser }>(
+        `${userApiBase()}/change-password`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token.value}` },
+          body: payload,
+        },
+      )
+      if (response.user) {
+        // Refresh the identity (must_change_password now false) so the guard releases.
+        user.value = response.user
+      }
+      return true
+    }
+    catch (err: unknown) {
+      const fetchError = err as FetchError
+      if (fetchError.data?.errors) {
+        fieldErrors.value = fetchError.data.errors
+        const firstError = Object.values(fieldErrors.value)[0]
+        error.value = firstError?.[0] ?? 'Validation failed'
+      }
+      else {
+        const errField = fetchError.data?.error
+        error.value = (typeof errField === 'string' ? errField : null)
+          ?? fetchError.data?.message
+          ?? 'Password change failed'
+      }
+      return false
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
   async function logout() {
     try {
       if (token.value) {
@@ -341,12 +401,14 @@ export const useAuthStore = defineStore('auth', () => {
     aiInherited,
     // Computed
     isLoggedIn,
+    mustChangePassword,
     // Actions
     login,
     register,
     setSession,
     fetchUser,
     fetchCanUseAi,
+    changePassword,
     logout,
   }
 })

@@ -48,7 +48,17 @@
     "emailPlaceholder": "ty{'@'}przyklad.pl",
     "submit": "Zaloguj się",
     "submitting": "Logowanie…",
-    "noAccount": "Nie masz konta? Poproś administratora o zaproszenie."
+    "noAccount": "Nie masz konta? Poproś administratora o zaproszenie.",
+    "changePassword": {
+      "heading": "Wybierz nowe hasło",
+      "subtitle": "Twoje konto zostało utworzone z hasłem tymczasowym. Ustaw własne, aby kontynuować.",
+      "currentLabel": "Hasło tymczasowe",
+      "newLabel": "Nowe hasło",
+      "confirmLabel": "Potwierdź nowe hasło",
+      "submit": "Zmień hasło",
+      "submitting": "Zmienianie…",
+      "success": "Hasło zostało zmienione."
+    }
   },
   "footer": {
     "poweredBy": "Zbudowano w"
@@ -357,6 +367,8 @@
         "roleLabel": "Rola",
         "roleMember": "Członek",
         "roleAdmin": "Administrator",
+        "roleUpdated": "Zaktualizowano rolę.",
+        "roleChangeLabel": "Zmień rolę dla {email}",
         "save": "Utwórz konto",
         "removeLabel": "Usuń {email}",
         "removeTitle": "Usunąć {email}?",

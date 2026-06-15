@@ -48,7 +48,17 @@
     "emailPlaceholder": "you{'@'}example.com",
     "submit": "Sign in",
     "submitting": "Signing in…",
-    "noAccount": "No account? Ask an admin for an invite."
+    "noAccount": "No account? Ask an admin for an invite.",
+    "changePassword": {
+      "heading": "Choose a new password",
+      "subtitle": "Your account was created with a temporary password. Set your own to continue.",
+      "currentLabel": "Temporary password",
+      "newLabel": "New password",
+      "confirmLabel": "Confirm new password",
+      "submit": "Update password",
+      "submitting": "Updating…",
+      "success": "Password updated."
+    }
   },
   "footer": {
     "poweredBy": "Built in"
@@ -357,6 +367,8 @@
         "roleLabel": "Role",
         "roleMember": "Member",
         "roleAdmin": "Admin",
+        "roleUpdated": "Role updated.",
+        "roleChangeLabel": "Change role for {email}",
         "save": "Create account",
         "removeLabel": "Remove {email}",
         "removeTitle": "Remove {email}?",
