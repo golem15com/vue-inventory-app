@@ -15,15 +15,30 @@ import { Search, Boxes, Sparkles, Users } from '@lucide/vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { useAuthStore } from '~/stores/auth'
+import { useInventoryStore } from '~/stores/inventory'
 
 definePageMeta({ layout: 'public' })
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const store = useInventoryStore()
 
 // Logged-in visitors belong on the dashboard (D-03). Early-return redirect.
 if (auth.isLoggedIn) {
   await navigateTo('/dashboard')
+}
+else {
+  // First-run gate (D-10): on a zero-user deployment the very first thing a
+  // visitor must see is the owner onboarding card — not the marketing landing.
+  // The server's onboarding/status is the boundary; this is the entry redirect
+  // that surfaces /onboarding (which self-redirects back to /login once any user
+  // exists). Only checked for logged-out visitors, never on authed routes.
+  const { data: needsOnboarding } = await useAsyncData('inv:onboarding-status', () =>
+    store.fetchOnboardingStatus(),
+  )
+  if (needsOnboarding.value === true) {
+    await navigateTo('/onboarding')
+  }
 }
 
 // Feature highlights — kraft-amber chip icons (bg-accent), 4-card grid.

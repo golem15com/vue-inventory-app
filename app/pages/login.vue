@@ -13,12 +13,28 @@ import { toast } from 'vue-sonner'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { useAuthStore } from '~/stores/auth'
+import { useInventoryStore } from '~/stores/inventory'
 
 definePageMeta({ layout: 'public' })
 
 const { t } = useI18n()
 const authStore = useAuthStore()
+const store = useInventoryStore()
 const route = useRoute()
+
+// First-run gate (D-10): if no frontend user exists yet, there is nothing to log
+// in to — send the visitor to the owner onboarding card instead. The landing
+// page redirects here too; this guard also catches a direct /login deep-link on a
+// fresh deploy. The server's onboarding/status is the boundary; /onboarding
+// self-redirects back to /login the moment any user exists.
+if (!authStore.isLoggedIn) {
+  const { data: needsOnboarding } = await useAsyncData('inv:onboarding-status', () =>
+    store.fetchOnboardingStatus(),
+  )
+  if (needsOnboarding.value === true) {
+    await navigateTo('/onboarding')
+  }
+}
 
 const form = reactive({
   email: '',
