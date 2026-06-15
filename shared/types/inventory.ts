@@ -179,3 +179,55 @@ export interface TestConnectionResult {
   ok: boolean
   error?: string
 }
+
+// ---------------------------------------------------------------------------
+// Phase 12 — Organisation, shared (org) BYOK credential, members, onboarding.
+//
+// The org-credential share is the per-user AiCredentialResponse contract with
+// the SAME secret discipline (the key is sent, never echoed back). Member rows
+// and the onboarding bootstrap response are likewise secret-free (no password
+// is ever round-tripped — Plan 05 backend).
+// ---------------------------------------------------------------------------
+
+/** A member's role inside their organisation (D-01/D-02 — owner is non-removable). */
+export type OrganisationRole = 'owner' | 'admin' | 'member'
+
+/** The org-credential save/test request body — mirrors AiCredentialForm exactly. */
+export type OrgAiCredentialForm = AiCredentialForm
+
+/** Secret-free org-credential status (GET /org-ai-credential) — mirrors AiCredentialResponse. */
+export type OrgAiCredentialResponse = AiCredentialResponse
+
+/** A single organisation member row (GET /org/members) — secret-free, never the password. */
+export interface OrganisationMember {
+  id: number
+  email: string
+  organisation_role: OrganisationRole
+}
+
+export type OrganisationMembersResponse = { data: OrganisationMember[] }
+
+/** Add-member request body (POST /org/members) — `role` is member|admin (never owner). */
+export interface OrganisationMemberForm {
+  email: string
+  password: string
+  role: 'member' | 'admin'
+}
+
+/** First-run onboarding gate (GET /onboarding/status) — true only on a zero-user deploy. */
+export interface OnboardingStatusResponse {
+  needs_onboarding: boolean
+}
+
+/** First-run owner bootstrap body (POST /onboarding/bootstrap) — PUBLIC, no auth header. */
+export interface OnboardingBootstrapForm {
+  org_name: string
+  email: string
+  password: string
+}
+
+/** Bootstrap response — the new owner's session token + user (Plan 05). */
+export interface OnboardingBootstrapResponse {
+  token?: string
+  user?: import('./auth').AuthUser
+}

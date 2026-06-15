@@ -316,6 +316,59 @@
     "dashboard": {
       "brandAlt": "Logo whereiput.it",
       "title": "Inwentarz"
+    },
+    "onboarding": {
+      "heading": "Skonfiguruj swój inwentarz",
+      "body": "Jesteś tu pierwszym użytkownikiem. Utwórz swoje konto i organizację, aby zacząć.",
+      "orgNameLabel": "Nazwa organizacji",
+      "orgNamePlaceholder": "np. Gospodarstwo Reymonta",
+      "emailLabel": "Twój e-mail",
+      "passwordLabel": "Hasło",
+      "submit": "Utwórz witrynę",
+      "submitting": "Tworzenie…",
+      "error": "Nie udało się utworzyć witryny: {message}. Sprawdź dane i spróbuj ponownie."
+    },
+    "organisation": {
+      "title": "Organizacja",
+      "loadError": "Coś poszło nie tak podczas ładowania. Odśwież i spróbuj ponownie.",
+      "notAllowed": "Nie masz uprawnień do zarządzania tą organizacją.",
+      "ai": {
+        "heading": "Współdzielony dostawca AI",
+        "description": "Ustaw tutaj jeden klucz API, a każdy członek użyje go do AI rozpoznającego zdjęcia. Członkowie nadal mogą dodać własny klucz, chyba że współdzielone poświadczenia są wymuszone.",
+        "emptyTitle": "Brak współdzielonego klucza AI",
+        "emptyBody": "Wybierz dostawcę i wklej klucz API, aby włączyć AI dla całej organizacji.",
+        "save": "Zapisz klucz",
+        "saved": "Zapisano współdzielony klucz AI.",
+        "test": "Testuj połączenie",
+        "lockedNotice": "Współdzielone poświadczenia są wymuszone dla tego wdrożenia — członkowie nie mogą dodać własnego klucza."
+      },
+      "members": {
+        "heading": "Członkowie",
+        "emptyTitle": "Brak członków",
+        "emptyBody": "Dodaj konto dla każdej osoby, która ma współdzielić ten inwentarz.",
+        "add": "Dodaj członka",
+        "added": "Dodano członka.",
+        "removed": "Usunięto członka.",
+        "dialogTitle": "Dodaj członka",
+        "emailLabel": "E-mail",
+        "passwordLabel": "Hasło tymczasowe",
+        "roleLabel": "Rola",
+        "roleMember": "Członek",
+        "roleAdmin": "Administrator",
+        "save": "Utwórz konto",
+        "removeLabel": "Usuń {email}",
+        "removeTitle": "Usunąć {email}?",
+        "removeBody": "Utracą dostęp do inwentarza tej organizacji. Tego nie można cofnąć stąd.",
+        "removeConfirm": "Usuń członka"
+      },
+      "shared": {
+        "indicator": "Używasz współdzielonych poświadczeń organizacji",
+        "body": "Twoja organizacja udostępnia klucz AI do katalogowania zdjęć. Nie musisz dodawać własnego."
+      }
+    },
+    "aiInherited": {
+      "band": "Twoja organizacja udostępnia współdzielony klucz AI. Dodaj własny poniżej, aby go zastąpić, albo zostaw puste, aby nadal korzystać ze współdzielonego.",
+      "locked": "Współdzielone poświadczenia organizacji są wymuszone — klucze poszczególnych użytkowników są wyłączone dla tego wdrożenia."
     }
   },
   "public": {

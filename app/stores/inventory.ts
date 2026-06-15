@@ -20,7 +20,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
-import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse, AiCredentialForm, AiCredentialResponse, TestConnectionResult } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse, AiCredentialForm, AiCredentialResponse, TestConnectionResult, OrgAiCredentialForm, OrgAiCredentialResponse, OrganisationMember, OrganisationMemberForm, OnboardingStatusResponse, OnboardingBootstrapForm, OnboardingBootstrapResponse } from '~~/shared/types/inventory'
+import { useAuthStore } from '~/stores/auth'
 
 export const useInventoryStore = defineStore('inventory', () => {
   const { t, locale } = useI18n()
@@ -526,6 +527,12 @@ export const useInventoryStore = defineStore('inventory', () => {
       toast.success(t('inventory.settings.ai.saved'))
       await refreshNuxtData('inv:me') // recompute can_use_ai (D-04)
       await refreshNuxtData('inv:ai-credential') // refresh the configured status
+      // The dashboard v-if + ai-gate middleware read `auth.canUseAi` (the auth
+      // store ref), NOT the `inv:me` useFetch cache — refreshing `inv:me` alone
+      // leaves the gate flag stale, so the AI affordances would not appear until
+      // a full reload. Re-hydrate the authoritative flag here so saving a key
+      // reveals the AI buttons immediately, without an F5 (D-04).
+      await useAuthStore().fetchCanUseAi()
       return res
     }
     catch (err: unknown) {
@@ -547,6 +554,141 @@ export const useInventoryStore = defineStore('inventory', () => {
     const { $api } = useNuxtApp()
     const baseURL = inventoryBase()
     return await $api<TestConnectionResult>('/ai-credential/test', { baseURL, method: 'POST', body: form })
+  }
+
+  // ---------------------------------------------------------------
+  // Org (shared) BYOK AI credential (Phase 12, D-09/D-13)
+  //
+  // Exact mirror of saveAiCredential/testAiConnection but pointed at the
+  // org-scoped routes. The WRITE is owner/admin-guarded server-side (Plan 05);
+  // the SPA still surfaces the failure through `fail()` on a 403. The org key is
+  // never round-tripped — sent in the body, the responses are secret-free.
+  // ---------------------------------------------------------------
+
+  /**
+   * Persist the ORGANISATION's shared BYOK credential (D-09). On success: success
+   * toast, then refresh `inv:me` so `can_use_ai`/`ai_inherited` recompute (D-04/
+   * D-13) and `inv:org-ai-credential` so the configured status updates, then
+   * re-hydrate `auth.canUseAi`/`aiInherited` so the AI affordances + inherited
+   * band update without an F5. Returns the secret-free response.
+   */
+  async function saveOrgAiCredential(form: OrgAiCredentialForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<OrgAiCredentialResponse>('/org-ai-credential', { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.organisation.ai.saved'))
+      await refreshNuxtData('inv:me') // recompute can_use_ai + ai_inherited (D-04/D-13)
+      await refreshNuxtData('inv:org-ai-credential') // refresh the configured status
+      await useAuthStore().fetchCanUseAi() // re-hydrate the authoritative flags (no F5)
+      return res
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * Fire a cheap real provider call to verify the org credential (D-09). Returns
+   * the `{ ok, error? }` result for INLINE rendering (UI-SPEC) — NO toast, verbatim
+   * provider message (D-08). Mirrors testAiConnection exactly.
+   */
+  async function testOrgAiConnection(form: OrgAiCredentialForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    return await $api<TestConnectionResult>('/org-ai-credential/test', { baseURL, method: 'POST', body: form })
+  }
+
+  // ---------------------------------------------------------------
+  // Organisation members (Phase 12, owner/admin only — D-09)
+  // ---------------------------------------------------------------
+
+  /**
+   * Add a member to the organisation (D-01/D-02). On success: success toast +
+   * refresh `inv:org-members`. The temporary password is sent in the body and
+   * never echoed back (secret-free response, Plan 05).
+   */
+  async function addMember(form: OrganisationMemberForm) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await $api<OrganisationMember>('/org/members', { baseURL, method: 'POST', body: form })
+      toast.success(t('inventory.organisation.members.added'))
+      await refreshNuxtData('inv:org-members')
+      return res
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
+   * Remove a member from the organisation (detaches without deleting the account,
+   * Plan 05). The owner is non-removable server-side (422). On success: success
+   * toast + refresh `inv:org-members`.
+   */
+  async function removeMember(id: number) {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    isLoading.value = true
+    error.value = null
+    try {
+      await $api(`/org/members/${id}`, { baseURL, method: 'DELETE' })
+      toast.success(t('inventory.organisation.members.removed'))
+      await refreshNuxtData('inv:org-members')
+    }
+    catch (err: unknown) {
+      return fail(err)
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // First-run site-owner onboarding (Phase 12, D-10) — PUBLIC.
+  //
+  // Both calls hit the SEPARATE public onboarding group (no jwt.auth). They MUST
+  // use bare `$fetch` against the resolved absolute base — NOT `$api`, which
+  // attaches the (non-existent) bearer and would try a 401-refresh the very first
+  // owner cannot satisfy. Replay safety (409) and the zero-user gate are enforced
+  // server-side (Plan 05); the SPA status check is convenience only.
+  // ---------------------------------------------------------------
+
+  /** Whether a first-run owner still needs to be created (zero-user gate, D-10). */
+  async function fetchOnboardingStatus() {
+    const baseURL = resolveApiUrl(inventoryBase())
+    const res = await $fetch<OnboardingStatusResponse>('/onboarding/status', { baseURL })
+    return res.needs_onboarding === true
+  }
+
+  /**
+   * Create the first owner + organisation #1 (D-10). On success persist the
+   * returned token via the auth store's setSession helper (the same path login
+   * uses) and return the user; the page navigates. The server error message is
+   * surfaced verbatim on failure so the onboarding card can render it inline.
+   */
+  async function bootstrapOnboarding(form: OnboardingBootstrapForm) {
+    const baseURL = resolveApiUrl(inventoryBase())
+    const res = await $fetch<OnboardingBootstrapResponse>('/onboarding/bootstrap', {
+      baseURL,
+      method: 'POST',
+      body: form,
+    })
+    if (res.token && res.user) {
+      await useAuthStore().setSession(res.token, res.user)
+    }
+    return res.user
   }
 
   // ---------------------------------------------------------------
@@ -610,5 +752,11 @@ export const useInventoryStore = defineStore('inventory', () => {
     revokeToken,
     saveAiCredential,
     testAiConnection,
+    saveOrgAiCredential,
+    testOrgAiConnection,
+    addMember,
+    removeMember,
+    fetchOnboardingStatus,
+    bootstrapOnboarding,
   }
 })

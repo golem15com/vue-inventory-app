@@ -316,6 +316,59 @@
     "dashboard": {
       "brandAlt": "whereiput.it logo",
       "title": "Inventory"
+    },
+    "onboarding": {
+      "heading": "Set up your inventory",
+      "body": "You're the first user here. Create your account and your organisation to get started.",
+      "orgNameLabel": "Organisation name",
+      "orgNamePlaceholder": "e.g. Reymonta Household",
+      "emailLabel": "Your email",
+      "passwordLabel": "Password",
+      "submit": "Create site",
+      "submitting": "Creating…",
+      "error": "Couldn't create your site: {message}. Check your details and try again."
+    },
+    "organisation": {
+      "title": "Organisation",
+      "loadError": "Something went wrong loading this. Refresh and try again.",
+      "notAllowed": "You don't have permission to manage this organisation.",
+      "ai": {
+        "heading": "Shared AI provider",
+        "description": "Set one API key here and every member uses it for photo-to-catalog AI. Members can still add their own key unless shared credentials are enforced.",
+        "emptyTitle": "No shared AI key yet",
+        "emptyBody": "Choose a provider and paste an API key to turn on AI for your whole organisation.",
+        "save": "Save key",
+        "saved": "Shared AI key saved.",
+        "test": "Test connection",
+        "lockedNotice": "Shared credentials are enforced for this deployment — members can't add their own key."
+      },
+      "members": {
+        "heading": "Members",
+        "emptyTitle": "No members yet",
+        "emptyBody": "Add an account for each person who should share this inventory.",
+        "add": "Add member",
+        "added": "Member added.",
+        "removed": "Member removed.",
+        "dialogTitle": "Add a member",
+        "emailLabel": "Email",
+        "passwordLabel": "Temporary password",
+        "roleLabel": "Role",
+        "roleMember": "Member",
+        "roleAdmin": "Admin",
+        "save": "Create account",
+        "removeLabel": "Remove {email}",
+        "removeTitle": "Remove {email}?",
+        "removeBody": "They'll lose access to this organisation's inventory. This can't be undone from here.",
+        "removeConfirm": "Remove member"
+      },
+      "shared": {
+        "indicator": "Using shared organisation credentials",
+        "body": "Your organisation provides the AI key for photo-to-catalog. You don't need to add your own."
+      }
+    },
+    "aiInherited": {
+      "band": "Your organisation provides a shared AI key. Add your own below to override it, or leave this blank to keep using the shared one.",
+      "locked": "Shared organisation credentials are enforced — per-user keys are disabled for this deployment."
     }
   },
   "public": {

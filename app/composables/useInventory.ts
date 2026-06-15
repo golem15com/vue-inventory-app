@@ -22,7 +22,7 @@
  * foreign/missing resource 404s identically (no enumeration). `inventoryApiBase`
  * is single-owned by Plan 05-02's nuxt.config and reached through the dev proxy.
  */
-import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta, AiCredentialResponse } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, Meta, TokenMeta, AiCredentialResponse, OrgAiCredentialResponse, OrganisationMembersResponse } from '~~/shared/types/inventory'
 // NOTE: the embedded-reference type is exported as `InventoryRef` (not `Ref`) to
 // avoid shadowing Nuxt's auto-imported `Ref` from vue — see shared/types/inventory.ts.
 //
@@ -225,6 +225,26 @@ export function useInventory() {
     return useFetch<AiCredentialResponse>('/ai-credential', { baseURL, key: 'inv:ai-credential', headers: authHeaders() })
   }
 
+  /**
+   * The ORGANISATION's shared BYOK credential STATUS (Phase 12, D-09/D-13). Reads
+   * the JWT/cookie group; secret-free by construction — only `{ configured }` +
+   * non-secret provider/model/base_url, NEVER the org key. Readable by any org
+   * member (D-13 transparency); the WRITE is owner/admin-guarded server-side.
+   * Mirrors fetchAiCredential exactly, key `inv:org-ai-credential`.
+   */
+  function fetchOrgAiCredential() {
+    return useFetch<OrgAiCredentialResponse>('/org-ai-credential', { baseURL, key: 'inv:org-ai-credential', headers: authHeaders() })
+  }
+
+  /**
+   * The organisation's member roster (Phase 12, owner/admin only server-side —
+   * D-09). Secret-free (id/email/role, never a password). Keyed `inv:org-members`
+   * so the store's add/remove mutations can refresh exactly this read.
+   */
+  function fetchMembers() {
+    return useFetch<OrganisationMembersResponse>('/org/members', { baseURL, key: 'inv:org-members', headers: authHeaders() })
+  }
+
   return {
     fetchAreas,
     fetchMe,
@@ -239,5 +259,7 @@ export function useInventory() {
     fetchTags,
     fetchTokens,
     fetchAiCredential,
+    fetchOrgAiCredential,
+    fetchMembers,
   }
 }

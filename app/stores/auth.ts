@@ -58,6 +58,21 @@ export const useAuthStore = defineStore('auth', () => {
    * `ai-gate` route guard; the server 403 (Plan 01) remains the real boundary.
    */
   const canUseAi = ref(false)
+  /**
+   * Whether this deployment enforces shared organisation AI credentials (D-04).
+   * Read from the explicit `ai_org_lock` boolean on the me/areas envelope (the
+   * server-side `.env` flag, Plan 04). When true the SPA drops the per-user AI
+   * tab from settings — but this is COSMETIC: the server (Plan 04) is the real
+   * org-lock boundary. Default false (Phase 11 per-user behaviour preserved).
+   */
+  const aiOrgLock = ref(false)
+  /**
+   * Whether the caller is currently using an INHERITED organisation credential
+   * (D-13): an org credential is present, the caller has no per-user key, and the
+   * lock flag is unset. Drives the non-accent "inherited from organisation" band
+   * on the AI settings tab. Read from the me/areas envelope (Plan 04).
+   */
+  const aiInherited = ref(false)
 
   // ---------------------------------------------------------------
   // Token (cookie-based, shared with plugins/api.ts + utils/tokenRefresh.ts)
@@ -91,6 +106,17 @@ export const useAuthStore = defineStore('auth', () => {
     return useRuntimeConfig().public.userApiBase as string
   }
 
+  /**
+   * Public session-set helper (D-10). The first-run onboarding flow (handled in
+   * the inventory store, which cannot reach this private closure) calls this to
+   * persist the bootstrap token + owner exactly the way login/register do, then
+   * hydrates the AI flags. Keeps the cookie-write idiom in ONE place.
+   */
+  async function setSession(newToken: string, newUser: AuthUser) {
+    applySession(newToken, newUser)
+    await fetchCanUseAi()
+  }
+
   function applySession(newToken: string, newUser: AuthUser) {
     token.value = newToken
     // Also write via document.cookie so the api plugin's independent cookie
@@ -109,6 +135,8 @@ export const useAuthStore = defineStore('auth', () => {
     fieldErrors.value = {}
     twoFactorRequired.value = false
     canUseAi.value = false
+    aiOrgLock.value = false
+    aiInherited.value = false
   }
 
   /**
@@ -120,21 +148,37 @@ export const useAuthStore = defineStore('auth', () => {
   async function fetchCanUseAi() {
     if (!token.value) {
       canUseAi.value = false
+      aiOrgLock.value = false
+      aiInherited.value = false
       return
     }
     try {
       // meAreasUrl is pre-resolved at store-setup scope — DO NOT call
       // useRuntimeConfig()/resolveApiUrl() here: this runs nested after an await
       // during SSR, where the Nuxt instance is gone and those composables throw.
-      const response = await $fetch<{ data: unknown[], can_use_ai?: boolean }>(
+      //
+      // The envelope also carries the Plan 04 org flags: `ai_org_lock` (D-04 →
+      // SPA drops the per-user AI tab) and `ai_inherited` (D-13 → the inherited
+      // band). The 403 is the boundary — we NEVER infer access from a caught 403;
+      // these are explicit reads, defaulting false on any failure (fail-closed).
+      const response = await $fetch<{
+        data: unknown[]
+        can_use_ai?: boolean
+        ai_org_lock?: boolean
+        ai_inherited?: boolean
+      }>(
         meAreasUrl,
         { headers: { Authorization: `Bearer ${token.value}` } },
       )
       canUseAi.value = response.can_use_ai === true
+      aiOrgLock.value = response.ai_org_lock === true
+      aiInherited.value = response.ai_inherited === true
     }
     catch {
       // Fail-closed: an unreachable/erroring envelope hides the AI affordances.
       canUseAi.value = false
+      aiOrgLock.value = false
+      aiInherited.value = false
     }
   }
 
@@ -293,11 +337,14 @@ export const useAuthStore = defineStore('auth', () => {
     fieldErrors,
     twoFactorRequired,
     canUseAi,
+    aiOrgLock,
+    aiInherited,
     // Computed
     isLoggedIn,
     // Actions
     login,
     register,
+    setSession,
     fetchUser,
     fetchCanUseAi,
     logout,
