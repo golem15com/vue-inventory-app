@@ -37,7 +37,7 @@ import {
 import { Check, Eye, EyeOff } from '@lucide/vue'
 import { useInventoryStore } from '~/stores/inventory'
 import { useAuthStore } from '~/stores/auth'
-import type { AiProvider, TestConnectionResult } from '~~/shared/types/inventory'
+import type { AiProvider, OrgAiCredentialForm, OrgAiCredentialTestForm, TestConnectionResult } from '~~/shared/types/inventory'
 
 const { t } = useI18n()
 const store = useInventoryStore()
@@ -75,20 +75,48 @@ const keyPlaceholder = computed(() =>
     : t('inventory.settings.ai.apiKeyPlaceholder'),
 )
 
-/** Trim + drop the optional overrides when blank so the backend default applies. */
-function buildPayload() {
+/** The non-secret overrides, dropped when blank so the backend default applies. */
+function buildOverrides() {
   return {
     provider: form.provider,
-    api_key: form.api_key,
     ...(form.model.trim() ? { model: form.model.trim() } : {}),
     ...(form.base_url.trim() ? { base_url: form.base_url.trim() } : {}),
   }
 }
 
-/** Client-side gate (UX only — the server D-09 guard is the real boundary). */
+/** Save body — the typed api_key is always present (a save needs a key). */
+function buildSavePayload(): OrgAiCredentialForm {
+  return { ...buildOverrides(), api_key: form.api_key }
+}
+
+/**
+ * Test body. When the input holds a typed key it is sent for an inline pre-save
+ * test; when it is empty the api_key is OMITTED entirely (not sent as "") so the
+ * server tests against the STORED org credential (OrgAiConfig::fromOrg).
+ */
+function buildTestPayload(): OrgAiCredentialTestForm {
+  const overrides = buildOverrides()
+  return form.api_key.trim()
+    ? { ...overrides, api_key: form.api_key }
+    : overrides
+}
+
+/** Save gate (UX only — the server D-09 guard is the real boundary): a save
+ * always needs a key, since the stored secret is never round-tripped. */
 function validate(): boolean {
   providerError.value = !form.provider
   keyError.value = !form.api_key.trim()
+  return !providerError.value && !keyError.value
+}
+
+/**
+ * Test gate. A test may run WITHOUT a typed key when a credential is already
+ * saved (the server falls back to the stored org key). Only block — and show the
+ * key-required error — when the input is empty AND nothing is configured yet.
+ */
+function validateTest(): boolean {
+  providerError.value = !form.provider
+  keyError.value = !form.api_key.trim() && !configured.value
   return !providerError.value && !keyError.value
 }
 
@@ -96,7 +124,7 @@ async function onSave() {
   if (!validate()) return
   submitting.value = true
   try {
-    await store.saveOrgAiCredential(buildPayload())
+    await store.saveOrgAiCredential(buildSavePayload())
     // Clear the key field after a successful save (secret hygiene, T-12-cred-leak).
     form.api_key = ''
     revealed.value = false
@@ -110,11 +138,14 @@ async function onSave() {
 }
 
 async function onTest() {
-  if (!validate()) return
+  if (!validateTest()) return
   testing.value = true
   testResult.value = null
   try {
-    testResult.value = await store.testOrgAiConnection(buildPayload())
+    // Typed a key → test it. Left empty but a credential is saved → test the
+    // STORED org key (buildTestPayload omits api_key so the server uses
+    // OrgAiConfig::fromOrg).
+    testResult.value = await store.testOrgAiConnection(buildTestPayload())
   }
   catch {
     // A thrown error (network/5xx) — surface it inline like a failed connection,

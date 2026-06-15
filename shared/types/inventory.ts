@@ -192,8 +192,18 @@ export interface TestConnectionResult {
 /** A member's role inside their organisation (D-01/D-02 — owner is non-removable). */
 export type OrganisationRole = 'owner' | 'admin' | 'member'
 
-/** The org-credential save/test request body — mirrors AiCredentialForm exactly. */
+/** The org-credential save request body — mirrors AiCredentialForm exactly. */
 export type OrgAiCredentialForm = AiCredentialForm
+
+/**
+ * The org-credential TEST request body. Unlike the save form, the api_key is
+ * OPTIONAL: when a credential is already saved the SPA omits it and the server
+ * tests against the stored org key (OrgAiConfig::fromOrg). A typed key still
+ * tests inline pre-save.
+ */
+export type OrgAiCredentialTestForm = Omit<OrgAiCredentialForm, 'api_key'> & {
+  api_key?: string
+}
 
 /** Secret-free org-credential status (GET /org-ai-credential) — mirrors AiCredentialResponse. */
 export type OrgAiCredentialResponse = AiCredentialResponse

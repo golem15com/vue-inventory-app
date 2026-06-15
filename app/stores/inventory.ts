@@ -20,7 +20,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
-import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse, AiCredentialForm, AiCredentialResponse, TestConnectionResult, OrgAiCredentialForm, OrgAiCredentialResponse, OrganisationMember, OrganisationMemberForm, OnboardingStatusResponse, OnboardingBootstrapForm, OnboardingBootstrapResponse } from '~~/shared/types/inventory'
+import type { Area, Location, Item, ItemCategory, Tag, TokenMintForm, TokenMintResponse, AiCredentialForm, AiCredentialResponse, TestConnectionResult, OrgAiCredentialForm, OrgAiCredentialTestForm, OrgAiCredentialResponse, OrganisationMember, OrganisationMemberForm, OnboardingStatusResponse, OnboardingBootstrapForm, OnboardingBootstrapResponse } from '~~/shared/types/inventory'
 import { useAuthStore } from '~/stores/auth'
 
 export const useInventoryStore = defineStore('inventory', () => {
@@ -598,7 +598,7 @@ export const useInventoryStore = defineStore('inventory', () => {
    * the `{ ok, error? }` result for INLINE rendering (UI-SPEC) — NO toast, verbatim
    * provider message (D-08). Mirrors testAiConnection exactly.
    */
-  async function testOrgAiConnection(form: OrgAiCredentialForm) {
+  async function testOrgAiConnection(form: OrgAiCredentialTestForm) {
     const { $api } = useNuxtApp()
     const baseURL = inventoryBase()
     return await $api<TestConnectionResult>('/org-ai-credential/test', { baseURL, method: 'POST', body: form })
