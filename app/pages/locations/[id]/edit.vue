@@ -31,6 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
+import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import { useInventoryStore } from '~/stores/inventory'
 
 definePageMeta({ middleware: 'auth' })
@@ -149,6 +150,15 @@ useSeoMeta({
 
 <template>
   <section class="space-y-6">
+    <Breadcrumbs
+      :segments="[
+        { label: t('inventory.totals.areas'), to: '/dashboard' },
+        { label: location.area?.name ?? '', to: areaId ? `/areas/${areaId}` : undefined },
+        { label: location.name, to: `/locations/${location.id}` },
+        { label: t('inventory.location.edit') },
+      ]"
+    />
+
     <h1 class="text-3xl font-semibold tracking-tight">{{ t('inventory.location.edit') }}</h1>
 
     <form class="space-y-6" @submit.prevent="onSubmit">
