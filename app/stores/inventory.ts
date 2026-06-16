@@ -482,6 +482,17 @@ export const useInventoryStore = defineStore('inventory', () => {
     }
   }
 
+  /**
+   * The caller's accessible Areas as a flat list — used by the mint dialog's
+   * area-restriction picker. A plain read (no caching); the area pool is tiny.
+   */
+  async function listAreas(): Promise<Area[]> {
+    const { $api } = useNuxtApp()
+    const baseURL = inventoryBase()
+    const res = await $api<{ data: Area[] }>('/areas', { baseURL })
+    return res.data
+  }
+
   /** Revoke a token by id (owner-scoped server-side; a foreign/missing id 404s). */
   async function revokeToken(id: number) {
     const { $api } = useNuxtApp()
@@ -606,6 +617,7 @@ export const useInventoryStore = defineStore('inventory', () => {
     bulkSaveItems,
     attachLocationPhoto,
     loadLocationsForPickers,
+    listAreas,
     mintToken,
     revokeToken,
     saveAiCredential,

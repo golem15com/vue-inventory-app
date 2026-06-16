@@ -31,7 +31,7 @@ import { Label } from '~/components/ui/label'
 import { Copy, Check } from '@lucide/vue'
 import { toast } from 'vue-sonner'
 import { useInventoryStore } from '~/stores/inventory'
-import type { TokenScope } from '~~/shared/types/inventory'
+import type { Area, TokenScope } from '~~/shared/types/inventory'
 
 const props = defineProps<{
   open: boolean
@@ -51,10 +51,14 @@ const installCommand = computed(() => config.public.mcpInstallCommand)
 
 const ALL_SCOPES: TokenScope[] = ['read', 'write', 'ai']
 
-const form = reactive({ name: '', scopes: ['read'] as TokenScope[] })
+const form = reactive({ name: '', scopes: ['read'] as TokenScope[], area_ids: [] as number[] })
 const nameError = ref(false)
 const scopeError = ref(false)
 const submitting = ref(false)
+
+/** Areas the caller can bind the token to (empty selection = all areas). */
+const areas = ref<Area[]>([])
+const areasLoading = ref(false)
 
 /** The raw secret — local-only, view-once, never persisted (T-08-spa-secret). */
 const secret = ref<string | null>(null)
@@ -74,17 +78,31 @@ const prefilledInstallCommand = computed(() =>
     : '',
 )
 
-// Reset everything whenever the dialog (re)opens.
+// Reset everything whenever the dialog (re)opens, and load the area pool for the
+// optional restriction picker.
 watch(
   () => props.open,
-  (open) => {
+  async (open) => {
     if (!open) return
     form.name = ''
     form.scopes = ['read']
+    form.area_ids = []
     nameError.value = false
     scopeError.value = false
     secret.value = null
     copied.value = false
+
+    areasLoading.value = true
+    try {
+      areas.value = await store.listAreas()
+    }
+    catch {
+      // Non-fatal: without the list the user simply mints an all-areas token.
+      areas.value = []
+    }
+    finally {
+      areasLoading.value = false
+    }
   },
 )
 
@@ -93,6 +111,12 @@ function toggleScope(scope: TokenScope) {
   if (idx >= 0) form.scopes.splice(idx, 1)
   else form.scopes.push(scope)
   if (form.scopes.length) scopeError.value = false
+}
+
+function toggleArea(id: number) {
+  const idx = form.area_ids.indexOf(id)
+  if (idx >= 0) form.area_ids.splice(idx, 1)
+  else form.area_ids.push(id)
 }
 
 function scopeHint(scope: TokenScope): string {
@@ -113,6 +137,8 @@ async function onSubmit() {
     const res = await store.mintToken({
       name: form.name.trim(),
       scopes: [...form.scopes],
+      // Empty = unrestricted (all accessible areas); otherwise bind to the picks.
+      area_ids: form.area_ids.length ? [...form.area_ids] : undefined,
     })
     // Hold the raw secret only here, in local state — swap to the reveal step.
     secret.value = res.token
@@ -212,6 +238,28 @@ async function copyPrefilledInstall() {
           <p v-if="scopeError" class="text-sm text-destructive">
             {{ t('inventory.settings.scopeRequired') }}
           </p>
+        </div>
+
+        <!-- Optional per-Area restriction. Empty selection = all accessible areas. -->
+        <div v-if="areas.length" class="space-y-2">
+          <Label>{{ t('inventory.settings.token.areas') }}</Label>
+          <div class="space-y-2">
+            <label
+              v-for="area in areas"
+              :key="area.id"
+              class="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border p-3 hover:bg-muted"
+              :data-testid="`area-${area.id}`"
+            >
+              <input
+                type="checkbox"
+                class="size-4 shrink-0"
+                :checked="form.area_ids.includes(area.id)"
+                @change="toggleArea(area.id)"
+              >
+              <span class="min-w-0 truncate text-sm font-medium">{{ area.name }}</span>
+            </label>
+          </div>
+          <p class="text-xs text-muted-foreground">{{ t('inventory.settings.token.areasHint') }}</p>
         </div>
 
         <DialogFooter>

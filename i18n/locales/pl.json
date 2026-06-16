@@ -253,7 +253,10 @@
         "expires": "Wygasa",
         "lastUsed": "Ostatnio użyto",
         "never": "Nigdy",
-        "created": "Utworzono"
+        "created": "Utworzono",
+        "areas": "Ogranicz do obszarów",
+        "areasHint": "Pozostaw puste, aby zezwolić na wszystkie Twoje obszary.",
+        "areasAll": "Wszystkie obszary"
       },
       "ai": {
         "title": "AI",
