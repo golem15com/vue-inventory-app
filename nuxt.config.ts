@@ -76,7 +76,7 @@ export default defineNuxtConfig({
       userApiBase: '/_user/api/v1',
       // Golem15.Journal blog read API (relative → proxied in dev, same-origin in prod).
       journalApiBase: '/_journal/api/v1',
-      // JZ.Inventory read/write API (relative → proxied in dev, same-origin in prod).
+      // Golem15.Inventory read/write API (relative → proxied in dev, same-origin in prod).
       inventoryApiBase: '/_inventory/api/v1',
       // MCP install one-liner surfaced in the token-mint reveal (Phase 8).
       // Override with NUXT_PUBLIC_MCP_INSTALL_COMMAND per deployment.

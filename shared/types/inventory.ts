@@ -1,7 +1,7 @@
 /**
  * Inventory types.
  *
- * Mirror the backend JZ.Inventory plugin contract at `/_inventory/api/v1`
+ * Mirror the backend Golem15.Inventory plugin contract at `/_inventory/api/v1`
  * (verified against the SerializesInventory trait — see 05-RESEARCH.md). List
  * endpoints return `{ data: T[], meta?: Meta }`; detail endpoints return
  * `{ data: T }`. The embedded Item shape carries one level of relations
@@ -103,7 +103,7 @@ export interface Meta {
 // ---------------------------------------------------------------------------
 // Personal API tokens (Phase 8) — the SPA Integrations surface.
 //
-// Mirrors the JZ.Inventory backend contract on the JWT/cookie group (Plan 03):
+// Mirrors the Golem15.Inventory backend contract on the JWT/cookie group (Plan 03):
 //   POST   /_inventory/api/v1/tokens   -> 201 { token: 'inv_…', meta: TokenMeta }
 //   GET    /_inventory/api/v1/tokens   -> 200 { data: TokenMeta[] }
 //   DELETE /_inventory/api/v1/tokens/{id} -> 200 { data: { revoked: true } }
@@ -152,7 +152,7 @@ export interface TokenMintResponse {
 // ---------------------------------------------------------------------------
 // BYOK AI credential (Phase 11) — the SPA AI-settings surface.
 //
-// Mirrors the JZ.Inventory backend contract on the JWT/cookie group (Plan 03):
+// Mirrors the Golem15.Inventory backend contract on the JWT/cookie group (Plan 03):
 //   GET  /_inventory/api/v1/ai-credential      -> 200 { configured, provider?, model?, base_url? }
 //   POST /_inventory/api/v1/ai-credential       -> 200 { configured: true, provider } | 422 { error, errors }
 //   POST /_inventory/api/v1/ai-credential/test  -> 200 { ok: boolean, error? }
