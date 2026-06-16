@@ -9,8 +9,8 @@
  *
  * This is READ-FIRST: it SHOWS where the item lives and what it is, with editing one
  * deliberate click away behind the Edit button (→ /items/:id/edit, which reuses the
- * item form). Full-width (route.meta.fullWidth, the 10-01 layout mechanism), square,
- * headers-in-cards. Desktop = details-left / photo-right; mobile = details FIRST,
+ * item form). Renders at the shared max-w-5xl reading width, square, headers-in-cards.
+ * Desktop = details-left / photo-right; mobile = details FIRST,
  * photo gallery LAST (the user explicitly cares about this order).
  *
  * Photo precedence (D-05): item own photo → else the Location's first photo (with a
@@ -22,8 +22,9 @@ import { computed } from 'vue'
 import { Package } from '@lucide/vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import LocationPhotoBadge from '~/components/inventory/LocationPhotoBadge.vue'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
@@ -136,9 +137,7 @@ useSeoMeta({
               class="size-24 rounded-md object-cover"
             >
           </a>
-          <span class="absolute bottom-0 left-0 bg-muted/80 text-muted-foreground text-sm px-1">
-            {{ t('inventory.item.locationPhoto') }}
-          </span>
+          <LocationPhotoBadge />
         </div>
 
         <!-- 3. No photo anywhere: placeholder + muted caption -->

@@ -3,7 +3,7 @@
  * /locations/[id]/edit — full-page Edit Location screen (D-08).
  *
  * Replaces the inline LocationFormDialog flow that used to open on /areas/:id.
- * Full-width (route.meta.fullWidth, the 10-01 layout mechanism), square,
+ * Renders at the standard reading width (max-w-5xl) like the View pages — square,
  * headers-in-cards. One field (name) + a multi-photo gallery card. The single
  * --primary CTA is Save; all controls are min-h-11.
  *
@@ -31,9 +31,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
+import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import { useInventoryStore } from '~/stores/inventory'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
@@ -149,6 +150,15 @@ useSeoMeta({
 
 <template>
   <section class="space-y-6">
+    <Breadcrumbs
+      :segments="[
+        { label: t('inventory.totals.areas'), to: '/dashboard' },
+        { label: location.area?.name ?? '', to: areaId ? `/areas/${areaId}` : undefined },
+        { label: location.name, to: `/locations/${location.id}` },
+        { label: t('inventory.location.edit') },
+      ]"
+    />
+
     <h1 class="text-3xl font-semibold tracking-tight">{{ t('inventory.location.edit') }}</h1>
 
     <form class="space-y-6" @submit.prevent="onSubmit">

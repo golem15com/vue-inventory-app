@@ -41,10 +41,11 @@ const route = useRoute()
 const topbarQ = ref('')
 const showTopbarSearch = computed(() => route.path !== '/search' && route.path !== '/dashboard')
 
-// Full-width opt-out (D-04) — pages set `definePageMeta({ fullWidth: true })`
-// to break out of the default max-w-5xl reading column into max-w-7xl (View
-// Item / Edit Item / /items/new / Edit Area / Edit Location consume this).
-const mainWidth = computed(() => route.meta.fullWidth ? 'max-w-7xl' : 'max-w-5xl')
+// One reading column for the whole app shell — every page renders at max-w-5xl so
+// container width is consistent across dashboard, search, areas, locations, items
+// (view/new/edit) and settings. Wide content (e.g. the item view/form) lays out in
+// a multi-column grid INSIDE this column rather than widening the shell.
+const mainWidth = 'max-w-5xl'
 
 // Responsive top-bar placeholder — the narrow mobile input truncates the full
 // "Search your things…" to "Search your th…", so use a short "Search…" below lg.
@@ -220,17 +221,21 @@ async function onLogout() {
     </main>
 
     <!--
-      whereiput.it attribution. Intentionally subtle — the header/main are the
-      primary brand space; this footer badge marks the build without competing
-      with the page content. Semantic tokens only.
+      Maker attribution. Intentionally subtle — the header/main are the primary
+      brand space; this footer marks who built it without competing with the page
+      content. Semantic tokens only.
     -->
     <footer class="border-t">
-      <div class="mx-auto flex max-w-5xl items-center justify-center gap-2 px-4 py-6 text-xs text-muted-foreground">
-        <span>{{ t('footer.poweredBy') }}</span>
-        <span class="inline-flex items-center gap-2 opacity-80">
-          <img src="/brand/logo.png" alt="whereiput.it" class="h-5 w-auto" width="20" height="20" >
-          <span class="font-semibold tracking-tight">whereiput.it</span>
-        </span>
+      <div class="mx-auto flex max-w-5xl items-center justify-center gap-1 px-4 py-6 text-xs text-muted-foreground">
+        <span>{{ t('footer.madeBy') }}</span>
+        <a
+          href="https://www.golem15.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold tracking-tight hover:text-foreground"
+        >
+          Golem15
+        </a>
       </div>
     </footer>
 

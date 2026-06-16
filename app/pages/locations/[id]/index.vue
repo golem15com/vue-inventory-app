@@ -122,12 +122,26 @@ useSeoMeta({
       <h1 class="min-w-0 break-words text-3xl font-semibold tracking-tight">
         {{ locationName }}
       </h1>
-      <div v-if="items.length" class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button class="min-h-11 w-full sm:w-auto" @click="navigateTo(`/items/new?location=${locationId}`)">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <!-- Edit Location (always available, mirrors the View Area pencil → /areas/:id/edit). -->
+        <Button
+          variant="ghost"
+          size="icon"
+          class="size-11 self-start sm:self-auto"
+          :aria-label="t('inventory.action.editLabel', { name: locationName })"
+          @click="navigateTo(`/locations/${locationId}/edit`)"
+        >
+          <Pencil />
+        </Button>
+        <Button
+          v-if="items.length"
+          class="min-h-11 w-full sm:w-auto"
+          @click="navigateTo(`/items/new?location=${locationId}`)"
+        >
           {{ t('inventory.item.add') }}
         </Button>
         <Button
-          v-if="canUseAi"
+          v-if="items.length && canUseAi"
           class="min-h-11 w-full sm:w-auto"
           data-testid="scan-with-ai"
           :aria-label="t('inventory.aiAssist.entryLabel')"

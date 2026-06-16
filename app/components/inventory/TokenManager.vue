@@ -67,6 +67,12 @@ async function confirmRevoke() {
   }
 }
 
+/** The token's area restriction as a label: bound area names, or "All areas". */
+function areaLabel(token: TokenMeta): string {
+  const names = (token.areas ?? []).map(a => a.name)
+  return names.length ? names.join(', ') : t('inventory.settings.token.areasAll')
+}
+
 /** Localized "Never" or the formatted timestamp. */
 function formatStamp(value: string | null): string {
   if (!value) return t('inventory.settings.token.never')
@@ -128,6 +134,9 @@ function formatStamp(value: string | null): string {
                 {{ t(`inventory.settings.token.scope.${scope}`) }}
               </span>
             </div>
+            <p class="text-xs text-muted-foreground" data-testid="token-areas">
+              {{ t('inventory.settings.token.areas') }}: {{ areaLabel(token) }}
+            </p>
             <p class="text-xs text-muted-foreground">
               {{ t('inventory.settings.token.lastUsed') }}: {{ formatStamp(token.last_used_at) }}
               ·

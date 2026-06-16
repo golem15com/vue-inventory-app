@@ -61,7 +61,8 @@
     }
   },
   "footer": {
-    "poweredBy": "Built in"
+    "poweredBy": "Built in",
+    "madeBy": "Made by"
   },
   "pwa": {
     "install": {
@@ -263,7 +264,10 @@
         "expires": "Expires",
         "lastUsed": "Last used",
         "never": "Never",
-        "created": "Created"
+        "created": "Created",
+        "areas": "Limit to areas",
+        "areasHint": "Leave empty to allow access to all your areas.",
+        "areasAll": "All areas"
       },
       "ai": {
         "title": "AI",

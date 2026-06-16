@@ -24,6 +24,7 @@
  */
 import { computed, onMounted, reactive, ref } from 'vue'
 import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -168,7 +169,12 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <form class="max-w-2xl space-y-6" @submit.prevent="onSubmit">
+  <form class="space-y-6" @submit.prevent="onSubmit">
+    <!-- Desktop: fields (2 cols) left, photo (1 col) right — mirrors the View Item layout. -->
+    <div class="flex flex-col gap-6 lg:grid lg:grid-cols-3">
+    <!-- FIELDS (left / first) -->
+    <Card class="bg-card border p-6 lg:col-span-2">
+      <div class="space-y-6">
     <!-- 1. Name (required) -->
     <div class="space-y-1.5">
       <Label for="item-name">{{ t('inventory.field.name') }}</Label>
@@ -233,19 +239,24 @@ async function confirmDelete() {
         class="flex min-h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-base shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 md:text-sm"
       />
     </div>
+      </div>
+    </Card>
 
-    <!-- 7. Photo (create: one staged File; edit: multi-photo gallery) -->
-    <div class="space-y-1.5">
-      <Label>{{ t('inventory.field.photo') }}</Label>
-      <PhotoUploader
-        v-if="!isEdit"
-        v-model="photoFiles"
-      />
-      <PhotoUploader
-        v-else
-        :item-id="existing!.id"
-        :photos="existing!.photos"
-      />
+    <!-- PHOTO (right / last) -->
+    <Card class="bg-card border p-6">
+      <div class="space-y-1.5">
+        <Label>{{ t('inventory.field.photo') }}</Label>
+        <PhotoUploader
+          v-if="!isEdit"
+          v-model="photoFiles"
+        />
+        <PhotoUploader
+          v-else
+          :item-id="existing!.id"
+          :photos="existing!.photos"
+        />
+      </div>
+    </Card>
     </div>
 
     <!-- Footer: single accent Save Item + Cancel -->

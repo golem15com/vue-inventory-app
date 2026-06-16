@@ -10,7 +10,7 @@
  */
 import ItemForm from '~/components/inventory/ItemForm.vue'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()

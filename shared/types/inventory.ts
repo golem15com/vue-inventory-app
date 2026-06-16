@@ -122,16 +122,24 @@ export interface TokenMeta {
   id: number
   name: string
   scopes: TokenScope[]
+  /** RESOURCE-01: null = all accessible Areas; otherwise the bound Area ids. */
+  area_ids: number[] | null
+  /** Resolved {id,name} for the bound Areas — empty when unrestricted (all areas). */
+  areas: InventoryRef[]
   last_used_at: string | null
   expires_at: string | null
   revoked_at: string | null
   created_at: string
 }
 
-/** The mint form payload (name + chosen scopes + optional expiry). */
+/**
+ * The mint form payload (name + chosen scopes + optional area allow-list + expiry).
+ * Omit/empty `area_ids` mints an unrestricted token (all accessible Areas).
+ */
 export interface TokenMintForm {
   name: string
   scopes: TokenScope[]
+  area_ids?: number[] | null
   expires_at?: string | null
 }
 

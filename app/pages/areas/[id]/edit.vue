@@ -2,7 +2,7 @@
 /**
  * /areas/[id]/edit — full-page Edit Area screen (D-08).
  *
- * Full-width (route.meta.fullWidth, the 10-01 layout mechanism), square,
+ * Renders at the standard reading width (max-w-5xl) like the View pages — square,
  * headers-in-cards. Two fields (name + description — Area has a description,
  * Location does not) + a multi-photo gallery card. The single --primary CTA is
  * Save; all controls are min-h-11.
@@ -32,9 +32,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
+import Breadcrumbs from '~/components/inventory/Breadcrumbs.vue'
 import { useInventoryStore } from '~/stores/inventory'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
@@ -152,6 +153,14 @@ useSeoMeta({
 
 <template>
   <section class="space-y-6">
+    <Breadcrumbs
+      :segments="[
+        { label: t('inventory.totals.areas'), to: '/dashboard' },
+        { label: area.name, to: parentTo },
+        { label: t('inventory.area.edit') },
+      ]"
+    />
+
     <h1 class="text-3xl font-semibold tracking-tight">{{ t('inventory.area.edit') }}</h1>
 
     <form class="space-y-6" @submit.prevent="onSubmit">
