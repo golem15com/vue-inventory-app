@@ -56,10 +56,17 @@ export default defineNuxtConfig({
     // Server-only: absolute origin SSR uses to reach the PHP backend (Nitro
     // can't serve relative /_user|/_inventory paths against itself — they
     // resolve to the Nitro server and 502). Override per deployment with
-    // NUXT_INTERNAL_API_ORIGIN. Defaults to the public site URL so prod
-    // (same-origin) works without extra env, falling back to the canonical
-    // production origin.
+    // NUXT_INTERNAL_API_ORIGIN.
+    //
+    // In DEV, fall back to NUXT_DEV_BACKEND_ORIGIN (the same local backend the
+    // dev proxies target) BEFORE the public site URL. Without this, SSR on a
+    // hard reload would validate the LOCAL auth_token against the production
+    // origin (whereiput.it), get a 401, and clear the cookie — logging the dev
+    // user out on every F5. In production NUXT_DEV_BACKEND_ORIGIN is unset, so
+    // an explicit NUXT_INTERNAL_API_ORIGIN / NUXT_PUBLIC_SITE_URL still wins and
+    // behavior is unchanged.
     internalApiOrigin: process.env.NUXT_INTERNAL_API_ORIGIN
+      || process.env.NUXT_DEV_BACKEND_ORIGIN
       || process.env.NUXT_PUBLIC_SITE_URL
       || 'https://whereiput.it',
     public: {
