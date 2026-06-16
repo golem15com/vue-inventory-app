@@ -51,7 +51,8 @@
     "noAccount": "Nie masz konta? Poproś administratora o zaproszenie."
   },
   "footer": {
-    "poweredBy": "Zbudowano w"
+    "poweredBy": "Zbudowano w",
+    "madeBy": "Wykonane przez"
   },
   "pwa": {
     "install": {

@@ -221,17 +221,21 @@ async function onLogout() {
     </main>
 
     <!--
-      whereiput.it attribution. Intentionally subtle — the header/main are the
-      primary brand space; this footer badge marks the build without competing
-      with the page content. Semantic tokens only.
+      Maker attribution. Intentionally subtle — the header/main are the primary
+      brand space; this footer marks who built it without competing with the page
+      content. Semantic tokens only.
     -->
     <footer class="border-t">
-      <div class="mx-auto flex max-w-5xl items-center justify-center gap-2 px-4 py-6 text-xs text-muted-foreground">
-        <span>{{ t('footer.poweredBy') }}</span>
-        <span class="inline-flex items-center gap-2 opacity-80">
-          <img src="/brand/logo.png" alt="whereiput.it" class="h-5 w-auto" width="20" height="20" >
-          <span class="font-semibold tracking-tight">whereiput.it</span>
-        </span>
+      <div class="mx-auto flex max-w-5xl items-center justify-center gap-1 px-4 py-6 text-xs text-muted-foreground">
+        <span>{{ t('footer.madeBy') }}</span>
+        <a
+          href="https://www.golem15.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold tracking-tight hover:text-foreground"
+        >
+          Golem15
+        </a>
       </div>
     </footer>
 

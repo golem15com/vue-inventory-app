@@ -51,7 +51,8 @@
     "noAccount": "No account? Ask an admin for an invite."
   },
   "footer": {
-    "poweredBy": "Built in"
+    "poweredBy": "Built in",
+    "madeBy": "Made by"
   },
   "pwa": {
     "install": {

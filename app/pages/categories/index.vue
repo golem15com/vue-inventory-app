@@ -62,16 +62,21 @@ useSeoMeta({
       <Button @click="createOpen = true">{{ t('inventory.category.create') }}</Button>
     </EmptyState>
 
-    <!-- Read-only rows — NO edit/delete affordance (D-12). -->
+    <!-- Read-only pool — NO edit/delete affordance (D-12); each row links to a
+         category-filtered search (empty query, this category pre-selected). -->
     <Card v-else class="p-2">
       <ul class="divide-y">
         <li
           v-for="category in categories"
           :key="category.id"
           data-testid="category-row"
-          class="rounded-md px-2 py-2 text-base"
         >
-          {{ category.name }}
+          <NuxtLink
+            :to="{ path: '/search', query: { category: category.id } }"
+            class="flex min-h-11 items-center rounded-md px-2 py-3 text-base hover:bg-muted"
+          >
+            {{ category.name }}
+          </NuxtLink>
         </li>
       </ul>
     </Card>
