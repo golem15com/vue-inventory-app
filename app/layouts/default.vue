@@ -41,10 +41,11 @@ const route = useRoute()
 const topbarQ = ref('')
 const showTopbarSearch = computed(() => route.path !== '/search' && route.path !== '/dashboard')
 
-// Full-width opt-out (D-04) — pages set `definePageMeta({ fullWidth: true })`
-// to break out of the default max-w-5xl reading column into max-w-7xl (View
-// Item / Edit Item / /items/new / Edit Area / Edit Location consume this).
-const mainWidth = computed(() => route.meta.fullWidth ? 'max-w-7xl' : 'max-w-5xl')
+// One reading column for the whole app shell — every page renders at max-w-5xl so
+// container width is consistent across dashboard, search, areas, locations, items
+// (view/new/edit) and settings. Wide content (e.g. the item view/form) lays out in
+// a multi-column grid INSIDE this column rather than widening the shell.
+const mainWidth = 'max-w-5xl'
 
 // Responsive top-bar placeholder — the narrow mobile input truncates the full
 // "Search your things…" to "Search your th…", so use a short "Search…" below lg.

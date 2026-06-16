@@ -6,12 +6,13 @@
  * hydrates the Item via the SSR read composable, 404s a missing/inaccessible id with
  * the generic inventory.error.notFound copy (no foreign-record enumeration), then
  * passes the record to ItemForm as `existing` — which switches the photo field into
- * the multi-photo gallery (edit mode). Full-width via route.meta.fullWidth (the 10-01
- * layout mechanism). The View Item screen at /items/:id links here via its Edit CTA.
+ * the multi-photo gallery (edit mode). Renders at the shared max-w-5xl reading width;
+ * the form lays out as a 2-col grid inside it. The View Item screen at /items/:id
+ * links here via its Edit CTA.
  */
 import ItemForm from '~/components/inventory/ItemForm.vue'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
