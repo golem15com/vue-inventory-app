@@ -153,36 +153,41 @@ async function confirmRemove() {
 </script>
 
 <template>
-  <!-- CREATE MODE: multiple optional photos, staged for the seamless save -->
-  <div v-if="!isEdit" class="space-y-3">
-    <div v-if="staged.length" class="flex flex-wrap gap-3">
-      <div
-        v-for="(url, index) in previewUrls"
-        :key="index"
-        class="relative size-24"
-      >
-        <img :src="url" alt="" class="size-24 rounded-md object-cover">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          class="absolute top-1 right-1 bg-background/80 text-destructive hover:text-destructive"
-          :aria-label="t('inventory.action.deleteLabel', { name: 'photo' })"
-          @click="removeStaged(index)"
-        >
-          <Trash2 />
-        </Button>
-      </div>
-    </div>
-    <input
-      ref="createInput"
-      type="file"
-      accept="image/*"
-      capture="environment"
-      multiple
-      class="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border file:border-input file:bg-background file:px-3 file:py-1.5 file:text-sm hover:file:bg-accent"
-      @change="onCreatePick"
+  <!-- CREATE MODE: staged previews + dashed add tile (parity with the edit gallery) -->
+  <div v-if="!isEdit" class="flex flex-wrap gap-3">
+    <div
+      v-for="(url, index) in previewUrls"
+      :key="index"
+      class="relative size-24"
     >
+      <img :src="url" alt="" class="size-24 rounded-md object-cover">
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        class="absolute top-1 right-1 bg-background/80 text-destructive hover:text-destructive"
+        :aria-label="t('inventory.action.deleteLabel', { name: 'photo' })"
+        @click="removeStaged(index)"
+      >
+        <Trash2 />
+      </Button>
+    </div>
+
+    <!-- Add tile -->
+    <label
+      class="flex size-24 cursor-pointer items-center justify-center rounded-md border border-dashed text-muted-foreground transition-colors hover:bg-muted"
+    >
+      <ImagePlus class="size-6" />
+      <input
+        ref="createInput"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        multiple
+        class="sr-only"
+        @change="onCreatePick"
+      >
+    </label>
   </div>
 
   <!-- EDIT MODE: multi-photo gallery with add + per-photo remove -->

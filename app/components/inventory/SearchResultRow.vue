@@ -16,13 +16,12 @@
  */
 import { computed } from 'vue'
 import { Package } from '@lucide/vue'
+import LocationPhotoBadge from '~/components/inventory/LocationPhotoBadge.vue'
 import type { Item } from '~~/shared/types/inventory'
 
 const props = defineProps<{
   item: Item
 }>()
-
-const { t } = useI18n()
 
 // "{Location} · {Area}" — same join the dashboard uses (index.vue lines 63–65).
 const whereItLives = computed(() =>
@@ -57,11 +56,7 @@ const whereItLives = computed(() =>
         :alt="item.name"
         class="size-12 rounded-md object-cover"
       >
-      <span
-        class="absolute bottom-0 left-0 bg-muted/80 text-muted-foreground text-sm px-1"
-      >
-        {{ t('inventory.item.locationPhoto') }}
-      </span>
+      <LocationPhotoBadge />
     </div>
     <div
       v-else

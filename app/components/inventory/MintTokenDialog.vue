@@ -220,7 +220,7 @@ async function copyPrefilledInstall() {
             <label
               v-for="scope in ALL_SCOPES"
               :key="scope"
-              class="flex min-h-11 cursor-pointer items-start gap-3 rounded-md border p-3 hover:bg-muted"
+              class="flex min-h-11 cursor-pointer items-start gap-3 rounded-none border p-3 hover:bg-muted"
               :data-testid="`scope-${scope}`"
             >
               <input
@@ -247,7 +247,7 @@ async function copyPrefilledInstall() {
             <label
               v-for="area in areas"
               :key="area.id"
-              class="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border p-3 hover:bg-muted"
+              class="flex min-h-11 cursor-pointer items-center gap-3 rounded-none border p-3 hover:bg-muted"
               :data-testid="`area-${area.id}`"
             >
               <input
@@ -274,7 +274,7 @@ async function copyPrefilledInstall() {
 
       <!-- Phase B: the view-once secret reveal. -->
       <div v-else class="space-y-4" data-testid="token-reveal">
-        <div class="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+        <div class="rounded-none border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
           {{ t('inventory.settings.secretOnceWarning') }}
         </div>
 
@@ -309,11 +309,11 @@ async function copyPrefilledInstall() {
           <p class="text-sm text-muted-foreground">{{ t('inventory.settings.installHint') }}</p>
           <button
             type="button"
-            class="flex w-full items-center justify-between gap-2 rounded-md border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
+            class="flex w-full items-center justify-between gap-2 rounded-none border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
             data-testid="token-install-prefilled"
             @click="copyPrefilledInstall"
           >
-            <span class="truncate">{{ prefilledInstallCommand }}</span>
+            <span class="min-w-0 flex-1 truncate">{{ prefilledInstallCommand }}</span>
             <Copy class="size-4 shrink-0 text-muted-foreground" />
           </button>
           <p class="text-xs text-muted-foreground">{{ t('inventory.settings.installHistoryWarning') }}</p>
@@ -324,11 +324,11 @@ async function copyPrefilledInstall() {
           <p class="text-sm text-muted-foreground">{{ t('inventory.settings.installHintSafe') }}</p>
           <button
             type="button"
-            class="flex w-full items-center justify-between gap-2 rounded-md border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
+            class="flex w-full items-center justify-between gap-2 rounded-none border bg-muted px-3 py-2 text-left font-mono text-xs hover:bg-muted/70"
             data-testid="token-install-safe"
             @click="copyInstall"
           >
-            <span class="truncate">{{ installCommand }}</span>
+            <span class="min-w-0 flex-1 truncate">{{ installCommand }}</span>
             <Copy class="size-4 shrink-0 text-muted-foreground" />
           </button>
         </div>

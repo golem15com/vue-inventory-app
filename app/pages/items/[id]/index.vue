@@ -22,6 +22,7 @@ import { computed } from 'vue'
 import { Package } from '@lucide/vue'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import LocationPhotoBadge from '~/components/inventory/LocationPhotoBadge.vue'
 
 definePageMeta({ middleware: 'auth', fullWidth: true })
 
@@ -136,9 +137,7 @@ useSeoMeta({
               class="size-24 rounded-md object-cover"
             >
           </a>
-          <span class="absolute bottom-0 left-0 bg-muted/80 text-muted-foreground text-sm px-1">
-            {{ t('inventory.item.locationPhoto') }}
-          </span>
+          <LocationPhotoBadge />
         </div>
 
         <!-- 3. No photo anywhere: placeholder + muted caption -->

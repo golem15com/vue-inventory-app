@@ -3,7 +3,7 @@
  * /locations/[id]/edit — full-page Edit Location screen (D-08).
  *
  * Replaces the inline LocationFormDialog flow that used to open on /areas/:id.
- * Full-width (route.meta.fullWidth, the 10-01 layout mechanism), square,
+ * Renders at the standard reading width (max-w-5xl) like the View pages — square,
  * headers-in-cards. One field (name) + a multi-photo gallery card. The single
  * --primary CTA is Save; all controls are min-h-11.
  *
@@ -33,7 +33,7 @@ import {
 } from '~/components/ui/dialog'
 import { useInventoryStore } from '~/stores/inventory'
 
-definePageMeta({ middleware: 'auth', fullWidth: true })
+definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
 const route = useRoute()
