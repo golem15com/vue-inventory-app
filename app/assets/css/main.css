@@ -171,6 +171,12 @@
     border-color: var(--border);
     outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
+  /* Always reserve the vertical scrollbar gutter so the mx-auto reading column
+     (and the brand pinned to its left edge) never shifts horizontally between a
+     tall page that scrolls (e.g. the dashboard) and a short one that doesn't. */
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     background-color: var(--background);
     color: var(--foreground);
