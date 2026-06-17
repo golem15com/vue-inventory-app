@@ -1,5 +1,5 @@
 /**
- * Inventory composable — SSR-compatible reads against the JZ.Inventory API.
+ * Inventory composable — SSR-compatible reads against the Golem15.Inventory API.
  *
  * Mirrors the blog composable's keyed-`useFetch` read pattern but RE-POINTED to
  * the Inventory contract `/_inventory/api/v1` (runtimeConfig.public.inventoryApiBase).
@@ -9,7 +9,7 @@
  * useBlog this composable does NOT inject the i18n state or re-fetch on a language
  * switch; every read is keyed by resource id only.
  *
- * Contract (verified JZ.Inventory routes.php — see 05-RESEARCH.md):
+ * Contract (verified Golem15.Inventory routes.php — see 05-RESEARCH.md):
  *   GET /areas                       → { data: Area[] }
  *   GET /areas/{id}/locations        → { data: Location[] }
  *   GET /locations/{id}/items        → { data: Item[], meta: Meta }   (paginated)

@@ -16,6 +16,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
 
+  // Self-host static build (docker/spa.Dockerfile sets NUXT_SPA_MODE=1) renders as
+  // a PURE SPA. This app is client-auth-gated (JWT in a JS cookie), so prerendering
+  // protected routes with `nuxt generate` + ssr:true bakes a redirect-to-/login into
+  // each route's static HTML — there is no session at build time — which meta-refreshes
+  // logged-in users to /login on reload/deep-link. ssr:false emits a single client-
+  // rendered shell; auth middleware then runs in the browser where the cookie exists
+  // (paired with plugins/auth-init.client.ts boot hydration). Dev (:3118) and the
+  // SSR production server keep ssr:true (the default — env var unset).
+  ssr: process.env.NUXT_SPA_MODE !== '1',
+
   // Canonical dev/preview port for this app is 3118 (matches siteUrl + the
   // Centrifugo allowed-origin you whitelist). Override only via NUXT_PORT or
   // `nuxt dev --port`. NB: if 3118 is already taken, the Nuxt listener silently
@@ -76,7 +86,7 @@ export default defineNuxtConfig({
       userApiBase: '/_user/api/v1',
       // Golem15.Journal blog read API (relative → proxied in dev, same-origin in prod).
       journalApiBase: '/_journal/api/v1',
-      // JZ.Inventory read/write API (relative → proxied in dev, same-origin in prod).
+      // Golem15.Inventory read/write API (relative → proxied in dev, same-origin in prod).
       inventoryApiBase: '/_inventory/api/v1',
       // MCP install one-liner surfaced in the token-mint reveal (Phase 8).
       // Override with NUXT_PUBLIC_MCP_INSTALL_COMMAND per deployment.
