@@ -90,6 +90,9 @@ const submitting = ref(false)
 const testing = ref(false)
 const revealed = ref(false)
 const showAdvanced = ref(false)
+// True once the user has saved a credential in this session — lets Test run against
+// the stored key before the secret-free read re-settles `configured`.
+const justSaved = ref(false)
 
 // Inline test-connection result (NOT a toast). null = not yet run.
 const testResult = ref<TestConnectionResult | null>(null)
@@ -101,12 +104,18 @@ const keyPlaceholder = computed(() =>
     : t('inventory.settings.ai.apiKeyPlaceholder'),
 )
 
-/** Trim + drop the optional overrides when blank so the backend default applies. */
+/**
+ * Build the save/test payload. `model` is ALWAYS sent (empty string when blank) so
+ * clearing the Advanced field actually clears the stored model — the backend only
+ * updates columns present in the request, so an omitted model would leave a stale
+ * value pinned forever. An empty stored model falls back to AiDefaults (D-11).
+ * base_url stays conditional ('' would fail the backend's `url` validation).
+ */
 function buildPayload() {
   return {
     provider: form.provider,
     api_key: form.api_key,
-    ...(form.model.trim() ? { model: form.model.trim() } : {}),
+    model: form.model.trim(),
     ...(form.base_url.trim() ? { base_url: form.base_url.trim() } : {}),
   }
 }
@@ -127,7 +136,10 @@ function validate(): boolean {
  */
 function validateTest(): boolean {
   providerError.value = !form.provider
-  keyError.value = !configured.value && !form.api_key.trim()
+  // configured = a key was stored on load; justSaved = stored THIS session (the
+  // secret-free read hasn't necessarily re-settled yet). Either means an empty
+  // field is testable against the stored credential.
+  keyError.value = !configured.value && !justSaved.value && !form.api_key.trim()
   return !providerError.value && !keyError.value
 }
 
@@ -139,6 +151,10 @@ async function onSave() {
     // Clear the key field after a successful save (secret hygiene, T-11-15).
     form.api_key = ''
     revealed.value = false
+    // A credential now exists for this user — let Test run against it immediately,
+    // before the secret-free read re-settles `configured` (fixes save→test asking
+    // for the key again).
+    justSaved.value = true
   }
   catch {
     // The store surfaced the failure toast + error.value.
