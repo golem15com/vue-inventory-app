@@ -36,7 +36,7 @@ import {
 import { Check, Eye, EyeOff } from '@lucide/vue'
 import { useInventoryStore } from '~/stores/inventory'
 import { useAuthStore } from '~/stores/auth'
-import type { AiProvider, TestConnectionResult } from '~~/shared/types/inventory'
+import type { AiProvider, AiSource, TestConnectionResult } from '~~/shared/types/inventory'
 
 const { t } = useI18n()
 const store = useInventoryStore()
@@ -47,6 +47,33 @@ const { data, status } = await fetchAiCredential()
 
 const loadFailed = computed(() => status.value === 'error')
 const configured = computed(() => data.value?.configured === true)
+
+// Coverage context (backend AiConfigResolver — single source of truth). Drives a
+// single explainer band that reflects what ACTUALLY powers AI for this caller,
+// instead of a static "AI is off" that lies for admins and org-covered users.
+const aiSource = computed<AiSource>(() => data.value?.ai_source ?? 'none')
+const canManageOrg = computed(() => data.value?.can_manage_org === true)
+const orgName = computed(() => data.value?.org_name ?? '')
+const globalModel = computed(() => data.value?.global_model ?? '')
+
+// Friendly provider label for the "using your key" band (saved provider, not the
+// form's working copy).
+const providerName = computed(() =>
+  (data.value?.provider ?? form.provider) === 'openai'
+    ? t('inventory.settings.ai.providerOpenai')
+    : t('inventory.settings.ai.providerClaude'),
+)
+
+// The 'none' (AI-off) body adapts to org context: an org member can lean on a
+// shared key (managed by them, or by an admin) OR their own; an orphan only their own.
+const noneBody = computed(() => {
+  if (orgName.value) {
+    return canManageOrg.value
+      ? t('inventory.settings.ai.coverage.noneOrgManage', { org: orgName.value })
+      : t('inventory.settings.ai.coverage.noneOrgMember', { org: orgName.value })
+  }
+  return t('inventory.settings.ai.emptyBody')
+})
 
 // The form. `provider` and the advanced overrides hydrate from the secret-free
 // read; `api_key` is ALWAYS empty on load (the stored key is never round-tripped).
@@ -142,9 +169,15 @@ async function onTest() {
     </p>
 
     <template v-else>
-      <!-- Org-locked fallback band (D-04). The whole AI tab is normally hidden
-           from the strip when the .env org-lock flag is set; this only renders if
-           the route is hit directly. Non-accent muted band — a steady state. -->
+      <!-- Coverage explainer — ONE band driven by what actually powers AI for this
+           caller (ai_source, mirrored from the backend AiConfigResolver). It replaces
+           a static "AI is off" message that was wrong for admins and org-covered
+           users. The form below stays visible in every state (a personal key is
+           always saveable, though for admins/locked members it won't change the
+           resolution). -->
+
+      <!-- Org-locked: the AI tab is normally dropped from the strip when the .env
+           org-lock flag is set; this only renders on a direct hit. Steady state. -->
       <div
         v-if="auth.aiOrgLock"
         class="bg-muted p-4 text-sm text-foreground"
@@ -153,25 +186,64 @@ async function onTest() {
         {{ t('inventory.aiInherited.locked') }}
       </div>
 
-      <!-- Inherited-org info band (D-13): an org credential is present, the caller
-           has no per-user key, and the lock flag is unset. Non-accent muted band —
-           it is informational, NOT a call to action. -->
+      <!-- system (admin): AI already runs on the shared global model; a personal key
+           here is not consulted. Warns instead when no system vision model exists. -->
       <div
-        v-else-if="auth.aiInherited"
+        v-else-if="aiSource === 'system'"
+        class="p-4 text-sm"
+        :class="globalModel ? 'bg-muted text-foreground' : 'border border-destructive/40 bg-destructive/5 text-destructive'"
+        data-testid="ai-admin-band"
+      >
+        <p class="text-base font-medium">
+          {{ globalModel ? t('inventory.settings.ai.coverage.adminTitle') : t('inventory.settings.ai.coverage.adminNoModelTitle') }}
+        </p>
+        <p class="mt-1 text-sm" :class="globalModel ? 'text-muted-foreground' : ''">
+          {{ globalModel ? t('inventory.settings.ai.coverage.adminBody', { model: globalModel }) : t('inventory.settings.ai.coverage.adminNoModelBody') }}
+        </p>
+      </div>
+
+      <!-- organisation: AI is on via the shared org key (inherited). Add your own
+           below to override it just for you. -->
+      <div
+        v-else-if="aiSource === 'organisation'"
         class="bg-muted p-4 text-sm text-foreground"
         data-testid="ai-inherited-band"
       >
-        {{ t('inventory.aiInherited.band') }}
+        <p class="text-base font-medium">{{ t('inventory.settings.ai.coverage.orgTitle') }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">
+          {{ orgName ? t('inventory.settings.ai.coverage.orgBodyNamed', { org: orgName }) : t('inventory.settings.ai.coverage.orgBody') }}
+        </p>
       </div>
 
-      <!-- Unconfigured explainer — the form stays visible below in both states. -->
+      <!-- user: AI is on, running on the caller's own saved key. -->
       <div
-        v-if="!configured"
+        v-else-if="aiSource === 'user'"
+        class="bg-muted p-4 text-sm text-foreground"
+        data-testid="ai-on-band"
+      >
+        <p class="text-base font-medium">{{ t('inventory.settings.ai.coverage.userTitle') }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">
+          {{ t('inventory.settings.ai.coverage.userBody', { provider: providerName }) }}
+        </p>
+      </div>
+
+      <!-- none: AI is off for this caller. The body adapts to org context; an
+           org admin/owner also gets a CTA to set the shared key for everyone. -->
+      <div
+        v-else
         class="rounded-md border bg-muted p-4"
         data-testid="ai-empty"
       >
         <p class="text-base font-medium">{{ t('inventory.settings.ai.emptyTitle') }}</p>
-        <p class="mt-1 text-sm text-muted-foreground">{{ t('inventory.settings.ai.emptyBody') }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ noneBody }}</p>
+        <NuxtLink
+          v-if="orgName && canManageOrg"
+          to="/organisation"
+          class="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+          data-testid="ai-manage-org"
+        >
+          {{ t('inventory.settings.ai.coverage.manageOrgCta') }}
+        </NuxtLink>
       </div>
 
       <Card class="space-y-4 p-4">

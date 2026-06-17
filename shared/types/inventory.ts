@@ -174,12 +174,33 @@ export interface AiCredentialForm {
   base_url?: string
 }
 
+/**
+ * Which credential actually powers recognition for the caller right now (mirrors
+ * the backend AiConfigResolver tiers — the single source of truth):
+ *   - system        admin; the shared global Golem vision model (a personal key
+ *                   here is NOT consulted).
+ *   - organisation  an org member inheriting / enforced to the shared org key.
+ *   - user          the caller's own per-user BYOK key.
+ *   - none          nothing configured — AI is off for the caller.
+ */
+export type AiSource = 'system' | 'organisation' | 'user' | 'none'
+
 /** Secret-free credential status as returned by the GET read. */
 export interface AiCredentialResponse {
   configured: boolean
   provider?: AiProvider
   model?: string | null
   base_url?: string | null
+  /** What powers AI for this caller right now — drives the settings explainer copy. */
+  ai_source?: AiSource
+  /** Site admin: recognition uses the global model; a personal key is not used. */
+  is_admin?: boolean
+  /** May set the shared org key (owner/admin) — "add it on the Organisation page". */
+  can_manage_org?: boolean
+  /** The caller's organisation name (copy only), or null when org-less. */
+  org_name?: string | null
+  /** Admin only: the system vision model's name, or null when none is configured. */
+  global_model?: string | null
 }
 
 /** Test-connection result — `{ ok: false, error }` carries the verbatim provider message (D-08). */

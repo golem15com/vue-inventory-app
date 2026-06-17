@@ -295,6 +295,20 @@
         "testFailure": "Connection failed: {message}",
         "emptyTitle": "AI is off until you add a key",
         "emptyBody": "Choose your provider and paste an API key to turn on photo-to-catalog AI.",
+        "coverage": {
+          "adminTitle": "AI is on — covered by system settings",
+          "adminBody": "You're an admin, so photo-to-catalog AI already runs on the shared system model ({model}). A key saved here isn't used for your own recognition — you don't need to add one.",
+          "adminNoModelTitle": "No system AI model is configured",
+          "adminNoModelBody": "You're an admin, but no vision-capable model is enabled in the system AI settings, so recognition will fail until one is. A personal key saved here is not used for admins.",
+          "orgTitle": "AI is on — using your organisation's shared key",
+          "orgBody": "Photo-to-catalog runs on your organisation's shared AI key. Add your own below to override it just for you, or leave this blank to keep using the shared one.",
+          "orgBodyNamed": "Photo-to-catalog runs on {org}'s shared AI key. Add your own below to override it just for you, or leave this blank to keep using the shared one.",
+          "userTitle": "AI is on — using your key",
+          "userBody": "Photo-to-catalog runs on your saved {provider} key. It's encrypted and used only for your own recognition. Replace it below at any time.",
+          "noneOrgManage": "Photo-to-catalog AI is off — {org} has no shared key yet. Set a shared key for everyone, or paste your own below to turn it on for just you.",
+          "noneOrgMember": "Photo-to-catalog AI is off — {org} has no shared key yet. Ask an organisation admin to add one, or paste your own key below to turn it on for just you.",
+          "manageOrgCta": "Set your organisation's shared key"
+        },
         "providerRequired": "Choose a provider.",
         "keyRequired": "Enter your API key."
       },

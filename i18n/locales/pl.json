@@ -295,6 +295,20 @@
         "testFailure": "Połączenie nie powiodło się: {message}",
         "emptyTitle": "AI jest wyłączone, dopóki nie dodasz klucza",
         "emptyBody": "Wybierz dostawcę i wklej klucz API, aby włączyć katalogowanie ze zdjęć przez AI.",
+        "coverage": {
+          "adminTitle": "AI jest włączone — obsługiwane przez ustawienia systemowe",
+          "adminBody": "Jesteś administratorem, więc katalogowanie ze zdjęć przez AI już działa na współdzielonym modelu systemowym ({model}). Klucz zapisany tutaj nie jest używany do Twojego rozpoznawania — nie musisz go dodawać.",
+          "adminNoModelTitle": "Nie skonfigurowano modelu AI w systemie",
+          "adminNoModelBody": "Jesteś administratorem, ale w ustawieniach AI systemu nie włączono żadnego modelu obsługującego obraz, więc rozpoznawanie nie zadziała, dopóki go nie włączysz. Klucz osobisty zapisany tutaj nie jest używany dla administratorów.",
+          "orgTitle": "AI jest włączone — używa współdzielonego klucza organizacji",
+          "orgBody": "Katalogowanie ze zdjęć korzysta ze współdzielonego klucza AI Twojej organizacji. Dodaj własny poniżej, aby zastąpić go tylko dla siebie, albo zostaw puste, aby nadal korzystać ze współdzielonego.",
+          "orgBodyNamed": "Katalogowanie ze zdjęć korzysta ze współdzielonego klucza AI organizacji {org}. Dodaj własny poniżej, aby zastąpić go tylko dla siebie, albo zostaw puste, aby nadal korzystać ze współdzielonego.",
+          "userTitle": "AI jest włączone — używa Twojego klucza",
+          "userBody": "Katalogowanie ze zdjęć korzysta z Twojego zapisanego klucza {provider}. Jest szyfrowany i używany wyłącznie do Twojego rozpoznawania. Możesz go w każdej chwili zmienić poniżej.",
+          "noneOrgManage": "Katalogowanie ze zdjęć przez AI jest wyłączone — organizacja {org} nie ma jeszcze współdzielonego klucza. Ustaw współdzielony klucz dla wszystkich albo wklej własny poniżej, aby włączyć go tylko dla siebie.",
+          "noneOrgMember": "Katalogowanie ze zdjęć przez AI jest wyłączone — organizacja {org} nie ma jeszcze współdzielonego klucza. Poproś administratora organizacji o jego dodanie albo wklej własny klucz poniżej, aby włączyć go tylko dla siebie.",
+          "manageOrgCta": "Ustaw współdzielony klucz organizacji"
+        },
         "providerRequired": "Wybierz dostawcę.",
         "keyRequired": "Wprowadź klucz API."
       },
