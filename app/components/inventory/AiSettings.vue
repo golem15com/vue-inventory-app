@@ -118,6 +118,19 @@ function validate(): boolean {
   return !providerError.value && !keyError.value
 }
 
+/**
+ * Test-connection gate. Unlike save, a test may run against the ALREADY-STORED key:
+ * when a credential is configured, an empty field is valid — the backend
+ * (AiCredentialController::resolveTestConfig) falls back to the stored credential.
+ * Only a pre-save test (nothing configured yet) requires a key. Mirrors the org
+ * Test Connection fix (c031d4a).
+ */
+function validateTest(): boolean {
+  providerError.value = !form.provider
+  keyError.value = !configured.value && !form.api_key.trim()
+  return !providerError.value && !keyError.value
+}
+
 async function onSave() {
   if (!validate()) return
   submitting.value = true
@@ -136,7 +149,7 @@ async function onSave() {
 }
 
 async function onTest() {
-  if (!validate()) return
+  if (!validateTest()) return
   testing.value = true
   testResult.value = null
   try {
