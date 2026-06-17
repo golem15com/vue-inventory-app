@@ -211,6 +211,12 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'whereiput.it',
+      // @nuxtjs/seo's default title template is "%s %separator %siteName". Give
+      // @unhead the template params explicitly so the tokens interpolate on
+      // client-rendered routes too — the static SPA build (ssr:false) showed a
+      // literal "%siteName" on pages whose title is set client-side (e.g. /settings),
+      // because the seo module's param injection only ran at prerender time.
+      templateParams: { siteName: 'whereiput.it', separator: '|' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
