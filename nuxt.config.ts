@@ -89,12 +89,16 @@ export default defineNuxtConfig({
       // Golem15.Inventory read/write API (relative → proxied in dev, same-origin in prod).
       inventoryApiBase: '/_inventory/api/v1',
       // MCP install one-liner surfaced in the token-mint reveal (Phase 8).
-      // Override with NUXT_PUBLIC_MCP_INSTALL_COMMAND per deployment.
-      mcpInstallCommand: 'curl -fsSL https://mcp.whereiput.it | bash',
+      // The Inventory MCP server is self-hosted (no hosted SaaS) — this
+      // `mcp.example.com` default is a PLACEHOLDER every deployment overrides
+      // with NUXT_PUBLIC_MCP_INSTALL_COMMAND, pointing at its OWN MCP host (see
+      // the `inventory-mcp` submodule for deploying one).
+      mcpInstallCommand: 'curl -fsSL https://mcp.example.com | bash',
       // Bare MCP server origin — used to compose the token-prefilled install
       // command and the manual Claude/Codex snippets in the Integrations tab.
-      // Override with NUXT_PUBLIC_MCP_INSTALL_URL per deployment.
-      mcpInstallUrl: 'https://mcp.whereiput.it',
+      // Placeholder default; override with NUXT_PUBLIC_MCP_INSTALL_URL to your
+      // own self-hosted MCP origin per deployment.
+      mcpInstallUrl: 'https://mcp.example.com',
       // Centrifugo websocket URL. Empty = realtime gracefully degrades (no-op).
       // The WS connection is a direct cross-origin socket (not proxied) — set it
       // to your Centrifugo endpoint and add the app origin to Centrifugo's

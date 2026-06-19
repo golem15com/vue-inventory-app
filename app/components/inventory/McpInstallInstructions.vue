@@ -5,9 +5,10 @@
  *
  * Universal, token-agnostic setup help: the `curl | bash` installer one-liner
  * plus copy-paste manual config for Claude Code and Codex. The installer itself
- * (served by mcp.whereiput.it) handles global-vs-folder scope and Claude/Codex
- * selection; here we just surface the entry points. The actual `inv_…` secret is
- * never shown here — it appears only once, in the mint reveal (MintTokenDialog).
+ * (served by the deployment's own self-hosted MCP host — see `mcpInstallUrl`)
+ * handles global-vs-folder scope and Claude/Codex selection; here we just
+ * surface the entry points. The actual `inv_…` secret is never shown here — it
+ * appears only once, in the mint reveal (MintTokenDialog).
  *
  * Commands derive from runtimeConfig (`mcpInstallCommand`, `mcpInstallUrl`) so a
  * deployment can repoint them via NUXT_PUBLIC_* without a code change. All text
